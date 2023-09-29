@@ -43,11 +43,11 @@ function registerUser(firstName, lastName, username, dob, email, password, callb
 }
 
 
+// below is an example of how to use the function
 registerUser("testeste", "somelastname", "someusername", "somedob", "someemail", "somepasswrod", (err, data) => {
   if (err) {
     console.log(err)
   } else {
-    // Proceed with user registration
     console.log('successfully registered')
   }
 });
