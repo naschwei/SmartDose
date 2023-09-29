@@ -1,7 +1,16 @@
-const AWS = require('aws-sdk');
-const dynamodb = new AWS.DynamoDB();
+const { v4: uuidv4 } = require('uuid');
 
-function registerUser(firstName, lastName, userName, dob, email, password, callback) {
+const AWS = require('aws-sdk'),
+      {
+          DynamoDB
+      } = require("@aws-sdk/client-dynamodb");
+
+
+AWS.config.update({region:'us-east-2'});
+
+const dynamodb = new DynamoDB();
+
+function registerUser(firstName, lastName, username, dob, email, password, callback) {
 
     const uniqueUserID = uuidv4();
 
@@ -10,10 +19,10 @@ function registerUser(firstName, lastName, userName, dob, email, password, callb
     const params = {
         TableName: 'user-profile',
         Item: {
-            'userId': { S: uniqueUserID },
+            'userID': { S: uniqueUserID },
             'firstName': { S: firstName },
             'lastName': { S: lastName },
-            'userName': { S: userName },
+            'username': { S: username },
             'dob': { S: dob },
             'email': { S: email },
             'password': { S: password },
@@ -32,3 +41,13 @@ function registerUser(firstName, lastName, userName, dob, email, password, callb
 
 
 }
+
+
+registerUser("testeste", "somelastname", "someusername", "somedob", "someemail", "somepasswrod", (err, data) => {
+  if (err) {
+    console.log(err)
+  } else {
+    // Proceed with user registration
+    console.log('successfully registered')
+  }
+});
