@@ -5,7 +5,7 @@ function registerUser(firstName, lastName, userName, dob, email, password, callb
 
     const uniqueUserID = uuidv4();
 
-    // TODO: need to hash password!
+    // TODO: need to hash password before storing it in db!
 
     const params = {
         TableName: 'user-profile',
@@ -32,22 +32,3 @@ function registerUser(firstName, lastName, userName, dob, email, password, callb
 
 
 }
-
-const params = {
-  TableName: 'user-profile',
-  Item: {
-    'userId': { S: 'uniqueUserID' },
-    'email': { S: 'user@example.com' },
-    'password': { S: 'hashedPassword' },
-  },
-};
-
-dynamodb.putItem(params, (err, data) => {
-  if (err) {
-    console.error(err);
-    // stay on registration page, prompt user to register again w correct values?
-  } else {
-    console.log('User registered successfully');
-    // proceed to next page after registration is completed
-  }
-});
