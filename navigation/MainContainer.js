@@ -6,12 +6,14 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SettingsScreen from './screens/SettingsScreen';
-import DetailsScreen from '../navigation/screens/DetailsScreen';
+import HistoryScreen from './screens/HistoryScreen';
+import ManageScreen from './screens/ManageScreen';
 import HomeScreen from '../navigation/screens/HomeScreen';
 
 // screen names
 const settingsName = 'Settings';
-const detailsName = 'Details';
+const historyName = 'History';
+const manageName = 'Manage Medication';
 const homeName = 'Home';
 
 const Tab = createBottomTabNavigator();
@@ -28,10 +30,12 @@ export default function MainContainer() {
 
                         if (rn === homeName) {
                             iconName = focused ? 'home' : 'home-outline'
-                        } else if (rn === detailsName) {
-                            iconName = focused ? 'list' : 'list-outline'
+                        } else if (rn === historyName) {
+                            iconName = focused ? 'bar-chart' : 'bar-chart-outline'
                         } else if (rn === settingsName) {
                             iconName = focused ? 'settings' : 'settings-outline'
+                        } else if (rn === manageName) {
+                            iconName = focused ? 'add-circle' : 'add-circle-outline' 
                         }
 
                         return <Ionicons name={iconName} size={size} color={color}/>
@@ -46,7 +50,8 @@ export default function MainContainer() {
             >
 
             <Tab.Screen name={homeName} component={HomeScreen}/>
-            <Tab.Screen name={detailsName} component={DetailsScreen}/>
+            <Tab.Screen name={manageName} component={ManageScreen}/>
+            <Tab.Screen name={historyName} component={HistoryScreen}/>
             <Tab.Screen name={settingsName} component={SettingsScreen}/>
 
             </Tab.Navigator>
