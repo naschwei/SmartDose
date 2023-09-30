@@ -25,7 +25,7 @@ import {
     ExtraText,
     TextLink,
     TextLinkContent
-} from './../components/styles';
+} from './../../components/styles';
 
 const {brand, darkLight, primary} = Colors;
 

@@ -24,7 +24,7 @@ import {
     ExtraText,
     TextLink,
     TextLinkContent
-} from './../components/styles';
+} from '../../components/styles';
 
 const {brand, darkLight, primary} = Colors;
 
@@ -35,7 +35,7 @@ const Login = () => {
         <StyledContainer>
             <StatusBar style="dark" />
             <InnerContainer>
-                <PageLogo resizeMode="cover" source={require('./../assets/icon.png')} />
+                <PageLogo resizeMode="cover" source={require('./../../assets/icon.png')} />
                 <PageTitle> SmartDose </PageTitle>
                 <SubTitle> Account Login </SubTitle>
 
