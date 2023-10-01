@@ -76,11 +76,24 @@ function getAllUserMedications(userID, callback) {
 }
 
 // this is an example of using the getAllUserMedications function !!
-getAllUserMedications('test-userid', (err, data) => {
-  if (err) {
-    console.error('Error getting all user medications: ', err);
-  } else {
-    console.log('Successfully retrieved all user medications');
-    console.log(data['Items']);
-  }
-});
+// getAllUserMedications('test-userid', (err, data) => {
+//   if (err) {
+//     console.error('Error getting all user medications: ', err);
+//   } else {
+//     console.log('Successfully retrieved all user medications');
+//     console.log(data['Items']);
+//   }
+// });
+
+
+//TODO: function to update usermedications
+
+
+
+
+//TODO: function to delete user medications
+
+
+
+
+//TODO: 
