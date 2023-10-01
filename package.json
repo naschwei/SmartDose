@@ -17,6 +17,7 @@
     "@react-navigation/native": "^6.1.8",
     "@react-navigation/stack": "^6.3.18",
     "aws-sdk": "^2.1467.0",
+    "axios": "^1.5.1",
     "babel-core": "^6.26.3",
     "babel-preset-react": "^6.24.1",
     "babel-register": "^6.26.0",
