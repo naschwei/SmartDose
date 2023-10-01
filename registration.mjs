@@ -22,9 +22,9 @@ function registerUser(firstName, lastName, username, dob, email, password, callb
 
         bcrypt.hash(password, salt, (err, hash) => {
             if (err) {
-            console.log("Error hashing password with salt: ", err)
-            callback(err);
-            return;
+                console.log("Error hashing password with salt: ", err)
+                callback(err);
+                return;
             }
             console.log('Hashed Password:', hash);
 
@@ -49,9 +49,9 @@ function registerUser(firstName, lastName, username, dob, email, password, callb
                     console.log('User registered successfully');
                     callback(null, 'User registered successfully');
                 })
-                .catch((error) => {
-                    console.error("Error registering user:", error);
-                    callback(error, null); // Notify caller of error
+                .catch((err) => {
+                    console.error("Error registering user:", err);
+                    callback(err, null); // Notify caller of error
                 });
         });
     });
@@ -77,40 +77,42 @@ function loginUser(username, password, callback) {
         IndexName: 'username-index', // Specify the secondary index name
         KeyConditionExpression: 'username = :username',
         ExpressionAttributeValues: {
-        ':username': { S: username }, // Specify the username you want to query
+            ':username': { S: username }, // Specify the username you want to query
         },
     };
 
+    const command = new QueryCommand(params);
+
     try {
-        const command = new QueryCommand(params);
-        dynamodb.send(command).then((data) => {
-            if (data.Items && data.Items.length === 1) {
-                const userData = data.Items[0];
+        dynamodb.send(command)
+            .then((data) => {
+                if (data.Items && data.Items.length === 1) {
+                    const userData = data.Items[0];
 
-                const storedHashedPassword = userData.password.S;
+                    const storedHashedPassword = userData.password.S;
 
-                bcrypt.compare(password, storedHashedPassword, (err, result) => {
-                if (err) {
-                    console.error('Error comparing passwords:', err);
-                    callback(err, null);
-                } else {
-                    if (result) {
-                    // Passwords match, login successful
-                    callback(null, true);
+                    bcrypt.compare(password, storedHashedPassword, (err, result) => {
+                    if (err) {
+                        console.error('Error comparing passwords:', err);
+                        callback(err, null);
                     } else {
-                    // Passwords do not match
-                    callback(null, false);
+                        if (result) {
+                        // Passwords match, login successful
+                        callback(null, true);
+                        } else {
+                        // Passwords do not match
+                        callback(null, false);
+                        }
                     }
+                    });
+                } else {
+                    // Username not found or multiple users with the same username
+                    callback(null, false);
                 }
-                });
-            } else {
-                // Username not found or multiple users with the same username
-                callback(null, false);
-            }
-        });
-    } catch (error) {
-        console.error('Error retrieving user data:', error);
-        callback(error, null);
+            });
+    } catch (err) {
+        console.error('Error retrieving user data:', err);
+        callback(err, null);
     }
 }
 
