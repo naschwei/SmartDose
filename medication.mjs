@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 
-import { DynamoDBClient, QueryCommand, PutItemCommand } from '@aws-sdk/client-dynamodb';
+import { DynamoDBClient, QueryCommand, PutItemCommand, DeleteItemCommand } from '@aws-sdk/client-dynamodb';
 
 
 function addMedication(userID, name, doseQuantity, doseTimings, feederNum, callback) {
@@ -19,7 +19,7 @@ function addMedication(userID, name, doseQuantity, doseTimings, feederNum, callb
         },
     };
 
-    console.log(params)
+    // console.log(params)
 
     const dynamodb = new DynamoDBClient({ region: 'us-east-2' });
     const command = new PutItemCommand(params);
@@ -70,7 +70,7 @@ function getAllUserMedications(userID, callback) {
                 callback(null, data);
             })
     } catch (err) {
-        console.error('Error retrieving user medicatino data: ', err);
+        console.error('Error retrieving user medication data: ', err);
         callback(err, null)
     }
 }
@@ -86,13 +86,75 @@ function getAllUserMedications(userID, callback) {
 // });
 
 
-//TODO: function to update usermedications
+//function to update usermedications
+//medID cannot change if updating ! and technically neither should userID
+function updateUserMedication(medID, userID, name, doseQuantity, doseTimings, feederNum, callback) {
 
+    const dynamodb = new DynamoDBClient({ region: 'us-east-2' });
+
+    const params = {
+        TableName: 'medications', 
+        Item: {
+            'medID': { S: uniqueMedID },
+            'userID': { S: userID },
+            'name': { S: name },
+            'doseQuantity': { S: doseQuantity },
+            'doseTimings': { SS: doseTimings },
+            'feederNum': { S: feederNum },
+        },
+    };
+    // replaces item if medid is already present which it will be
+    const command = new PutItemCommand(params);
+
+    dynamodb.send(command)
+        .then(() => {
+            console.log('Medication updated successfully');
+            callback(null, 'Medication updated successfully');
+        })
+        .catch((err) => {
+            console.error("Error updating medication: ", err);
+            callback(err, null);
+    });
+
+}
 
 
 
 //TODO: function to delete user medications
+function deleteUserMedication(medID, callback) {
 
+    const dynamodb = new DynamoDBClient({ region: 'us-east-2' });
+
+    const params = {
+        TableName: 'medications', 
+        Key: {
+            "medID": {
+                "S": medID,
+            }
+        }
+    };
+
+    const command = new DeleteItemCommand(params);
+
+    dynamodb.send(command)
+        .then(() => {
+            console.log('Medication deleted successfully');
+            callback(null, 'Medication deleted successfully');
+        })
+        .catch((err) => {
+            console.error("Error deleting medication: ", err);
+            callback(err, null);
+    });
+}
+
+// deleteUserMedication('test-medid', (err, data) => {
+//   if (err) {
+//     console.error('Error deleting user medications: ', err);
+//   } else {
+//     console.log('Successfully deleted user medications');
+//     console.log(data['Items']);
+//   }
+// });
 
 
 
