@@ -31,7 +31,7 @@ export const InnerContainer = styled.View`
 `;
 
 export const WelcomeContainer = styled(InnerContainer)`
-    padding: 25px;
+    padding: 30px;
     padding-top: 10px;
     justify-content: center;
 `;

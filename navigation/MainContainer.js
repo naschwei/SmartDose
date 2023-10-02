@@ -42,17 +42,23 @@ export default function MainContainer() {
                     }
                 })}
                 tabBarOptions={{
-                    activeTintColor: 'purple',
+                    activeTintColor: "#6D28D9", 
                     inactiveTintColor: 'grey',
                     labelStyle: { paddingBottom: 0, fontSize: 10 },
-                    style: { padding: 20, height: 70 }
+                    style: { padding: 20, height: 100 },
+                    title: 'ugh'
+                }}
+                headerStyle= {{
+                    backgroundColor: "#6D28D9",
+                    fontWeight: 'bold',
+                    fontSize: 100
                 }}
             >
 
-            <Tab.Screen name={homeName} component={HomeScreen}/>
-            <Tab.Screen name={manageName} component={ManageScreen}/>
-            <Tab.Screen name={historyName} component={HistoryScreen}/>
-            <Tab.Screen name={settingsName} component={SettingsScreen}/>
+            <Tab.Screen name={homeName} component={HomeScreen} options={{ headerTitle:'SmartDose', headerStyle: {backgroundColor: "#6D28D9"}, headerTintColor: 'white', headerTitleStyle: {fontSize: 25}}}/>
+            <Tab.Screen name={manageName} component={ManageScreen} options={{ headerTitle:'SmartDose', headerStyle: {backgroundColor: "#6D28D9"}, headerTintColor: 'white', headerTitleStyle: {fontSize: 25}}}/> 
+            <Tab.Screen name={historyName} component={HistoryScreen} options={{ headerTitle:'SmartDose', headerStyle: {backgroundColor: "#6D28D9"}, headerTintColor: 'white', headerTitleStyle: {fontSize: 25}}}/>
+            <Tab.Screen name={settingsName} component={SettingsScreen} options={{ headerTitle:'SmartDose', headerStyle: {backgroundColor: "#6D28D9"}, headerTintColor: 'white', headerTitleStyle: {fontSize: 25}}}/>
 
             </Tab.Navigator>
         </NavigationContainer>
