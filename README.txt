@@ -1,3 +1,8 @@
+// how to set up environment to view the software
+1. Install Expo Go on Mobile Device
+2. Ensure Node.js is installed 
+
+
 // Dependencies needed to add navigation bar. 
 // Run the following commands to install...
 
