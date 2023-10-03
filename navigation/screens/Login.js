@@ -28,7 +28,7 @@ import {
 
 const {brand, darkLight, primary} = Colors;
 
-const Login = () => {
+const Login = ({navigation}) => {
     const [hidePassword, setHidePassword] = useState(true);
 
     return (
@@ -43,6 +43,7 @@ const Login = () => {
                     initialValues={{ email: '', password: ''}}
                     onSubmit={(values) => {
                         console.log(values);
+                        navigation.navigate("Home");
                     }}
                 >
                     {({handleChange, handleBlur, handleSubmit, values}) => (
@@ -81,7 +82,7 @@ const Login = () => {
                             </StyledButton>
                             <ExtraView>
                                 <ExtraText> Don't have an account? </ExtraText>
-                                <TextLink> 
+                                <TextLink onPress={() => navigation.navigate("Signup")}> 
                                     <TextLinkContent> Signup </TextLinkContent>
                                 </TextLink>
                             </ExtraView>

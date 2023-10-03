@@ -29,7 +29,7 @@ import {
 
 const {brand, darkLight, primary} = Colors;
 
-const Signup = () => {
+const Signup = ({navigation}) => {
     const [hidePassword, setHidePassword] = useState(true);
     const [show, setShow] = useState(false);
     const [date, setDate] = useState(new Date(2000,0,1));
@@ -71,6 +71,7 @@ const Signup = () => {
                     initialValues={{ fullName: '', dateOfBirth: '', email: '', password: '', confirmPassword: ''}}
                     onSubmit={(values) => {
                         console.log(values);
+                        navigation.navigate('Home');
                     }}
                 >
                     {({handleChange, handleBlur, handleSubmit, values}) => (
@@ -139,7 +140,7 @@ const Signup = () => {
                             <Line />
                             <ExtraView>
                                 <ExtraText> Already have an account? </ExtraText>
-                                <TextLink> 
+                                <TextLink onPress={() => navigation.navigate('Login')}> 
                                     <TextLinkContent> Login </TextLinkContent>
                                 </TextLink>
                             </ExtraView>

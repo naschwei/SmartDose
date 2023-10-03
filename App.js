@@ -3,16 +3,13 @@ import { StyleSheet, Text, View } from 'react-native';
 import Login from './navigation/screens/Login';
 import Signup from './navigation/screens/Signup';
 import * as React from 'react';
-import MainContainer from './navigation/MainContainer'
+import Authenticate from './navigation/Authenticate';
 
-// TODO: https://youtu.be/tZVKk-V0Xko?si=EnhApZOt76oShmwN
-// TODO: https://youtu.be/OGRR79IIW7g?si=hn-zqxY99oVgl8BD 
+// TODO: (keyboard avoiding wrapper) https://youtu.be/tZVKk-V0Xko?si=EnhApZOt76oShmwN
 
 export default function App() {
   return (
-    //<Login />
-    //<Signup />
-    <MainContainer/>
+    <Authenticate/>
   );
 }
 

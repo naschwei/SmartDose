@@ -57,7 +57,7 @@ export default function HomeScreen({ navigation }) {
                     <StyledFormArea>
                         <Avatar resizeMode="cover" source={require('./../../assets/icon.png')} />
                         <Line />
-                        <StyledButton onPress={() => {}}>
+                        <StyledButton onPress={() => {navigation.navigate("Login")}}>
                             <ButtonText> Logout </ButtonText>
                         </StyledButton>
                     </StyledFormArea>
