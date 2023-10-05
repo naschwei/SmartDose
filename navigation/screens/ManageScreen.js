@@ -1,16 +1,202 @@
-import * as React from 'react';
-import { View, Text } from 'react-native';
+//import * as React from 'react';
+import React, {useState} from 'react';
+import { TouchableOpacity, SafeAreaView, Button, View, TextInput, StyleSheet, Text } from 'react-native';
+import Modal from 'react-native-modal';
+//import {CheckBox} from 'react-native-elements';
 
-export default function ManageScreen({ navigation }) {
-    return (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-            <Text
-                onPress={() => navigation.navigate('Home')}
-                style={{ fontSize: 26, fontWeight: 'bold'}}>Manage Medication Screen
-            </Text>
+const Item = ({name, isSelected}) => {
+    return(
+        <View>
+            <Text style={{color: 'black'}}>{name}</Text>
         </View>
     );
 }
+
+const DATA = [
+    {
+        id: 'Mon',
+        title: 'Mo',
+        isSeleted: false,
+    },
+    {
+        id: 'Tue',
+        title: 'Tu',
+        isSeleted: false,
+    },
+    {
+        id: 'Wed',
+        title: 'We',
+        isSeleted: false,
+    },
+    {
+        id: 'Thu',
+        title: 'Th',
+        isSeleted: false,
+    },
+    {
+        id: 'Fri',
+        title: 'F',
+        isSeleted: false,
+    },
+    {
+        id: 'Sat',
+        title: 'Sa',
+        isSeleted: false,
+    },
+    {
+        id: 'Sun',
+        title: 'Su',
+        isSeleted: false,
+    }
+]
+
+const renderItem = ({item}) => (
+    <Item name={item.title}/>
+);
+
+global.Monday = false;
+const Tuesday = false;
+const Wednesday = false;
+const Thursday = false;
+const Friday = false;
+const Saturday = false;
+const Sunday = false;
+
+
+export default function ManageScreen({ navigation }) {
+    const [ isModalVisible, setIsModalVisible ] = useState(false);
+    const toggleModal = () => {
+        setIsModalVisible(!isModalVisible);
+    };
+
+    const onPress = (day) => {
+        // alert(day);
+        //import global.Monday;
+        
+        //alert(day);
+    }
+
+    return (
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <Button style={styles.button} title="Click Here To Add New Medication" onPress={toggleModal}/>
+            <Modal isVisible={isModalVisible}>
+                <View style={styles.container}>
+                    <View style={styles.container2}>
+                        <Text style={styles.title}>Add New Medication</Text>
+                        <View style={styles.items}>
+                            <TextInput style={styles.input} placeholder="Medication Name" placeholderTextColor={'grey'} />
+                            <TextInput style={styles.input} placeholder="Pill Quantity" placeholderTextColor={'grey'} />
+                            <TextInput style={styles.input} placeholder="End Date" placeholderTextColor={'grey'} />
+                            <TextInput style={styles.input} placeholder="Dispenser Number" placeholderTextColor={'grey'}/>
+                            <Text style={styles.text}>Select Weekly Schedule</Text>
+                            <SafeAreaView style={styles.days}>
+                                <View style={[styles.day, {backgroundColor: Monday ? 'blue': '#f0ffff'}]}>
+                                    <Text style={styles.dayText}>Mo</Text>   
+                                </View>
+                                <View style={styles.day}>
+                                    <Text style={styles.dayText}>Tu</Text>
+                                </View>
+                                <View style={styles.day}>
+                                    <Text style={styles.dayText}>We</Text>
+                                </View>
+                                <View style={styles.day}>
+                                    <Text style={styles.dayText}>Th</Text>
+                                </View>
+                                <View style={styles.day}>
+                                    <Text style={styles.dayText}>Fr</Text>
+                                </View>
+                                <View style={styles.day}>
+                                    <Text style={styles.dayText}>Sa</Text>
+                                </View>
+                                <View style={styles.day}>
+                                    <Text style={styles.dayText}>Su</Text>
+                                </View>
+                            </SafeAreaView>
+                            <TextInput style={styles.input} placeholder="Dispense Times (Each Day)" placeholderTextColor={'grey'}/>
+                        </View>
+                        <Button title='Submit' onPress={toggleModal}/>
+                    </View>
+                </View>
+            </Modal>
+        </View>
+    );
+}
+
+// name
+// quantity
+// days
+// end
+// feeder number
+
+const styles = StyleSheet.create({
+    container: {
+        backgroundColor: '#E6E6FA',
+        alignItems: 'center',
+        //justifyContent: 'center',
+        width: 375,
+        height: 450,
+        paddingBottom: 20,
+        paddingTop: 20,
+    },
+    title: {
+        fontSize: 26,
+        fontWeight: 'bold'
+    },
+    text: {
+        fontSize: 15,
+        fontWeight: 'bold',
+        margin: 5,
+        marginLeft: 10,
+        marginBottom: 10
+    },
+    container2: {
+        flex: 1,
+        alignItems: 'center',
+        flexDirection: 'column',
+        justifyContent: 'space-evenly'
+    },
+    items: {
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'space-evenly'
+    },
+    input: {
+        width: 300,
+        height: 40,
+        backgroundColor: '#fff',
+        paddingVertical: 20,
+        paddingHorizontal: 5,
+        borderColor: '#ccc',
+        borderWidth: 1,
+        borderRadius: 15, 
+        fontSize: 16,
+        margin: 5
+    },
+    days: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        //paddingTop: 20,
+        marginTop: 0,
+        marginBottom: 0
+    },
+    day: {
+        width: 40,
+        height: 40,
+        backgroundColor: '#f0ffff',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontWeight: 'bold'
+    },
+    dayText: {
+        fontWeight: 'bold',
+    }
+});
+
+/* <Text
+    onPress={() => navigation.navigate('Home')}
+    style={{ fontSize: 26, fontWeight: 'bold'}}>Manage Medication Screen
+</Text> */
 
 async function extractMedicineName(imageData, imageToTextApiKey) {
     //  Upload the image to Image to Text API
