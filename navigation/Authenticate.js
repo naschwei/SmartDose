@@ -73,7 +73,13 @@ function MainContainer() {
 function Authenticate() {
     return (
         <NavigationContainer>
-            <Stack.Navigator>
+            <Stack.Navigator
+                screenOptions={{
+                    headerShown: false, 
+                    headerLeft: null,
+                }}
+                initialRouteName="Login"
+            >
                 <Stack.Screen name="Login" component={Login} />
                 <Stack.Screen name="Signup" component={Signup} />
                 <Stack.Screen name="Home" component={MainContainer} />
