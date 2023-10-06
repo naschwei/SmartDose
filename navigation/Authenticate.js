@@ -82,7 +82,7 @@ function Authenticate() {
             >
                 <Stack.Screen name="Login" component={Login} />
                 <Stack.Screen name="Signup" component={Signup} />
-                <Stack.Screen name="Home" component={MainContainer} />
+                <Stack.Screen name="Home" component={MainContainer} options={{headerShown:false}}/>
             </Stack.Navigator> 
         </NavigationContainer>
     )
