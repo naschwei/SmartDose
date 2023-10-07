@@ -67,3 +67,58 @@ const styles=StyleSheet.create({
         marginVertical: 10
     }
 })
+
+// import AWS from 'aws-sdk/dist/aws-sdk-react-native';
+
+// async function getAllUserMedications(userID) {
+
+//     const dynamoDB = new AWS.DynamoDB();
+    
+//     const params = {
+//         TableName: 'medications',
+//         KeyConditionExpression: 'userID = :userID',
+//         ExpressionAttributeValues: {
+//             ':userID': { S: userID },
+//         },
+//     };
+
+//     try {
+//         const data = await dynamoDB.query(params).promise();
+//         return data;
+//     } catch (err) {
+//         console.error('Error retrieving user medication data: ', err);
+//         return null;
+//     }
+// }
+
+// export default function Card(props) {
+//     // Introduce state
+//     const [medications, setMedications] = useState([]);
+
+// // Call getAllUserMedications on component mount
+// useEffect(() => {
+//     // Replace 'userID' below with the actual user's ID
+//     getAllUserMedications('userID', (err, data) => {
+//         if (err) {
+//           console.error('Error retrieving medical data: ', err);
+//         } else {
+//           setMedications(data.Items);
+//         }
+//     });
+// }, []);
+
+// // Update render to map medication to card display
+// return (
+//     medications.map((medication) => (
+//         <View key={medication.medID.S} style= {styles.cardContainer}>
+//             <View style={styles.cardContent}> 
+//                 <Text style={styles.titleStyle}> {medication.name.S} </Text>
+//                 <Text> {medication.doseQuantity.S} pill(s) </Text>
+//                 <Text> Scheduled for: {medication.doseTimings.SS[1]}:{medication.doseTimings.SS[0]} </Text>
+//                 {/* You might want to replace the icons based on some conditions */}
+//                 <Ionicons name="checkmark-circle-outline" size={50} iconColor="#5F8575" style={{ position: 'absolute', right: 0 }}/>
+//             </View>
+//         </View>
+//     ))
+// );
+// }
