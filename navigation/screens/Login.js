@@ -1,8 +1,10 @@
-import React, {useState} from 'react';
+import React, {useState, StyleSheet}  from 'react';
 import {StatusBar} from 'expo-status-bar';
 import {View} from 'react-native';
 import {Formik} from 'formik';
 import {Octicons, Ionicons, Fontisto} from '@expo/vector-icons';
+import * as WebBrowser from "expo-web-browser";
+import * as Google from "expo-auth-session/providers/google";
 
 import {
     Colors,
@@ -28,15 +30,21 @@ import {
 
 const {brand, darkLight, primary} = Colors;
 
+WebBrowser.maybeCompleteAuthSession();
+
 const Login = ({navigation}) => {
     const [hidePassword, setHidePassword] = useState(true);
+    const [userInfo, setUserInfo] = useState(null);
+
+    const [request, response, promptAsync] = Google.useAuthRequest({
+      iosClientId: "171965448512-6ooeu2ap71ucs0q77gpp8ahljbt4gfav.apps.googleusercontent.com",
+    });
 
     return (
         <StyledContainer>
             <StatusBar style="dark" />
             <InnerContainer>
                 <PageLogo resizeMode="cover" source={require('./../../assets/icon.png')} />
-                <PageTitle> SmartDose </PageTitle>
                 <SubTitle> Account Login </SubTitle>
 
                 <Formik
@@ -76,7 +84,7 @@ const Login = ({navigation}) => {
                                 <ButtonText> Login </ButtonText>
                             </StyledButton>
                             <Line />
-                            <StyledButton google={true} onPress={handleSubmit}>
+                            <StyledButton google={true} onPress={() => {promptAsync();}}>
                                 <Fontisto name="google" color={primary} size={25} />
                                 <ButtonText google={true}> Sign in with Google</ButtonText>
                             </StyledButton>
@@ -93,6 +101,8 @@ const Login = ({navigation}) => {
         </StyledContainer>
     );
 };
+
+
 
 const MyTextInput = ({label, icon, isPassword, hidePassword, setHidePassword, ...props}) => {
     return (

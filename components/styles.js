@@ -53,7 +53,7 @@ export const WelcomeImage = styled.Image`
 `;
 
 export const PageLogo = styled.Image`
-    width: 250px;
+    width: 400px;
     height: 200px;
 `;
 

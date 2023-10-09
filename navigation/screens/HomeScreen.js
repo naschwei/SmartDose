@@ -66,7 +66,7 @@ export default function HomeScreen({ navigation }) {
                             fontWeight:"bold"
                         }}>Welcome Jane Doe</Text>
                     </View>
-                    <View style={{width:"50%",alignItems:"flex-end"}}>
+                    <View style={{width:"45%",alignItems:"flex-end"}}>
                         <Avatar resizeMode="cover" source={require('./../../assets/icon.png')} />
                     </View>
                 </View>
