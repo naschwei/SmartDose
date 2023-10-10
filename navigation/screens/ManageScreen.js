@@ -1,6 +1,6 @@
 //import * as React from 'react';
 import React, {useState} from 'react';
-import { TouchableOpacity, SafeAreaView, Button, View, TextInput, StyleSheet, Text } from 'react-native';
+import { Pressable, TouchableOpacity, SafeAreaView, Button, View, TextInput, StyleSheet, Text } from 'react-native';
 import Modal from 'react-native-modal';
 //import {CheckBox} from 'react-native-elements';
 
@@ -69,16 +69,33 @@ export default function ManageScreen({ navigation }) {
         setIsModalVisible(!isModalVisible);
     };
 
-    const onPress = (day) => {
-        // alert(day);
-        //import global.Monday;
+    // async function onPress(day) => {
+    //     // alert(day);
+    //     //import global.Monday;
         
-        //alert(day);
-    }
+    //     //alert(day);
+    // }
 
     return (
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <Button style={styles.button} title="Click Here To Add New Medication" onPress={toggleModal}/>
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{top: -110, fontWeight: 'bold', fontSize: 28}}>Select Dispenser</Text>
+            <Text style={{top:-90, fontSize: 14}}>The grid below matches the containers on your SmartDose Dispenser</Text>
+            <Text style={{top: -80, fontSize: 14}}>Select a container and hit the 'Add New Medication' button!</Text>
+            <View style={{top: -50, height: 300, width: 375, backgroundColor: 'grey', borderWidth: 10, borderRadius: 25, borderColor: 'black', justifyContent: 'center', alignItems: 'center'}}>
+                <View style={{flexDirection: 'row', justifyContent: 'space-evenly', width: 350}}>
+                    <Pressable style={styles.grid}></Pressable>
+                    <Pressable style={styles.grid}></Pressable>
+                    <Pressable style={styles.grid}></Pressable>
+                </View>
+                <View style={{flexDirection: 'row', justifyContent: 'space-evenly', width: 350}}>
+                    <Pressable style={styles.grid}></Pressable>
+                    <Pressable style={styles.grid}></Pressable>
+                    <Pressable style={styles.grid}></Pressable>
+                </View>
+            </View>
+            <Pressable style={{width: 200, height: 50, backgroundColor: '#5f9ea0', borderWidth: 10, borderRadius: 20, borderColor: 'black', justifyContent: 'center', alignItems: 'center'}} title="Add New Medication" onPress={toggleModal}>
+                <Text style={{fontWeight: 'bold', fontSize: 15, color: '#f0f8ff'}}>Add New Medication</Text>
+            </Pressable>
             <Modal isVisible={isModalVisible}>
                 <View style={styles.container}>
                     <View style={styles.container2}>
@@ -90,27 +107,27 @@ export default function ManageScreen({ navigation }) {
                             <TextInput style={styles.input} placeholder="Dispenser Number" placeholderTextColor={'grey'}/>
                             <Text style={styles.text}>Select Weekly Schedule</Text>
                             <SafeAreaView style={styles.days}>
-                                <View style={[styles.day, {backgroundColor: Monday ? 'blue': '#f0ffff'}]}>
+                                <Pressable style={[styles.day, {backgroundColor: Monday ? 'blue': '#f0ffff'}]}>
                                     <Text style={styles.dayText}>Mo</Text>   
-                                </View>
-                                <View style={styles.day}>
+                                </Pressable>
+                                <Pressable style={styles.day}>
                                     <Text style={styles.dayText}>Tu</Text>
-                                </View>
-                                <View style={styles.day}>
+                                </Pressable>
+                                <Pressable style={styles.day}>
                                     <Text style={styles.dayText}>We</Text>
-                                </View>
-                                <View style={styles.day}>
+                                </Pressable>
+                                <Pressable style={styles.day}>
                                     <Text style={styles.dayText}>Th</Text>
-                                </View>
-                                <View style={styles.day}>
+                                </Pressable>
+                                <Pressable style={styles.day}>
                                     <Text style={styles.dayText}>Fr</Text>
-                                </View>
-                                <View style={styles.day}>
+                                </Pressable>
+                                <Pressable style={styles.day}>
                                     <Text style={styles.dayText}>Sa</Text>
-                                </View>
-                                <View style={styles.day}>
+                                </Pressable>
+                                <Pressable style={styles.day}>
                                     <Text style={styles.dayText}>Su</Text>
-                                </View>
+                                </Pressable>
                             </SafeAreaView>
                             <TextInput style={styles.input} placeholder="Dispense Times (Each Day)" placeholderTextColor={'grey'}/>
                         </View>
@@ -129,14 +146,26 @@ export default function ManageScreen({ navigation }) {
 // feeder number
 
 const styles = StyleSheet.create({
+    grid: {
+        height: 100, 
+        width: 100, 
+        backgroundColor: '#f0f8ff', 
+        margin: 10,
+        borderWidth: 10,
+        borderRadius: 25,
+        borderColor: 'black'
+    }, 
     container: {
         backgroundColor: '#E6E6FA',
         alignItems: 'center',
         //justifyContent: 'center',
         width: 375,
-        height: 450,
+        height: 470,
         paddingBottom: 20,
         paddingTop: 20,
+        borderWidth: 10,
+        borderRadius: 20,
+        borderColor: 'black'
     },
     title: {
         fontSize: 26,
@@ -190,6 +219,13 @@ const styles = StyleSheet.create({
     },
     dayText: {
         fontWeight: 'bold',
+    },
+    buttons: {
+        width: 200,
+        height: 100,
+        borderWidth: 10,
+        borderRadius: 20,
+        borderColor: 'black' 
     }
 });
 
