@@ -27,6 +27,7 @@ import * as React from 'react';
 import { View, Text, Image } from 'react-native';
 import {StatusBar} from 'expo-status-bar';
 
+
 import {
     Colors,
     InnerContainer,
@@ -39,7 +40,27 @@ const {primary, tertiary, brand, darkLight} = Colors;
 
 import Card from './../../components/card';
 
-export default function HomeScreen({ navigation }) {
+import { getAuth, signOut } from 'firebase/auth';
+import { useNavigation } from '@react-navigation/native';
+
+export default function HomeScreen() {
+
+    const navigation = useNavigation()
+
+    const handleSignOut = () => {
+        signOut(getAuth(),)
+        .then(() => {
+            navigation.replace("Login");
+            console.log('Logged out');
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            alert(errorMessage);
+        });
+    }
+
+
     return (
         // <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
         <View style={{flex: 1, backgroundColor: "#FFF"}}>
@@ -65,12 +86,17 @@ export default function HomeScreen({ navigation }) {
                             color:"#FFF",
                             fontWeight:"bold"
                         }}>Welcome Jane Doe</Text>
+                        <Text style={{
+                            fontSize:16,
+                            color:"#FFF",
+                            fontWeight:"bold"
+                        }}>Email: { getAuth().currentUser?.email }</Text>
                     </View>
                     <View style={{width:"45%",alignItems:"flex-end"}}>
                         <Avatar resizeMode="cover" source={require('./../../assets/icon.png')} />
                     </View>
                 </View>
-                <StyledButton onPress={() => {navigation.navigate("Login")}}>
+                <StyledButton onPress={handleSignOut}>
                             <ButtonText> Logout </ButtonText>
                 </StyledButton>
             </View>

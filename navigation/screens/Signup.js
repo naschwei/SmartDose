@@ -27,7 +27,10 @@ import {
     TextLinkContent
 } from './../../components/styles';
 
+import { auth } from '../../firebase';
+
 const {brand, darkLight, primary} = Colors;
+
 
 const Signup = ({navigation}) => {
     const [hidePassword, setHidePassword] = useState(true);
@@ -36,6 +39,24 @@ const Signup = ({navigation}) => {
 
     // Actual date of brith to be sent
     const [dob, setDob] = useState();
+
+    initialValues = { 
+        fullName: '', 
+        dateOfBirth: '', 
+        email: '', 
+        password: '', 
+        confirmPassword: ''
+    }
+
+    const handleSignUp = () => {
+        auth
+            .createUserWithEmailAndPassword(email, password)
+            .then(userCredentials => {
+                const user = userCredentials.user;
+                console.log("Registered with ", user.email)
+            })
+            .catch(error => alert(error.message))
+    }
 
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
@@ -68,11 +89,8 @@ const Signup = ({navigation}) => {
                     />
                 )}
                 <Formik
-                    initialValues={{ fullName: '', dateOfBirth: '', email: '', password: '', confirmPassword: ''}}
-                    onSubmit={(values) => {
-                        console.log(values);
-                        navigation.navigate('Home');
-                    }}
+                    initialValues={initialValues}
+                    onSubmit={handleSignUp}
                 >
                     {({handleChange, handleBlur, handleSubmit, values}) => (
                         <StyledFormArea>
@@ -134,7 +152,7 @@ const Signup = ({navigation}) => {
                                 setHidePassword={setHidePassword}
                             />
                             <MsgBox> . . . </MsgBox>
-                            <StyledButton onPress={handleSubmit}>
+                            <StyledButton onPress={handleSignUp}>
                                 <ButtonText> Signup </ButtonText>
                             </StyledButton>
                             <Line />
