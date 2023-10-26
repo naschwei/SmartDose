@@ -85,7 +85,7 @@ export default function HomeScreen() {
                             fontSize:28,
                             color:"#FFF",
                             fontWeight:"bold"
-                        }}>Welcome Jane Doe</Text>
+                        }}>Welcome { getAuth().currentUser?.displayName }</Text>
                         <Text style={{
                             fontSize:16,
                             color:"#FFF",

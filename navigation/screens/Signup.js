@@ -1,9 +1,11 @@
 import React, {useState} from 'react';
 import {StatusBar} from 'expo-status-bar';
-import {View, TouchableOpacity, Touchable} from 'react-native';
 import {Formik} from 'formik';
 import {Octicons, Ionicons, Fontisto} from '@expo/vector-icons';
-import DateTimePicker from '@react-native-community/datetimepicker';
+
+import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { getAuth, createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+
 
 import {
     Colors,
@@ -27,50 +29,125 @@ import {
     TextLinkContent
 } from './../../components/styles';
 
-import { auth } from '../../firebase';
+import { useNavigation } from '@react-navigation/core';
+
 
 const {brand, darkLight, primary} = Colors;
 
 
-const Signup = ({navigation}) => {
+const Signup = () => {
+
+    const [fullName, setFullName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+
     const [hidePassword, setHidePassword] = useState(true);
-    const [show, setShow] = useState(false);
-    const [date, setDate] = useState(new Date(2000,0,1));
 
-    // Actual date of brith to be sent
-    const [dob, setDob] = useState();
-
-    initialValues = { 
-        fullName: '', 
-        dateOfBirth: '', 
-        email: '', 
-        password: '', 
-        confirmPassword: ''
-    }
+    const navigation = useNavigation();
 
     const handleSignUp = () => {
-        auth
-            .createUserWithEmailAndPassword(email, password)
-            .then(userCredentials => {
-                const user = userCredentials.user;
-                console.log("Registered with ", user.email)
-            })
-            .catch(error => alert(error.message))
+        const auth = getAuth()
+        createUserWithEmailAndPassword(auth, email, password)
+        .then(userCredentials => {
+            const user = userCredentials.user;
+            console.log("Registered with ", user.email)
+
+            updateProfile(getAuth().currentUser, {
+                displayName: fullName
+            }).then(() => {
+                console.log("full name updated")
+            }).catch(error => alert(error.message));
+            
+            navigation.replace("Login")
+
+        })
+        .catch(error => alert(error.message))
     }
 
-    const onChange = (event, selectedDate) => {
-        const currentDate = selectedDate || date;
-        setShow(false);
-        setDate(currentDate);
-        setDob(currentDate);
-    }
-
-    const showDatePicker = () => {
-        setShow(true);
-    }
-    // TODO: DateTimePicker in the wrong location! 
-    // How to fix so that click on date of birth calendar and calendar pops up?
     return (
+        <KeyboardAvoidingView
+            style={styles.container}
+            behavior="padding"
+        >
+        <View style={styles.inputContainer}>
+            <MyTextInput 
+                label="Full Name"
+                icon="person"
+                placeholder="Jane Doe"
+                placeholderTextColor={darkLight}
+                onChangeText={text => setFullName(text)}
+                onBlur={ () => {} }
+                value={fullName}
+            />
+            <MyTextInput 
+                label="Email Address"
+                icon="mail"
+                placeholder="hello-world@gmail.com"
+                placeholderTextColor={darkLight}
+                onChangeText={text => setEmail(text)}
+                onBlur={ () => {} }
+                value={email}
+                keyboardType="email-address"
+            />
+            <MyTextInput 
+                label="Password"
+                icon="lock"
+                placeholder="* * * * * * * *"
+                placeholderTextColor={darkLight}
+                onChangeText={text => setPassword(text)}
+                onBlur={ () => {} }
+                value={password}
+                secureTextEntry={hidePassword}
+                isPassword={true}
+                hidePassword={hidePassword}
+                setHidePassword={setHidePassword}
+            />
+            <MyTextInput 
+                label="Confirm Password"
+                icon="lock"
+                placeholder="* * * * * * * *"
+                placeholderTextColor={darkLight}
+                onChangeText={text => setConfirmPassword(text)}
+                onBlur={() => {} }
+                value={confirmPassword}
+                secureTextEntry={hidePassword}
+                isPassword={true}
+                hidePassword={hidePassword}
+                setHidePassword={setHidePassword}
+            />
+        </View>
+
+        <View style={styles.buttonContainer}>
+            <TouchableOpacity
+                onPress={handleSignUp}
+                style={[styles.button, styles.buttonOutline]}
+            >
+                <Text style={styles.buttonOutlineText}>Register</Text>
+            </TouchableOpacity>
+        </View>
+
+        <Line />
+
+        <ExtraView>
+            <ExtraText> Already have an account? </ExtraText>
+            <TextLink onPress={() => navigation.replace("Login")}> 
+                <TextLinkContent> Login </TextLinkContent>
+            </TextLink>
+        </ExtraView>
+        </KeyboardAvoidingView>
+    )
+
+}
+
+
+    
+
+
+
+
+
+    /* return (
         <StyledContainer>
             <StatusBar style="dark" />
             <InnerContainer>
@@ -78,16 +155,6 @@ const Signup = ({navigation}) => {
                 <SubTitle> Account Signup </SubTitle>
 
                 
-                {show && (
-                    <DateTimePicker
-                        testID="dateTimePicker"
-                        value={date}
-                        mode='date'
-                        is24Hour={true}
-                        display="default"
-                        onChange={onChange}
-                    />
-                )}
                 <Formik
                     initialValues={initialValues}
                     onSubmit={handleSignUp}
@@ -112,18 +179,6 @@ const Signup = ({navigation}) => {
                                 onBlur={handleBlur('email')}
                                 value={values.email}
                                 keyboardType="email-address"
-                            />
-                            <MyTextInput 
-                                label="Date of Birth"
-                                icon="calendar"
-                                placeholder="YYYY - MM - DD"
-                                placeholderTextColor={darkLight}
-                                onChangeText={handleChange('dateOfBirth')}
-                                onBlur={handleBlur('dateOfBirth')}
-                                value={dob ? dob.toDateString() : ''}
-                                isDate={true}
-                                editable={false}
-                                showDatePicker={showDatePicker}
                             />
                             <MyTextInput 
                                 label="Password"
@@ -167,8 +222,56 @@ const Signup = ({navigation}) => {
                 </Formik>
             </InnerContainer>
         </StyledContainer>
-    );
-};
+    ); */
+// };
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    inputContainer: {
+        width: '80%'
+    },
+    input: {
+        backgroundColor: 'white',
+        paddingHorizontal: 15,
+        paddingVertical: 10,
+        borderRadius: 10,
+        marginTop: 5,
+    },
+    buttonContainer: {
+        width: '60%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 40,
+    },
+    button: {
+        backgroundColor: '#0782F9',
+        width: '100%',
+        padding: 15,
+        borderRadius: 10,
+        alignItems: 'center',
+
+    },
+    buttonOutline: {
+        backgroundColor: 'white',
+        marginTop: 5,
+        borderColor: '#0782F9',
+        borderWidth: 2,
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: '700',
+        fontSize: 16,
+    },
+    buttonOutlineText: {
+        color: '#0782F9',
+        fontWeight: '700',
+        fontSize: 16,
+    },
+})
 
 const MyTextInput = ({label, icon, isPassword, hidePassword, setHidePassword, isDate, showDatePicker, ...props}) => {
     return (
@@ -177,10 +280,7 @@ const MyTextInput = ({label, icon, isPassword, hidePassword, setHidePassword, is
                 <Octicons name={icon} size={30} color={brand} />
             </LeftIcon>
             <StyledInputLabel> {label} </StyledInputLabel>
-            {!isDate && <StyledTextInput {...props} />}
-            {isDate && <TouchableOpacity onPress={showDatePicker()}>
-                <StyledTextInput {...props} />
-            </TouchableOpacity>}
+            {<StyledTextInput {...props} />}
             {isPassword && (
                 <RightIcon onPress={()=> setHidePassword(!hidePassword)}>
                     <Ionicons name={hidePassword ? 'md-eye-off' : 'md-eye'} size={30} color={darkLight} />

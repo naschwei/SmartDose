@@ -3,6 +3,8 @@ import React, { useEffect } from 'react'
 import { useState } from 'react'
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { useNavigation } from '@react-navigation/core';
+import { auth } from "../../firebase.js"
+
 
 import {
     Colors,
@@ -35,7 +37,7 @@ const Login = () => {
     const navigation = useNavigation();
 
     useEffect(() => {
-        const auth = getAuth();
+        // const auth = getAuth();
         const unsubscribe = onAuthStateChanged(auth, user => {
             if (user) {
                 navigation.replace("Home");
@@ -46,22 +48,6 @@ const Login = () => {
 
     }, [])
 
-    const handleSignUp = () => {
-        const auth = getAuth();
-
-        createUserWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                // Signed up 
-                const user = userCredential.user;
-                console.log('Registered with: ', user.email);
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                alert(errorMessage);
-            });
-
-    }
 
     const handleLogin = () => {
         const auth = getAuth();
@@ -108,12 +94,6 @@ const Login = () => {
         >
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={handleSignUp}
-          style={[styles.button, styles.buttonOutline]}
-        >
-          <Text style={styles.buttonOutlineText}>Register</Text>
-        </TouchableOpacity>
       </View>
 
       <Line />
@@ -125,7 +105,7 @@ const Login = () => {
         </TextLink>
     </ExtraView>
     </KeyboardAvoidingView>
-  )
+  );
 }
 
 export default Login
