@@ -1,8 +1,13 @@
 //import * as React from 'react';
+import { setStatusBarBackgroundColor } from 'expo-status-bar';
+import { getAuth } from 'firebase/auth';
+import { addDoc, doc, setDoc, collection } from 'firebase/firestore';
 import React, {useState} from 'react';
 import { Pressable, TouchableOpacity, SafeAreaView, Button, View, TextInput, StyleSheet, Text } from 'react-native';
 import Modal from 'react-native-modal';
 //import {CheckBox} from 'react-native-elements';
+
+import { auth, db } from "../../firebase.js"
 
 const Item = ({name, isSelected}) => {
     return(
@@ -64,6 +69,14 @@ const Sunday = false;
 
 
 export default function ManageScreen({ navigation }) {
+    const [medicationName, setMedicationName] = useState("")
+    const [pillQuantity, setPillQuantity] = useState("")
+    const [startDate, setStartDate] = useState("")
+    const [endDate, setEndDate] = useState("")
+    const [dispenserNumber, setDispenserNumber] = useState("")
+    const [weeklySchedule, setWeeklySchedule] = useState("")
+    const [dispenseTimes, setDispenseTimes] = useState("")
+
     const [ isModalVisible, setIsModalVisible ] = useState(false);
     const toggleModal = () => {
         setIsModalVisible(!isModalVisible);
@@ -75,6 +88,33 @@ export default function ManageScreen({ navigation }) {
         
     //     //alert(day);
     // }
+
+    const addMedication = () => {
+
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        const docInfo = {
+            user: user.email,
+            medicationName: medicationName,
+            pillQuantity: pillQuantity,
+            startDate: startDate,
+            endDate: endDate,
+            dispenserNumber: dispenserNumber,
+            weeklySchedule: weeklySchedule,
+            dispenseTimes: dispenseTimes
+        };
+        addDoc(collection(db, "meds"), docInfo)
+        .then(() => {
+            console.log("Successfully added document.");
+            toggleModal();
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorMessage);
+        })
+    }
 
     return (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -101,10 +141,21 @@ export default function ManageScreen({ navigation }) {
                     <View style={styles.container2}>
                         <Text style={styles.title}>Add New Medication</Text>
                         <View style={styles.items}>
-                            <TextInput style={styles.input} placeholder="Medication Name" placeholderTextColor={'grey'} />
-                            <TextInput style={styles.input} placeholder="Pill Quantity" placeholderTextColor={'grey'} />
-                            <TextInput style={styles.input} placeholder="End Date" placeholderTextColor={'grey'} />
-                            <TextInput style={styles.input} placeholder="Dispenser Number" placeholderTextColor={'grey'}/>
+                            <TextInput style={styles.input} placeholder="Medication Name" placeholderTextColor={'grey'} 
+                                onChangeText={text => setMedicationName(text)}
+                            />
+                            <TextInput style={styles.input} placeholder="Pill Quantity" placeholderTextColor={'grey'} 
+                                onChangeText={text => setPillQuantity(text)}
+                            />
+                            <TextInput style={styles.input} placeholder="Start Date" placeholderTextColor={'grey'} 
+                                onChangeText={text => setStartDate(text)}
+                            />
+                            <TextInput style={styles.input} placeholder="End Date" placeholderTextColor={'grey'} 
+                                onChangeText={text => setEndDate(text)}
+                            />
+                            <TextInput style={styles.input} placeholder="Dispenser Number" placeholderTextColor={'grey'}
+                                onChangeText={text => setDispenserNumber(text)}
+                            />
                             <Text style={styles.text}>Select Weekly Schedule</Text>
                             <SafeAreaView style={styles.days}>
                                 <Pressable style={[styles.day, {backgroundColor: Monday ? 'blue': '#f0ffff'}]}>
@@ -129,9 +180,11 @@ export default function ManageScreen({ navigation }) {
                                     <Text style={styles.dayText}>Su</Text>
                                 </Pressable>
                             </SafeAreaView>
-                            <TextInput style={styles.input} placeholder="Dispense Times (Each Day)" placeholderTextColor={'grey'}/>
+                            <TextInput style={styles.input} placeholder="Dispense Times (Each Day)" placeholderTextColor={'grey'}
+                                onChangeText={text => setDispenseTimes(text)}
+                            />
                         </View>
-                        <Button title='Submit' onPress={toggleModal}/>
+                        <Button title='Submit' onPress={addMedication}/>
                     </View>
                 </View>
             </Modal>
@@ -142,6 +195,7 @@ export default function ManageScreen({ navigation }) {
 // name
 // quantity
 // days
+// start
 // end
 // feeder number
 
@@ -199,7 +253,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 15, 
         fontSize: 16,
-        margin: 5
+        margin: 5,
+        color: '#000',
     },
     days: {
         flex: 1,

@@ -41,6 +41,8 @@ const {primary, tertiary, brand, darkLight} = Colors;
 import Card from './../../components/card';
 
 import { getAuth, signOut } from 'firebase/auth';
+import { collection, addDoc } from "firebase/firestore"; 
+
 import { useNavigation } from '@react-navigation/native';
 
 export default function HomeScreen() {
