@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 
 // imports for navigation tab
 import { NavigationContainer } from '@react-navigation/native';

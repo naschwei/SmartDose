@@ -1,11 +1,24 @@
 //import * as React from 'react';
+import { setStatusBarBackgroundColor } from 'expo-status-bar';
+import { getAuth } from 'firebase/auth';
+import { addDoc, doc, setDoc, collection } from 'firebase/firestore';
 import React, {useState} from 'react';
 import { Switch, Pressable, TouchableOpacity, SafeAreaView, Button, View, TextInput, StyleSheet, Text } from 'react-native';
 import Modal from 'react-native-modal';
 //import {CheckBox} from 'react-native-elements';
 
+import { auth, db } from "../../firebase.js"
+
 export default function ManageScreen({ navigation }) {
+    const [medicationName, setMedicationName] = useState("")
+    const [pillQuantity, setPillQuantity] = useState("")
+    const [startDate, setStartDate] = useState("")
+    const [endDate, setEndDate] = useState("")
+    const [dispenserNumber, setDispenserNumber] = useState("")
+    const [weeklySchedule, setWeeklySchedule] = useState("")
+    const [dispenseTimes, setDispenseTimes] = useState("")
     const [ dispenserSelected, setDispenser ] = useState(false);
+
     const [ isModalVisible, setIsModalVisible ] = useState(false);
     const [ Monday, changeMonday ] = useState(false);
     const [ Tuesday, changeTuesday ] = useState(false);
@@ -42,6 +55,33 @@ export default function ManageScreen({ navigation }) {
     const handleDispenserOne = () => {changeDispenserOne(!Dispenser1);};
     const handleDispenserTwo = () => {changeDispenserTwo(!Dispenser2);};
  
+    const addMedication = () => {
+
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        const docInfo = {
+            user: user.email,
+            medicationName: medicationName,
+            pillQuantity: pillQuantity,
+            startDate: startDate,
+            endDate: endDate,
+            dispenserNumber: dispenserNumber,
+            weeklySchedule: weeklySchedule,
+            dispenseTimes: dispenseTimes
+        };
+        addDoc(collection(db, "meds"), docInfo)
+        .then(() => {
+            console.log("Successfully added document.");
+            toggleModal();
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorMessage);
+        })
+    }
+    
     return (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Text style={{top: -110, fontWeight: 'bold', fontSize: 28}}>Select Dispenser</Text>
@@ -71,10 +111,21 @@ export default function ManageScreen({ navigation }) {
                     <View style={styles.container2}>
                         <Text style={styles.title}>Add New Medication</Text>
                         <View style={styles.items}>
-                            <TextInput style={styles.input} placeholder="Medication Name" placeholderTextColor={'grey'} />
-                            <TextInput style={styles.input} placeholder="Pill Quantity" placeholderTextColor={'grey'} />
-                            <TextInput style={styles.input} placeholder="End Date" placeholderTextColor={'grey'} />
-                            <TextInput style={styles.input} defaultValue={dispenserSelected} placeholder="Dispenser Number" placeholderTextColor={'grey'}/>
+                            <TextInput style={styles.input} placeholder="Medication Name" placeholderTextColor={'grey'} 
+                                onChangeText={text => setMedicationName(text)}
+                            />
+                            <TextInput style={styles.input} placeholder="Pill Quantity" placeholderTextColor={'grey'} 
+                                onChangeText={text => setPillQuantity(text)}
+                            />
+                            <TextInput style={styles.input} placeholder="Start Date" placeholderTextColor={'grey'} 
+                                onChangeText={text => setStartDate(text)}
+                            />
+                            <TextInput style={styles.input} placeholder="End Date" placeholderTextColor={'grey'} 
+                                onChangeText={text => setEndDate(text)}
+                            />
+                            <TextInput style={styles.input} placeholder="Dispenser Number" placeholderTextColor={'grey'}
+                                onChangeText={text => setDispenserNumber(text)}
+                            />
                             <Text style={styles.text}>Select Weekly Schedule</Text>
                             <View style={styles.days}>
                                 <Pressable style={[styles.day, {backgroundColor: Monday ? '#6D28D9': 'mediumpurple'}]} onPress={handleMondayClick}>
@@ -99,11 +150,12 @@ export default function ManageScreen({ navigation }) {
                                     <Text style={styles.dayText}>Su</Text>
                                 </Pressable>
                             </View>
-                            <TextInput style={styles.input} placeholder="Dispense Times (Each Day)" placeholderTextColor={'grey'}/>
+                            <TextInput style={styles.input} placeholder="Dispense Times (Each Day)" placeholderTextColor={'grey'} onChangeText={text => setDispenseTimes(text)/>
                         </View>
-                        <Pressable style={{width: 200, height: 30, backgroundColor: 'mediumpurple', borderWidth: 2, borderRadius: 5, borderColor: 'black', justifyContent: 'center', alignItems: 'center', margin: 5}} title="Add New Medication" onPress={toggleModal}>
-                            <Text style={{fontWeight: 'bold', fontSize: 15, color: 'white'}}>Submit</Text>
-                        </Pressable>
+                        //<Pressable style={{width: 200, height: 30, backgroundColor: 'mediumpurple', borderWidth: 2, borderRadius: 5, borderColor: 'black', justifyContent: 'center', alignItems: 'center', margin: 5}} title="Add New Medication" onPress={toggleModal}>
+                          //  <Text style={{fontWeight: 'bold', fontSize: 15, color: 'white'}}>Submit</Text>
+                        //</Pressable>
+                        <Button title='Submit' onPress={addMedication}/>
                     </View>
                 </View>
             </Modal>
@@ -172,7 +224,8 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderRadius: 15, 
         fontSize: 16,
-        margin: 4
+        margin: 4,
+        color: '#000',
     },
     days: {
         flex: 1,
