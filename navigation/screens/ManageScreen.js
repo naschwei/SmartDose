@@ -5,6 +5,7 @@ import Modal from 'react-native-modal';
 //import {CheckBox} from 'react-native-elements';
 
 export default function ManageScreen({ navigation }) {
+    const [ dispenserSelected, setDispenser ] = useState(false);
     const [ isModalVisible, setIsModalVisible ] = useState(false);
     const [ Monday, changeMonday ] = useState(false);
     const [ Tuesday, changeTuesday ] = useState(false);
@@ -26,6 +27,7 @@ export default function ManageScreen({ navigation }) {
             setIsModalVisible(!isModalVisible);
 
             // set the number of the dispenser selected.
+            
         }
     };
 
@@ -64,7 +66,7 @@ export default function ManageScreen({ navigation }) {
             <Pressable style={{width: 300, height: 50, backgroundColor: 'mediumpurple', borderWidth: 5, borderRadius: 20, borderColor: 'black', justifyContent: 'center', alignItems: 'center'}} title="Add New Medication" onPress={toggleModal}>
                 <Text style={{fontWeight: 'bold', fontSize: 25, color: '#f8ffff'}}>Add New Medication</Text>  
             </Pressable>
-            <Modal isVisible={isModalVisible}>
+            <Modal isVisible={isModalVisible} id='??'>
                 <View style={styles.container}>
                     <View style={styles.container2}>
                         <Text style={styles.title}>Add New Medication</Text>
@@ -72,7 +74,7 @@ export default function ManageScreen({ navigation }) {
                             <TextInput style={styles.input} placeholder="Medication Name" placeholderTextColor={'grey'} />
                             <TextInput style={styles.input} placeholder="Pill Quantity" placeholderTextColor={'grey'} />
                             <TextInput style={styles.input} placeholder="End Date" placeholderTextColor={'grey'} />
-                            <TextInput style={styles.input} placeholder="Dispenser Number" placeholderTextColor={'grey'}/>
+                            <TextInput style={styles.input} defaultValue={dispenserSelected} placeholder="Dispenser Number" placeholderTextColor={'grey'}/>
                             <Text style={styles.text}>Select Weekly Schedule</Text>
                             <View style={styles.days}>
                                 <Pressable style={[styles.day, {backgroundColor: Monday ? '#6D28D9': 'mediumpurple'}]} onPress={handleMondayClick}>
