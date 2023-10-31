@@ -150,11 +150,8 @@ export default function ManageScreen({ navigation }) {
                                     <Text style={styles.dayText}>Su</Text>
                                 </Pressable>
                             </View>
-                            <TextInput style={styles.input} placeholder="Dispense Times (Each Day)" placeholderTextColor={'grey'} onChangeText={text => setDispenseTimes(text)/>
+                            <TextInput style={styles.input} placeholder="Dispense Times (Each Day)" placeholderTextColor={'grey'} onChangeText={text => setDispenseTimes(text)} />
                         </View>
-                        //<Pressable style={{width: 200, height: 30, backgroundColor: 'mediumpurple', borderWidth: 2, borderRadius: 5, borderColor: 'black', justifyContent: 'center', alignItems: 'center', margin: 5}} title="Add New Medication" onPress={toggleModal}>
-                          //  <Text style={{fontWeight: 'bold', fontSize: 15, color: 'white'}}>Submit</Text>
-                        //</Pressable>
                         <Button title='Submit' onPress={addMedication}/>
                     </View>
                 </View>
@@ -162,6 +159,10 @@ export default function ManageScreen({ navigation }) {
         </View>
     );
 }
+
+//<Pressable style={{width: 200, height: 30, backgroundColor: 'mediumpurple', borderWidth: 2, borderRadius: 5, borderColor: 'black', justifyContent: 'center', alignItems: 'center', margin: 5}} title="Add New Medication" onPress={toggleModal}>
+//  <Text style={{fontWeight: 'bold', fontSize: 15, color: 'white'}}>Submit</Text>
+//</Pressable>
 
 const styles = StyleSheet.create({
     grid: {
