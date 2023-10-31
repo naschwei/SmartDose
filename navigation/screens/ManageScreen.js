@@ -3,70 +3,11 @@ import { setStatusBarBackgroundColor } from 'expo-status-bar';
 import { getAuth } from 'firebase/auth';
 import { addDoc, doc, setDoc, collection } from 'firebase/firestore';
 import React, {useState} from 'react';
-import { Pressable, TouchableOpacity, SafeAreaView, Button, View, TextInput, StyleSheet, Text } from 'react-native';
+import { Switch, Pressable, TouchableOpacity, SafeAreaView, Button, View, TextInput, StyleSheet, Text } from 'react-native';
 import Modal from 'react-native-modal';
 //import {CheckBox} from 'react-native-elements';
 
 import { auth, db } from "../../firebase.js"
-
-const Item = ({name, isSelected}) => {
-    return(
-        <View>
-            <Text style={{color: 'black'}}>{name}</Text>
-        </View>
-    );
-}
-
-const DATA = [
-    {
-        id: 'Mon',
-        title: 'Mo',
-        isSeleted: false,
-    },
-    {
-        id: 'Tue',
-        title: 'Tu',
-        isSeleted: false,
-    },
-    {
-        id: 'Wed',
-        title: 'We',
-        isSeleted: false,
-    },
-    {
-        id: 'Thu',
-        title: 'Th',
-        isSeleted: false,
-    },
-    {
-        id: 'Fri',
-        title: 'F',
-        isSeleted: false,
-    },
-    {
-        id: 'Sat',
-        title: 'Sa',
-        isSeleted: false,
-    },
-    {
-        id: 'Sun',
-        title: 'Su',
-        isSeleted: false,
-    }
-]
-
-const renderItem = ({item}) => (
-    <Item name={item.title}/>
-);
-
-global.Monday = false;
-const Tuesday = false;
-const Wednesday = false;
-const Thursday = false;
-const Friday = false;
-const Saturday = false;
-const Sunday = false;
-
 
 export default function ManageScreen({ navigation }) {
     const [medicationName, setMedicationName] = useState("")
@@ -76,19 +17,44 @@ export default function ManageScreen({ navigation }) {
     const [dispenserNumber, setDispenserNumber] = useState("")
     const [weeklySchedule, setWeeklySchedule] = useState("")
     const [dispenseTimes, setDispenseTimes] = useState("")
+    const [ dispenserSelected, setDispenser ] = useState(false);
 
     const [ isModalVisible, setIsModalVisible ] = useState(false);
+    const [ Monday, changeMonday ] = useState(false);
+    const [ Tuesday, changeTuesday ] = useState(false);
+    const [ Wednesday, changeWednesday ] = useState(false);
+    const [ Thursday, changeThursday ] = useState(false);
+    const [ Friday, changeFriday ] = useState(false);
+    const [ Saturday, changeSaturday ] = useState(false);
+    const [ Sunday, changeSunday ] = useState(false);
+
+    const [ Dispenser1, changeDispenserOne ] = useState(false);
+    const [ Dispenser2, changeDispenserTwo ] = useState(false);
+
     const toggleModal = () => {
-        setIsModalVisible(!isModalVisible);
+        if (Dispenser1 && Dispenser2) {
+            alert('PLEASE SELECT ONLY ONE DISPENSER');
+        } else if (Dispenser1 == false && Dispenser2 == false) {
+            alert('PLEASE SELECT A DISPENSER');
+        } else {
+            setIsModalVisible(!isModalVisible);
+
+            // set the number of the dispenser selected.
+            
+        }
     };
 
-    // async function onPress(day) => {
-    //     // alert(day);
-    //     //import global.Monday;
-        
-    //     //alert(day);
-    // }
+    const handleMondayClick = () => {changeMonday(!Monday);};
+    const handleTuesdayClick = () => {changeTuesday(!Tuesday);};
+    const handleWednesdayClick = () => {changeWednesday(!Wednesday);};
+    const handleThursdayClick = () => {changeThursday(!Thursday);};
+    const handleFridayClick = () => {changeFriday(!Friday);};
+    const handleSaturdayClick = () => {changeSaturday(!Saturday);};
+    const handleSundayClick = () => {changeSunday(!Sunday);};
 
+    const handleDispenserOne = () => {changeDispenserOne(!Dispenser1);};
+    const handleDispenserTwo = () => {changeDispenserTwo(!Dispenser2);};
+ 
     const addMedication = () => {
 
         const auth = getAuth();
@@ -115,28 +81,32 @@ export default function ManageScreen({ navigation }) {
             console.log(errorMessage);
         })
     }
-
+    
     return (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Text style={{top: -110, fontWeight: 'bold', fontSize: 28}}>Select Dispenser</Text>
-            <Text style={{top:-90, fontSize: 14}}>The grid below matches the containers on your SmartDose Dispenser</Text>
-            <Text style={{top: -80, fontSize: 14}}>Select a container and hit the 'Add New Medication' button!</Text>
+            <Text style={{width: 300, top:-90, fontSize: 14}}>(1) The grid below matches the containers on your SmartDose Dispenser</Text>
+            <Text style={{width: 300, top: -80, fontSize: 14}}>(2) Select a container and hit the 'Add New Medication' button!</Text>
             <View style={{top: -50, height: 300, width: 375, backgroundColor: 'grey', borderWidth: 10, borderRadius: 25, borderColor: 'black', justifyContent: 'center', alignItems: 'center'}}>
                 <View style={{flexDirection: 'row', justifyContent: 'space-evenly', width: 350}}>
-                    <Pressable style={styles.grid}></Pressable>
-                    <Pressable style={styles.grid}></Pressable>
-                    <Pressable style={styles.grid}></Pressable>
-                </View>
-                <View style={{flexDirection: 'row', justifyContent: 'space-evenly', width: 350}}>
-                    <Pressable style={styles.grid}></Pressable>
-                    <Pressable style={styles.grid}></Pressable>
-                    <Pressable style={styles.grid}></Pressable>
+                    <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                        <View style={{width: 30, height: 25, borderWidth: 3, backgroundColor: '#f8ffff', justifyContent:'center', alignItems: 'center'}}>
+                            <Text style={{color: 'black', fontWeight: 'bold', justifyContent: 'center', alignItems: 'center'}}>(1)</Text>
+                        </View>
+                        <Pressable style={[styles.grid, {backgroundColor: Dispenser1 ? 'mediumpurple' : '#f8ffff'}]} onPress={handleDispenserOne}></Pressable>
+                    </View>
+                    <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                        <View style={{width: 30, height: 25, borderWidth: 3, backgroundColor: '#f8ffff', justifyContent:'center', alignItems: 'center'}}>
+                            <Text style={{color: 'black', fontWeight: 'bold', justifyContent: 'center', alignItems: 'center'}}>(2)</Text>
+                        </View>
+                        <Pressable style={[styles.grid, {backgroundColor: Dispenser2 ? 'mediumpurple' : '#f8ffff'}]} onPress={handleDispenserTwo}></Pressable>
+                    </View>
                 </View>
             </View>
-            <Pressable style={{width: 200, height: 50, backgroundColor: '#5f9ea0', borderWidth: 10, borderRadius: 20, borderColor: 'black', justifyContent: 'center', alignItems: 'center'}} title="Add New Medication" onPress={toggleModal}>
-                <Text style={{fontWeight: 'bold', fontSize: 15, color: '#f0f8ff'}}>Add New Medication</Text>
+            <Pressable style={{width: 300, height: 50, backgroundColor: 'mediumpurple', borderWidth: 5, borderRadius: 20, borderColor: 'black', justifyContent: 'center', alignItems: 'center'}} title="Add New Medication" onPress={toggleModal}>
+                <Text style={{fontWeight: 'bold', fontSize: 25, color: '#f8ffff'}}>Add New Medication</Text>  
             </Pressable>
-            <Modal isVisible={isModalVisible}>
+            <Modal isVisible={isModalVisible} id='??'>
                 <View style={styles.container}>
                     <View style={styles.container2}>
                         <Text style={styles.title}>Add New Medication</Text>
@@ -157,33 +127,34 @@ export default function ManageScreen({ navigation }) {
                                 onChangeText={text => setDispenserNumber(text)}
                             />
                             <Text style={styles.text}>Select Weekly Schedule</Text>
-                            <SafeAreaView style={styles.days}>
-                                <Pressable style={[styles.day, {backgroundColor: Monday ? 'blue': '#f0ffff'}]}>
+                            <View style={styles.days}>
+                                <Pressable style={[styles.day, {backgroundColor: Monday ? '#6D28D9': 'mediumpurple'}]} onPress={handleMondayClick}>
                                     <Text style={styles.dayText}>Mo</Text>   
                                 </Pressable>
-                                <Pressable style={styles.day}>
+                                <Pressable style={[styles.day, {backgroundColor: Tuesday ? '#6D28D9': 'mediumpurple'}]} onPress={handleTuesdayClick}>
                                     <Text style={styles.dayText}>Tu</Text>
                                 </Pressable>
-                                <Pressable style={styles.day}>
+                                <Pressable style={[styles.day, {backgroundColor: Wednesday ? '#6D28D9': 'mediumpurple'}]} onPress={handleWednesdayClick}>
                                     <Text style={styles.dayText}>We</Text>
                                 </Pressable>
-                                <Pressable style={styles.day}>
+                                <Pressable style={[styles.day, {backgroundColor: Thursday ? '#6D28D9': 'mediumpurple'}]} onPress={handleThursdayClick}>
                                     <Text style={styles.dayText}>Th</Text>
                                 </Pressable>
-                                <Pressable style={styles.day}>
+                                <Pressable style={[styles.day, {backgroundColor: Friday ? '#6D28D9': 'mediumpurple'}]} onPress={handleFridayClick}>
                                     <Text style={styles.dayText}>Fr</Text>
                                 </Pressable>
-                                <Pressable style={styles.day}>
+                                <Pressable style={[styles.day, {backgroundColor: Saturday ? '#6D28D9': 'mediumpurple'}]} onPress={handleSaturdayClick}>
                                     <Text style={styles.dayText}>Sa</Text>
                                 </Pressable>
-                                <Pressable style={styles.day}>
+                                <Pressable style={[styles.day, {backgroundColor: Sunday ? '#6D28D9': 'mediumpurple'}]} onPress={handleSundayClick}>
                                     <Text style={styles.dayText}>Su</Text>
                                 </Pressable>
-                            </SafeAreaView>
-                            <TextInput style={styles.input} placeholder="Dispense Times (Each Day)" placeholderTextColor={'grey'}
-                                onChangeText={text => setDispenseTimes(text)}
-                            />
+                            </View>
+                            <TextInput style={styles.input} placeholder="Dispense Times (Each Day)" placeholderTextColor={'grey'} onChangeText={text => setDispenseTimes(text)/>
                         </View>
+                        //<Pressable style={{width: 200, height: 30, backgroundColor: 'mediumpurple', borderWidth: 2, borderRadius: 5, borderColor: 'black', justifyContent: 'center', alignItems: 'center', margin: 5}} title="Add New Medication" onPress={toggleModal}>
+                          //  <Text style={{fontWeight: 'bold', fontSize: 15, color: 'white'}}>Submit</Text>
+                        //</Pressable>
                         <Button title='Submit' onPress={addMedication}/>
                     </View>
                 </View>
@@ -192,17 +163,10 @@ export default function ManageScreen({ navigation }) {
     );
 }
 
-// name
-// quantity
-// days
-// start
-// end
-// feeder number
-
 const styles = StyleSheet.create({
     grid: {
-        height: 100, 
-        width: 100, 
+        height: 150, 
+        width: 150, 
         backgroundColor: '#f0f8ff', 
         margin: 10,
         borderWidth: 10,
@@ -212,7 +176,6 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: '#E6E6FA',
         alignItems: 'center',
-        //justifyContent: 'center',
         width: 375,
         height: 470,
         paddingBottom: 20,
@@ -223,14 +186,21 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 26,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        color: 'black',
+        textShadowColor: 'white',
+        textShadowOffset: {width: 1, height: 2},
+        textShadowRadius: 2,
     },
     text: {
         fontSize: 15,
         fontWeight: 'bold',
         margin: 5,
         marginLeft: 10,
-        marginBottom: 10
+        marginBottom: 10,
+        textShadowColor: 'white',
+        textShadowOffset: {width: 1, height: 2},
+        textShadowRadius: 2
     },
     container2: {
         flex: 1,
@@ -241,7 +211,8 @@ const styles = StyleSheet.create({
     items: {
         flex: 1,
         flexDirection: 'column',
-        justifyContent: 'space-evenly'
+        justifyContent: 'space-evenly',
+        margin: 1
     },
     input: {
         width: 300,
@@ -249,18 +220,17 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         paddingVertical: 20,
         paddingHorizontal: 5,
-        borderColor: '#ccc',
-        borderWidth: 1,
+        borderColor: 'black',
+        borderWidth: 2,
         borderRadius: 15, 
         fontSize: 16,
-        margin: 5,
+        margin: 4,
         color: '#000',
     },
     days: {
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-evenly',
-        //paddingTop: 20,
         marginTop: 0,
         marginBottom: 0
     },
@@ -270,10 +240,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#f0ffff',
         alignItems: 'center',
         justifyContent: 'center',
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        borderWidth: 2,
+        borderColor: 'black',
+        borderRadius: 5
     },
     dayText: {
         fontWeight: 'bold',
+        color: 'white' //  #6D28D9
     },
     buttons: {
         width: 200,
@@ -283,11 +257,6 @@ const styles = StyleSheet.create({
         borderColor: 'black' 
     }
 });
-
-/* <Text
-    onPress={() => navigation.navigate('Home')}
-    style={{ fontSize: 26, fontWeight: 'bold'}}>Manage Medication Screen
-</Text> */
 
 async function extractMedicineName(imageData, imageToTextApiKey) {
     //  Upload the image to Image to Text API
@@ -323,7 +292,7 @@ async function extractMedicineName(imageData, imageToTextApiKey) {
     } else {
         return null; // No matching names found
     }
-  }
+}
   
   // Example (need to add image upload functionality):
   // const imageFile = document.getElementById('yourImageInput').files[0];
