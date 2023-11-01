@@ -14,6 +14,11 @@
 // Other Dependencies
 1. sudo npm install react-native-modal
 
+// History Screen Dependencies
+npm install --save react-native-calendars
+npm install --save react-native-svg react-native-chart-kit
+npm install --save react-native-paper
+
 // To run the app, run... 
 npm start
 // scan the QR code, and wait for the project to load
