@@ -18,7 +18,7 @@ export default function ManageScreen({ navigation }) {
     const [startDate, setStartDate] = useState("")
     const [endDate, setEndDate] = useState("")
     const [dispenserNumber, setDispenserNumber] = useState("")
-    const [weeklySchedule, setWeeklySchedule] = useState("")
+    const [weeklySchedule, setWeeklySchedule] = useState([])
     const [dispenseTimes, setDispenseTimes] = useState("")
 
     const [ isModalVisible, setIsModalVisible ] = useState(false);
@@ -106,8 +106,17 @@ export default function ManageScreen({ navigation }) {
         const auth = getAuth();
         const user = auth.currentUser;
 
+        if (Dispenser1) {
+            setDispenserNumber("1");
+        } else {
+            setDispenserNumber("2");
+        }
+
+        const schedArray = [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday];
+        setWeeklySchedule(schedArray);
+
         const docInfo = {
-            user: user.email,
+            user: user.uid,
             medicationName: medicationName,
             pillQuantity: pillQuantity,
             startDate: startDate,
@@ -118,7 +127,7 @@ export default function ManageScreen({ navigation }) {
         };
         addDoc(collection(db, "meds"), docInfo)
         .then(() => {
-            console.log("Successfully added document.");
+            console.log("Successfully added medication.");
             toggleModal();
         })
         .catch((error) => {

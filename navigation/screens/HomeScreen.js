@@ -23,9 +23,11 @@
 //     );
 // };
 
-import * as React from 'react';
-import { View, Text, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, StyleSheet, Dimensions, Button } from 'react-native';
 import {StatusBar} from 'expo-status-bar';
+
+import {Octicons, Ionicons, Fontisto} from '@expo/vector-icons';
 
 
 import {
@@ -36,16 +38,21 @@ import {
     WelcomeImage,
     Avatar
 } from './../../components/styles';
+
 const {primary, tertiary, brand, darkLight} = Colors;
 
 import Card from './../../components/card';
 
+import { auth, db } from "../../firebase.js"
+
 import { getAuth, signOut } from 'firebase/auth';
-import { collection, addDoc } from "firebase/firestore"; 
+import { collection, getDocs } from "firebase/firestore"; 
 
 import { useNavigation } from '@react-navigation/native';
 
 export default function HomeScreen() {
+
+    const [userMedications, setUserMedications] = useState([]);
 
     const navigation = useNavigation()
 
@@ -61,6 +68,65 @@ export default function HomeScreen() {
             alert(errorMessage);
         });
     }
+
+    useEffect(() => {
+
+        const medications = [];
+
+        const user = auth.currentUser;
+
+        db.collection("meds").where("user", "==", user.uid)
+        .get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                // console.log(doc.id, " => ", doc.data());
+                medications.push(doc.data());
+                console.log(medications);
+            });
+            setUserMedications(medications);
+        })
+        .catch((error) => {
+            console.log("Error getting documents: ", error);
+        })
+
+
+        // getDocs(collection(db, "meds"))
+        // .then((query) => {
+        //     query.forEach((doc) => {
+        //         console.log(`${doc.id} => ${doc.data()}`);
+        //     });
+        // })
+
+    }, []);
+
+    const getMedications = () => {
+
+        const user = auth.currentUser;
+        const medications = [];
+
+        db.collection("meds").where("user", "==", user.uid)
+        .get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                // console.log(doc.id, " => ", doc.data());
+                medications.push(doc.data());
+                console.log(medications);
+            });
+            setUserMedications(medications);
+        })
+        .catch((error) => {
+            console.log("Error getting documents: ", error);
+        })
+
+
+        // getDocs(collection(db, "meds"))
+        // .then((query) => {
+        //     query.forEach((doc) => {
+        //         console.log(`${doc.id} => ${doc.data()}`);
+        //     });
+        // })
+    }
+
 
 
     return (
@@ -86,12 +152,12 @@ export default function HomeScreen() {
                         <Text style={{
                             fontSize:28,
                             color:"#FFF",
-                            fontWeight:"bold"
+                            fontWeight:"bold",
                         }}>Welcome { getAuth().currentUser?.displayName }</Text>
                         <Text style={{
                             fontSize:16,
                             color:"#FFF",
-                            fontWeight:"bold"
+                            fontWeight:"bold",
                         }}>Email: { getAuth().currentUser?.email }</Text>
                     </View>
                     <View style={{width:"45%",alignItems:"flex-end"}}>
@@ -104,13 +170,48 @@ export default function HomeScreen() {
             </View>
             
             <InnerContainer>
-                <Card>
-                    <Text> Medication </Text>
-                </Card>
+                {userMedications.map(med => 
+                    <View style= {styles.cardContainer}>
+                        <View style={styles.cardContent}> 
+                            <Text style={styles.titleStyle}> {med.medicationName} </Text>
+                            <Text> {med.pillQuantity} </Text>
+                            <Text> Scheduled for: 8:00am </Text>
+                            <Ionicons name="checkmark-circle-outline" size={50} iconColor="#5F8575" style={{ position: 'absolute', right: 0 }}/>
+                        </View>
+                    </View>
+                )}
             </InnerContainer>
             </>
         </View>
     );
 }
+
+
+const deviceWidth = Math.round(Dimensions.get('window').width);
+
+const styles=StyleSheet.create({
+    cardContainer: {
+        width: deviceWidth - 20,
+        height: 100,
+        backgroundColor: "#fff",
+        elevation: 3, 
+        borderRadius: 20,
+        shadowColor: '#333',
+        shadowOffset: { width: 2, height: 2, }, 
+        shadowOpacity: 0.3,
+        shadowRadius: 3,
+        marginHorizontal: 4,
+        marginVertical: 6
+    },
+    titleStyle: {
+        fontSize: 20,
+        fontWeight: '800',
+    },
+    cardContent: {
+        marginHorizontal: 18,
+        marginVertical: 10
+    }
+})
+
 
 //export default Welcome;

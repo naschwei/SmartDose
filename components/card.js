@@ -2,7 +2,45 @@ import React from 'react';
 import {StyleSheet, View, Text, Dimensions, Button} from 'react-native';
 import {Octicons, Ionicons, Fontisto} from '@expo/vector-icons';
 
+import { auth, db } from "../firebase.js"
+
+import { getAuth, signOut } from 'firebase/auth';
+import { collection, getDocs, query, where } from "firebase/firestore"; 
+
 export default function Card(props) {
+
+
+    
+    const getMedications = () => {
+
+        const user = auth.currentUser;
+        const user_medications = [];
+
+        db.collection("meds").where("user", "==", user.uid)
+        .get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                // console.log(doc.id, " => ", doc.data());
+                user_medications.push(doc.data());
+                console.log(user_medications);
+            });
+        })
+        .catch((error) => {
+            console.log("Error getting documents: ", error);
+        })
+
+
+        // getDocs(collection(db, "meds"))
+        // .then((query) => {
+        //     query.forEach((doc) => {
+        //         console.log(`${doc.id} => ${doc.data()}`);
+        //     });
+        // })
+    }
+
+
+
+
     return (
         // how to do it with {props.children}
         <>
