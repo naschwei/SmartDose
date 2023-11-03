@@ -99,6 +99,7 @@ export default function HomeScreen() {
 
     }, []);
 
+    // for a possible refresh button on this page?
     const getMedications = () => {
 
         const user = auth.currentUser;
@@ -117,14 +118,6 @@ export default function HomeScreen() {
         .catch((error) => {
             console.log("Error getting documents: ", error);
         })
-
-
-        // getDocs(collection(db, "meds"))
-        // .then((query) => {
-        //     query.forEach((doc) => {
-        //         console.log(`${doc.id} => ${doc.data()}`);
-        //     });
-        // })
     }
 
 
@@ -174,8 +167,8 @@ export default function HomeScreen() {
                     <View style= {styles.cardContainer}>
                         <View style={styles.cardContent}> 
                             <Text style={styles.titleStyle}> {med.medicationName} </Text>
-                            <Text> {med.pillQuantity} </Text>
-                            <Text> Scheduled for: 8:00am </Text>
+                            <Text> {med.pillQuantity} pills</Text>
+                            <Text> {med.dispenseTimes} times</Text>
                             <Ionicons name="checkmark-circle-outline" size={50} iconColor="#5F8575" style={{ position: 'absolute', right: 0 }}/>
                         </View>
                     </View>
