@@ -8,6 +8,8 @@ import Modal from 'react-native-modal';
 import {Camera, CameraType} from 'expo-camera';
 //import {CheckBox} from 'react-native-elements';
 
+import * as MediaLibrary from 'expo-media-library';
+
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { auth, db } from "../../firebase.js"
@@ -45,7 +47,6 @@ export default function ManageScreen({ navigation }) {
             setPreviewVisible(true);
             setCapturedImage(photo);
         }
-        
     }
 
     const toggleModal = () => {
@@ -57,11 +58,6 @@ export default function ManageScreen({ navigation }) {
             setIsModalVisible(!isModalVisible);
 
             // set the number of the dispenser selected.
-            // if (Dispenser1) {
-            //     dispenserNumber = '1';
-            // } else {
-            //     dispenserNumber = '2';
-            // }
             if (isModalVisible) {
                 if (Dispenser1) {
                     setDispenserNumber('1');
@@ -83,9 +79,12 @@ export default function ManageScreen({ navigation }) {
     const handleDispenserOne = () => {changeDispenserOne(!Dispenser1);};
     const handleDispenserTwo = () => {changeDispenserTwo(!Dispenser2);};
 
+    const imageToTextApiKey = 'yqfk5vqF5e/nVAhECxZgRw==1JSnGDvmDsKjxB3t';
+
     const [type, setType] = useState(CameraType.back);
     const [permission, requestPermission] = Camera.useCameraPermissions();
     const [startCamera, setStartCamera] = useState(false);
+    const [permissionResponse, requestMediaPermission] = MediaLibrary.usePermissions();
 
     function toggleCameraType() {
         setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
@@ -138,7 +137,7 @@ export default function ManageScreen({ navigation }) {
     }
 
     const CameraPreview = ({photo}) => {
-        console.log('sdsfds', photo)
+        // console.log('sdsfds', photo)
         return (
           <View
             style={{
@@ -160,8 +159,8 @@ export default function ManageScreen({ navigation }) {
                         <Text style={{fontWeight: 'bold', color: 'black'}}>Re-Take Picture</Text>
                     </Pressable>
                     <Pressable style={{top: 20, left: 40, width: 120, height: 30, backgroundColor: '#f0ffff', justifyContent: 'center', alignItems: 'center', borderWidth: 3, borderRadius: 3, borderColor: 'black'}}
-                        onPress={__savePhoto}>
-                        <Text style={{fontWeight: 'bold', color: 'black'}}>Save Photo</Text>
+                        onPress={__usePhoto}>
+                        <Text style={{fontWeight: 'bold', color: 'black'}}>Use Photo</Text>
                     </Pressable>
                 </View>
                 
@@ -180,12 +179,29 @@ export default function ManageScreen({ navigation }) {
         __startCamera();
     }
 
-    const __savePhoto = () => {
-        alert('functionality not yet buddy;');
+    const __usePhoto = async () => {
+        // alert('functionality not yet buddy;');
+
+        // set the name of the medication via photo extraction
+        alert('photo extraction');
+        console.log(capturedImage);
+
+        extractMedicineName(capturedImage.uri, imageToTextApiKey).then(medicineNames => {
+            if (medicineNames) {
+                console.log('Matching Medicine Names:', medicineNames);
+            } else {
+                console.log('No matching medicine names found.');
+            }
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+
+        // close camera
+        //closeCamera();
     }
     
     return (startCamera ? ( previewVisible && capturedImage ? (
-        <CameraPreview photo={capturedImage} savePhoto={__savePhoto} retakePicture={__retakePicture} />
+        <CameraPreview photo={capturedImage} retakePicture={__retakePicture} />
         ) : (
         <Camera
             style={{flex: 1, width: "100%", borderWidth: 4, borderRadius: 2, borderColor: 'mediumpurple'}}
@@ -219,13 +235,13 @@ export default function ManageScreen({ navigation }) {
                 <View style={{flexDirection: 'row', justifyContent: 'space-evenly', width: 350}}>
                     <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
                         <View style={{width: 30, height: 25, borderWidth: 3, backgroundColor: '#f8ffff', justifyContent:'center', alignItems: 'center'}}>
-                            <Text style={{color: 'black', fontWeight: 'bold', justifyContent: 'center', alignItems: 'center'}}>(A)</Text>
+                            <Text style={{color: 'black', fontWeight: 'bold', justifyContent: 'center', alignItems: 'center'}}>A</Text>
                         </View>
                         <Pressable style={[styles.grid, {backgroundColor: Dispenser1 ? 'mediumpurple' : '#f8ffff'}]} onPress={handleDispenserOne}></Pressable>
                     </View>
                     <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
                         <View style={{width: 30, height: 25, borderWidth: 3, backgroundColor: '#f8ffff', justifyContent:'center', alignItems: 'center'}}>
-                            <Text style={{color: 'black', fontWeight: 'bold', justifyContent: 'center', alignItems: 'center'}}>(B)</Text>
+                            <Text style={{color: 'black', fontWeight: 'bold', justifyContent: 'center', alignItems: 'center'}}>B</Text>
                         </View>
                         <Pressable style={[styles.grid, {backgroundColor: Dispenser2 ? 'mediumpurple' : '#f8ffff'}]} onPress={handleDispenserTwo}></Pressable>
                     </View>

@@ -31,6 +31,7 @@
     "expo-camera": "^13.6.0",
     "expo-constants": "~14.4.2",
     "expo-crypto": "~12.4.1",
+    "expo-media-library": "^15.6.0",
     "expo-splash-screen": "^0.10.3",
     "expo-status-bar": "~1.6.0",
     "expo-web-browser": "~12.3.2",
