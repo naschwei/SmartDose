@@ -16,8 +16,8 @@ const BoxSimple = ({ children }) => (
 )
 const boxStyles = StyleSheet.create({
     boxSimple: {
-        height: 150, 
-        width: 150, 
+        height: 120, 
+        width: 120, 
         justifyContent: 'center', 
         alignItems: 'center',
         backgroundColor: '#f0f8ff',
@@ -37,7 +37,7 @@ const DispenserPillStatus = () => {
     return (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Text style={{fontWeight: 'bold', fontSize: 20, justifyContent: 'center', alignItems: 'center'}}> Medication Tracker </Text>
-            <View style={{top: Dimensions.get('screen').height / 50, height: Dimensions.get('screen').height / 3.5, width: Dimensions.get('screen').width - 20, backgroundColor: 'grey', borderWidth: 10, borderRadius: 25, borderColor: 'black', justifyContent: 'center', alignItems: 'center'}}>
+            <View style={{height: Dimensions.get('screen').height / 4, width: Dimensions.get('screen').width - 30, backgroundColor: 'grey', borderWidth: 10, borderRadius: 25, borderColor: 'black', justifyContent: 'center', alignItems: 'center'}}>
                 <View style={{flexDirection: 'row', justifyContent: 'space-evenly', width: 350}}>
                     <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
                         <View style={{width: 30, height: 25, borderWidth: 3, backgroundColor: '#f8ffff', justifyContent:'center', alignItems: 'center'}}>

@@ -1,28 +1,3 @@
-// FIRST ATTEMPT: DISCARDED
-// const Welcome = () => {
-//     return (
-//         <>
-//         <StatusBar style="light" />
-//         <InnerContainer>
-//             <WelcomeImage resizeMode="cover" source={require('./../../assets/adaptive-icon.png')} />
-//             <WelcomeContainer>
-//                 <PageTitle welcome={true}> Welcome! </PageTitle>
-//                 <SubTitle welcome={true}> Jane Doe </SubTitle>
-//                 <SubTitle welcome={true}> hello-world@gmail.com </SubTitle>
-
-//                 <StyledFormArea>
-//                     <Avatar resizeMode="cover" source={require('./../../assets/icon.png')} />
-//                     <Line />
-//                     <StyledButton onPress={() => {}}>
-//                         <ButtonText> Logout </ButtonText>
-//                     </StyledButton>
-//                 </StyledFormArea>
-//             </WelcomeContainer>
-//         </InnerContainer>
-//         </>
-//     );
-// };
-
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, Dimensions, Button } from 'react-native';
 import {StatusBar} from 'expo-status-bar';
@@ -148,7 +123,7 @@ export default function HomeScreen() {
                             fontWeight:"bold",
                         }}>Welcome { getAuth().currentUser?.displayName }</Text>
                         <Text style={{
-                            fontSize:16,
+                            fontSize:14,
                             color:"#FFF",
                             fontWeight:"bold",
                         }}>Email: { getAuth().currentUser?.email }</Text>

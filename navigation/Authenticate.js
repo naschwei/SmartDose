@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { Button } from 'react-native';
+import { IconButton } from 'react-native-paper';
 
 // imports for navigation tab
 import { NavigationContainer } from '@react-navigation/native';
@@ -62,7 +63,23 @@ function MainContainer() {
             }}
         >
 
-        <Tab.Screen name={homeName} component={HomeScreen} options={{ headerTitle:'SmartDose', headerStyle: {backgroundColor: "#6D28D9"}, headerTintColor: 'white', headerTitleStyle: {fontSize: 25}}}/>
+        <Tab.Screen name={homeName} component={HomeScreen} 
+                    options=
+                    {{ 
+                        headerTitle:'SmartDose', 
+                        headerStyle: {backgroundColor: "#6D28D9"}, 
+                        headerTintColor: 'white', 
+                        headerTitleStyle: {fontSize: 25}, 
+                        headerRight: () => (
+                            <IconButton
+                                icon="refresh"
+                                iconColor="#FFF"
+                                size={40}
+                                onPress={() => alert("This will REFRESH the screen. Are you sure you want to REFRESH?")}
+                            />
+                        )
+                    }}
+        />
         <Tab.Screen name={manageName} component={ManageScreen} options={{ headerTitle:'SmartDose', headerStyle: {backgroundColor: "#6D28D9"}, headerTintColor: 'white', headerTitleStyle: {fontSize: 25}}}/> 
         <Tab.Screen name={historyName} component={HistoryScreen} options={{ headerTitle:'SmartDose', headerStyle: {backgroundColor: "#6D28D9"}, headerTintColor: 'white', headerTitleStyle: {fontSize: 25}}}/>
         <Tab.Screen name={settingsName} component={SettingsScreen} options={{ headerTitle:'SmartDose', headerStyle: {backgroundColor: "#6D28D9"}, headerTintColor: 'white', headerTitleStyle: {fontSize: 25}}}/>
