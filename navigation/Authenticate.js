@@ -21,6 +21,7 @@ const settingsName = 'Settings';
 const historyName = 'History';
 const manageName = 'Manage Medication';
 const homeName = 'Home';
+const photoName = 'Photo Library';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
