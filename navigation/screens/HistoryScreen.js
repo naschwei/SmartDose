@@ -18,7 +18,9 @@ const boxStyles = StyleSheet.create({
     boxSimple: {
         height: 150, 
         width: 150, 
-        backgroundColor: '#f0f8ff', 
+        justifyContent: 'center', 
+        alignItems: 'center',
+        backgroundColor: '#f0f8ff',
         margin: 10,
         borderWidth: 10,
         borderRadius: 25,
@@ -42,7 +44,7 @@ const DispenserPillStatus = () => {
                             <Text style={{color: 'black', fontWeight: 'bold', justifyContent: 'center', alignItems: 'center'}}>A</Text>
                         </View>
                         <View>
-                            <BoxSimple style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}> 
+                            <BoxSimple> 
                                 <Text style={{fontWeight: 'bold', fontSize: 48, justifyContent: 'center', alignItems: 'center'}}> 4 </Text>
                             </BoxSimple>
                         </View>
@@ -52,7 +54,7 @@ const DispenserPillStatus = () => {
                         <View style={{width: 30, height: 25, borderWidth: 3, backgroundColor: '#f8ffff', justifyContent:'center', alignItems: 'center'}}>
                             <Text style={{color: 'black', fontWeight: 'bold', justifyContent: 'center', alignItems: 'center'}}>B</Text>
                         </View>
-                        <BoxSimple > 
+                        <BoxSimple> 
                             <Text style={{fontWeight: 'bold', fontSize: 48, justifyContent: 'center', alignItems: 'center'}}> 4 </Text>
                         </BoxSimple>
                     </View>
