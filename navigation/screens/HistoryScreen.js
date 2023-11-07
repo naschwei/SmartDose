@@ -1,23 +1,30 @@
 import React, {useState} from 'react';
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Pressable} from 'react-native';
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Pressable, Box} from 'react-native';
 import { Agenda } from "react-native-calendars";
-//import {Card, Avatar} from 'react-native-paper';
-import {Card} from 'react-native-paper';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-
-/*
-    TODO: 
-        - Per medication agenda:
-            - calendar that shows if took medication for that day. (green check = good, gray x = not good)
-            - ideally can click on a calendar day for details
-        - dispenser display, number of pills left in each container
- */
+//import {Card} from 'react-native-paper';
+import AgendaCard from './../../components/agendaCard';
 
 const timeToString = (time) => {
     const date = new Date(time);
     return date.toISOString().split('T')[0];
 }
+
+const BoxSimple = ({ children }) => (
+    <View style={boxStyles.boxSimple}>
+        {children}
+    </View>
+)
+const boxStyles = StyleSheet.create({
+    boxSimple: {
+        height: 150, 
+        width: 150, 
+        backgroundColor: '#f0f8ff', 
+        margin: 10,
+        borderWidth: 10,
+        borderRadius: 25,
+        borderColor: 'black'
+    },
+})
 
 const DispenserPillStatus = () => {
     const [ Dispenser1, changeDispenserOne ] = useState(false);
@@ -34,17 +41,20 @@ const DispenserPillStatus = () => {
                         <View style={{width: 30, height: 25, borderWidth: 3, backgroundColor: '#f8ffff', justifyContent:'center', alignItems: 'center'}}>
                             <Text style={{color: 'black', fontWeight: 'bold', justifyContent: 'center', alignItems: 'center'}}>A</Text>
                         </View>
-                        <Pressable style={[styles.grid, {backgroundColor: Dispenser1 ? 'mediumpurple' : '#f8ffff'}]}>
-                            <Text style={{fontWeight: 'bold', fontSize: 48, justifyContent: 'center', alignItems: 'center'}}> 4 </Text>
-                        </Pressable>
+                        <View>
+                            <BoxSimple style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}> 
+                                <Text style={{fontWeight: 'bold', fontSize: 48, justifyContent: 'center', alignItems: 'center'}}> 4 </Text>
+                            </BoxSimple>
+                        </View>
+                        
                     </View>
                     <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
                         <View style={{width: 30, height: 25, borderWidth: 3, backgroundColor: '#f8ffff', justifyContent:'center', alignItems: 'center'}}>
-                            <Text style={{color: 'black', fontWeight: 'bold', justifyContent: 'center', alignItems: 'center'}}></Text>
+                            <Text style={{color: 'black', fontWeight: 'bold', justifyContent: 'center', alignItems: 'center'}}>B</Text>
                         </View>
-                        <Pressable style={[styles.grid, {backgroundColor: Dispenser2 ? 'mediumpurple' : '#f8ffff'}]} >
+                        <BoxSimple > 
                             <Text style={{fontWeight: 'bold', fontSize: 48, justifyContent: 'center', alignItems: 'center'}}> 4 </Text>
-                        </Pressable>
+                        </BoxSimple>
                     </View>
                 </View>
             </View>
@@ -86,17 +96,9 @@ const PillTracker = () => {
     const renderItem = (item) => {
         return (
             <TouchableOpacity style= {{marginRight: 10, marginTop: 17}}>
-                <Card>
-                    <Card.Content>
-                        <View style = {{
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                        }}>
-                            <Text>{item.name}</Text>
-                        </View>
-                    </Card.Content>
-                </Card>
+                <AgendaCard>
+                    <Text> Medication </Text>
+                </AgendaCard>
             </TouchableOpacity>
         )
     }
@@ -113,8 +115,6 @@ const PillTracker = () => {
 }
 
 export default function HistoryScreen({ navigation }) { 
-    const Stack = createStackNavigator();
-
     return (
         <View style={{flex: 1}}>
             <DispenserPillStatus></DispenserPillStatus>
@@ -122,6 +122,7 @@ export default function HistoryScreen({ navigation }) {
         </View>
     );
 }
+
 
 const styles = StyleSheet.create({
     item: {
