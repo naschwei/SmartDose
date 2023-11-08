@@ -6,6 +6,7 @@ import React, {useState} from 'react';
 import { ImageBackground, Switch, Pressable, TouchableOpacity, SafeAreaView, Button, View, TextInput, StyleSheet, Text, KeyboardAvoidingView } from 'react-native';
 import Modal from 'react-native-modal';
 import {Camera, CameraType} from 'expo-camera';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 //import {CheckBox} from 'react-native-elements';
 
 import * as MediaLibrary from 'expo-media-library';
@@ -247,6 +248,7 @@ export default function ManageScreen({ navigation }) {
         // close camera
         //closeCamera();
     }
+    //onChangeText={text => setMedicationName(text)}
     
     return (startCamera ? ( previewVisible && capturedImage ? (
         <CameraPreview photo={capturedImage} retakePicture={__retakePicture} />
@@ -299,67 +301,75 @@ export default function ManageScreen({ navigation }) {
                 <Text style={{fontWeight: 'bold', fontSize: 25, color: '#f8ffff'}}>Add New Medication</Text>  
             </Pressable>
             <Modal isVisible={isModalVisible} id='??'>
-                <KeyboardAvoidingView behavior="padding" style={styles.container}>
-                    <View style={{flexDirection: 'row', margin: 7, marginTop: 10}}>
-                        <Pressable style={{top: -0, left: -20, width: 30, height: 30, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'black', borderRadius: 5}}
-                            onPress={toggleModal}>
-                            <Text style={{color: 'white', fontWeight: 'bold', fontSize: 20}}>X</Text>
-                        </Pressable>
-                        <Text style={styles.title}>Add New Medication</Text>
-                        <Pressable style={{top: 0, left: 20, width: 30, height: 30, borderWidth: 2, borderColor: 'black', justifyContent: 'center', alignItems: 'center', borderRadius: 5, backgroundColor: 'mediumpurple'}}
-                            onPress={__startCamera}>
-                            <Ionicons name="camera" size={20} color={'white'}/>
-                        </Pressable>
-                    </View>
-                    <View style={styles.container2}>
-                        <View style={styles.items}>
-                            <TextInput style={styles.input} placeholder="Medication Name" placeholderTextColor={'grey'} 
-                                onChangeText={text => setMedicationName(text)}
-                            />
-                            <TextInput style={styles.input} placeholder="Pill Quantity" placeholderTextColor={'grey'} 
-                                onChangeText={text => setPillQuantity(text)}
-                            />
-                            <TextInput style={styles.input} placeholder="Start Date" placeholderTextColor={'grey'} 
-                                onChangeText={text => setStartDate(text)}
-                            />
-                            <TextInput style={styles.input} placeholder="End Date" placeholderTextColor={'grey'} 
-                                onChangeText={text => setEndDate(text)}
-                            />
-                            <Text style={styles.text}>Medication Dispenser</Text>
-                            <TextInput style={[styles.input, {backgroundColor: 'lightgray'}]} value= {Dispenser1 ? "A" : "B"} editable={false} placeholder="Dispenser (A or B)" placeholderTextColor={'grey'}
-                                onChangeText={text => setDispenserNumber(text)}
-                            />
-                            <Text style={styles.text}>Select Weekly Schedule</Text>
-                            <View style={styles.days}>
-                                <Pressable style={[styles.day, {backgroundColor: Monday ? '#6D28D9': 'mediumpurple'}]} onPress={handleMondayClick}>
-                                    <Text style={styles.dayText}>Mo</Text>   
-                                </Pressable>
-                                <Pressable style={[styles.day, {backgroundColor: Tuesday ? '#6D28D9': 'mediumpurple'}]} onPress={handleTuesdayClick}>
-                                    <Text style={styles.dayText}>Tu</Text>
-                                </Pressable>
-                                <Pressable style={[styles.day, {backgroundColor: Wednesday ? '#6D28D9': 'mediumpurple'}]} onPress={handleWednesdayClick}>
-                                    <Text style={styles.dayText}>We</Text>
-                                </Pressable>
-                                <Pressable style={[styles.day, {backgroundColor: Thursday ? '#6D28D9': 'mediumpurple'}]} onPress={handleThursdayClick}>
-                                    <Text style={styles.dayText}>Th</Text>
-                                </Pressable>
-                                <Pressable style={[styles.day, {backgroundColor: Friday ? '#6D28D9': 'mediumpurple'}]} onPress={handleFridayClick}>
-                                    <Text style={styles.dayText}>Fr</Text>
-                                </Pressable>
-                                <Pressable style={[styles.day, {backgroundColor: Saturday ? '#6D28D9': 'mediumpurple'}]} onPress={handleSaturdayClick}>
-                                    <Text style={styles.dayText}>Sa</Text>
-                                </Pressable>
-                                <Pressable style={[styles.day, {backgroundColor: Sunday ? '#6D28D9': 'mediumpurple'}]} onPress={handleSundayClick}>
-                                    <Text style={styles.dayText}>Su</Text>
-                                </Pressable>
-                            </View>
-                            <TextInput style={styles.input} placeholder="Dispense Times (Each Day)" placeholderTextColor={'grey'} onChangeText={text => setDispenseTimes(text)} />
+                <View style={styles.container}>
+                    <KeyboardAwareScrollView contentContainerStyle={{width: 350}}>
+                        <View style={{flexDirection: 'row', margin: 7, marginTop: 10}}>
+                            <Pressable style={{top: -0, left: 0, width: 30, height: 30, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'black', borderRadius: 5}}
+                                onPress={toggleModal}>
+                                <Text style={{color: 'white', fontWeight: 'bold', fontSize: 20}}>X</Text>
+                            </Pressable>
+                            <Text style={[styles.title, {left: 20}]}>Add New Medication</Text>
+                            <Pressable style={{top: 0, left: 40, width: 30, height: 30, borderWidth: 2, borderColor: 'black', justifyContent: 'center', alignItems: 'center', borderRadius: 5, backgroundColor: 'mediumpurple'}}
+                                onPress={__startCamera}>
+                                <Ionicons name="camera" size={20} color={'white'}/>
+                            </Pressable>
                         </View>
-                        <Pressable style={{width: 200, height: 30, backgroundColor: 'mediumpurple', borderWidth: 2, borderRadius: 5, borderColor: 'black', justifyContent: 'center', alignItems: 'center', marginBottom: 10, padding: 2}} title="Add New Medication" onPress={addMedication}>
-                            <Text style={{fontWeight: 'bold', fontSize: 15, color: 'white'}}>Submit</Text>
-                        </Pressable>
-                    </View>
-                </KeyboardAvoidingView>
+                        <View style={styles.container2}>
+                            <View style={styles.items}>
+                                <TextInput style={styles.input} placeholder="Medication Name" placeholderTextColor={'grey'} 
+                                    onChangeText={text => setMedicationName(text)}
+                                    value={medicationName}
+                                />
+                                <TextInput style={styles.input} placeholder="Pill Quantity" placeholderTextColor={'grey'} 
+                                    onChangeText={text => setPillQuantity(text)}
+                                    keyboardType='numeric'
+                                />
+                                <TextInput style={styles.input} placeholder="Start Date" placeholderTextColor={'grey'} 
+                                    onChangeText={text => setStartDate(text)}
+                                />
+                                <TextInput 
+                                    style={styles.input} 
+                                    placeholder="End Date" 
+                                    placeholderTextColor='grey'
+                                    onChangeText={text => setEndDate(text)}
+                                    value={endDate}
+                                />
+                                <Text style={styles.text}>Medication Dispenser</Text>
+                                <TextInput style={[styles.input, {backgroundColor: 'lightgray'}]} value= {Dispenser1 ? "A" : "B"} editable={false} placeholder="Dispenser (A or B)" placeholderTextColor={'grey'}
+                                    onChangeText={text => setDispenserNumber(text)}
+                                />
+                                <Text style={styles.text}>Select Weekly Schedule</Text>
+                                <View style={styles.days}>
+                                    <Pressable style={[styles.day, {backgroundColor: Monday ? '#6D28D9': 'mediumpurple'}]} onPress={handleMondayClick}>
+                                        <Text style={styles.dayText}>Mo</Text>   
+                                    </Pressable>
+                                    <Pressable style={[styles.day, {backgroundColor: Tuesday ? '#6D28D9': 'mediumpurple'}]} onPress={handleTuesdayClick}>
+                                        <Text style={styles.dayText}>Tu</Text>
+                                    </Pressable>
+                                    <Pressable style={[styles.day, {backgroundColor: Wednesday ? '#6D28D9': 'mediumpurple'}]} onPress={handleWednesdayClick}>
+                                        <Text style={styles.dayText}>We</Text>
+                                    </Pressable>
+                                    <Pressable style={[styles.day, {backgroundColor: Thursday ? '#6D28D9': 'mediumpurple'}]} onPress={handleThursdayClick}>
+                                        <Text style={styles.dayText}>Th</Text>
+                                    </Pressable>
+                                    <Pressable style={[styles.day, {backgroundColor: Friday ? '#6D28D9': 'mediumpurple'}]} onPress={handleFridayClick}>
+                                        <Text style={styles.dayText}>Fr</Text>
+                                    </Pressable>
+                                    <Pressable style={[styles.day, {backgroundColor: Saturday ? '#6D28D9': 'mediumpurple'}]} onPress={handleSaturdayClick}>
+                                        <Text style={styles.dayText}>Sa</Text>
+                                    </Pressable>
+                                    <Pressable style={[styles.day, {backgroundColor: Sunday ? '#6D28D9': 'mediumpurple'}]} onPress={handleSundayClick}>
+                                        <Text style={styles.dayText}>Su</Text>
+                                    </Pressable>
+                                </View>
+                                <TextInput style={styles.input} placeholder="Dispense Times (Each Day)" placeholderTextColor={'grey'} onChangeText={text => setDispenseTimes(text)} />
+                            </View>
+                            <Pressable style={{width: 200, height: 30, backgroundColor: 'mediumpurple', borderWidth: 2, borderRadius: 5, borderColor: 'black', justifyContent: 'center', alignItems: 'center', marginBottom: 10, padding: 2}} title="Add New Medication" onPress={addMedication}>
+                                <Text style={{fontWeight: 'bold', fontSize: 15, color: 'white'}}>Submit</Text>
+                            </Pressable>
+                        </View>
+                    </KeyboardAwareScrollView>
+                </View>
             </Modal>
         </View>
     ));
@@ -380,11 +390,12 @@ const styles = StyleSheet.create({
         backgroundColor: '#E6E6FA',
         alignItems: 'center',
         width: 375,
-        height: 510,
+        height: 515,
         marginBottom: 0,
         borderWidth: 10,
         borderRadius: 20,
-        borderColor: 'black'
+        borderColor: 'black',
+        top: 0
     },
     title: {
         fontSize: 24,
@@ -420,20 +431,30 @@ const styles = StyleSheet.create({
         width: 300,
         height: 40,
         backgroundColor: '#fff',
-        paddingVertical: 20,
         paddingHorizontal: 5,
         borderColor: 'black',
         borderWidth: 2,
         borderRadius: 15, 
         fontSize: 16,
-        margin: 3,
-        color: '#000',
+        margin: 5,
+        fontColor: '#000',
         fontWeight: 'bold'
+    },
+    input2: {
+        width: 300,
+        height: 40,
+        backgroundColor: '#fff',
+        paddingHorizontal: 15,
+        paddingVertical: 10,
+        borderRadius: 10,
+        marginTop: 5,
+        paddingVertical: 20
     },
     days: {
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-evenly',
+        marginBottom: 4
     },
     day: {
         width: 40,

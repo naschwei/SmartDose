@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, Pressable, TextInput, View, Text } from 'react-native';
+import { ScrollView, StyleSheet, Pressable, TextInput, View, Text } from 'react-native';
 import Modal from 'react-native-modal';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useState} from 'react';
@@ -163,14 +163,14 @@ export default function SettingsScreen({ navigation }) {
                 </View>
             </Modal>
             <Modal isVisible={isModalTwoVisible}>
-                <KeyboardAwareScrollView>
-                    <View style={styles.container3}>
-                        <View style={{flexDirection: 'row', margin: 7, marginTop: 10}}>
-                            <Pressable style={{top: -0, left: -40, width: 30, height: 30, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'black', borderRadius: 5}}
+                <View style={styles.container3}>
+                    <KeyboardAwareScrollView contentContainerStyle={{width: 375}}>
+                        <View style={{flexDirection: 'row', margin: 0, marginTop: 10}}>
+                            <Pressable style={{top: -0, left: 10, width: 30, height: 30, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'black', borderRadius: 5}}
                                 onPress={toggleModalTwo}>
                                 <Text style={{color: 'white', fontWeight: 'bold', fontSize: 20}}>X</Text>
                             </Pressable>
-                            <Text style={[styles.title, {left: -12}]}>Manage Medication</Text>
+                            <Text style={[styles.title, {left: 50}]}>Manage Medication</Text>
                         </View>
                         <View style={styles.container2}>
                             <View style={styles.items}>
@@ -179,6 +179,7 @@ export default function SettingsScreen({ navigation }) {
                                 <Text style={styles.text}>Refill Medication?</Text>
                                 <TextInput style={styles.input} placeholder="Pill Quantity" placeholderTextColor={'grey'} 
                                     onChangeText={text => setPillQuantity(text)}
+                                    keyboardType='numeric'
                                 />
                                 <Text style={styles.text}>Change Start Date?</Text>
                                 <TextInput style={styles.input} placeholder="Change Start Date" placeholderTextColor={'grey'} 
@@ -220,8 +221,8 @@ export default function SettingsScreen({ navigation }) {
                                 <Text style={{fontWeight: 'bold', fontSize: 15, color: 'white'}}>Change Medication</Text>
                             </Pressable>
                         </View>
-                    </View>
-                </KeyboardAwareScrollView>
+                    </KeyboardAwareScrollView>
+                </View>
             </Modal>
             <Modal isVisible={isModalThreeVisible}>
                 <View style={{top: -50, height: 300, width: 375, backgroundColor: 'grey', borderWidth: 10, borderRadius: 25, borderColor: 'black', justifyContent: 'center', alignItems: 'center'}}>
@@ -300,18 +301,18 @@ const styles = StyleSheet.create({
         backgroundColor: '#E6E6FA',
         alignItems: 'center',
         width: 375,
-        height: 565,
+        height: 545,
         marginBottom: 0,
         borderWidth: 5,
         borderRadius: 20,
         borderColor: 'black',
-        top: 150
+        top: 0
     },
     input: {
         width: 300,
         height: 40,
         backgroundColor: '#fff',
-        paddingVertical: 20,
+        //paddingVertical: 20,
         paddingHorizontal: 5,
         borderColor: 'black',
         borderWidth: 2,
