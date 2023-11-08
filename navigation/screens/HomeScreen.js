@@ -25,6 +25,12 @@ import { collection, getDocs } from "firebase/firestore";
 
 import { useNavigation } from '@react-navigation/native';
 
+
+import * as Notifications from 'expo-notifications';
+import { setNotifications, immediateNotification } from '../../notifs.js';
+
+
+
 export default function HomeScreen() {
 
     const [userMedications, setUserMedications] = useState([]);
@@ -44,56 +50,37 @@ export default function HomeScreen() {
         });
     }
 
-    useEffect(() => {
-
-        const medications = [];
-
-        const user = auth.currentUser;
-
-        db.collection("meds").where("user", "==", user.uid)
-        .get()
-        .then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                // console.log(doc.id, " => ", doc.data());
-                medications.push(doc.data());
-                console.log(medications);
-            });
-            setUserMedications(medications);
-        })
-        .catch((error) => {
-            console.log("Error getting documents: ", error);
-        })
-
-
-        // getDocs(collection(db, "meds"))
-        // .then((query) => {
-        //     query.forEach((doc) => {
-        //         console.log(`${doc.id} => ${doc.data()}`);
-        //     });
-        // })
-
-    }, []);
-
-    // for a possible refresh button on this page?
-    const getMedications = () => {
+    // for possible refresh button?
+    const getDailyMedications = () => {
+        // where 0 refers to sunday, 1 refers to monday, 2 to tuesday, ... etc.
+        const d = new Date();
+        const day = d.getDay();
+        console.log(day);
 
         const user = auth.currentUser;
         const medications = [];
 
-        db.collection("meds").where("user", "==", user.uid)
+        db.collection("sched").where("user", "==", user.uid)
         .get()
         .then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
-                // console.log(doc.id, " => ", doc.data());
-                medications.push(doc.data());
-                console.log(medications);
+                if (doc.data().dayOfWeek === day) {
+                    medications.push(doc.data());
+                }
             });
+            console.log(medications);
             setUserMedications(medications);
         })
         .catch((error) => {
-            console.log("Error getting documents: ", error);
+            console.log("Error getting schedule data: ", error);
         })
     }
+
+    useEffect(() => {
+
+        getDailyMedications();
+
+    }, []);
 
 
 
@@ -143,7 +130,7 @@ export default function HomeScreen() {
                         <View style={styles.cardContent}> 
                             <Text style={styles.titleStyle}> {med.medicationName} </Text>
                             <Text> {med.pillQuantity} pills</Text>
-                            <Text> {med.dispenseTimes} times</Text>
+                            <Text> {med.dispenseTime} </Text>
                             <Ionicons name="checkmark-circle-outline" size={50} iconColor="#5F8575" style={{ position: 'absolute', right: 0 }}/>
                         </View>
                     </View>

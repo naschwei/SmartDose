@@ -14,14 +14,19 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { auth, db } from "../../firebase.js"
 
+import { setNotifications, scheduleWeeklyNotification } from '../../notifs.js';
+
+
 export default function ManageScreen({ navigation }) {
-    const [medicationName, setMedicationName] = useState("")
-    const [pillQuantity, setPillQuantity] = useState("")
-    const [startDate, setStartDate] = useState("")
-    const [endDate, setEndDate] = useState("")
-    const [dispenserNumber, setDispenserNumber] = useState("")
-    const [weeklySchedule, setWeeklySchedule] = useState([])
-    const [dispenseTimes, setDispenseTimes] = useState("")
+
+    const [medicationName, setMedicationName] = useState("");
+    const [pillQuantity, setPillQuantity] = useState("");
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
+    const [dispenserNumber, setDispenserNumber] = useState("");
+    const [weeklySchedule, setWeeklySchedule] = useState([]);
+    const [dispenseTimes, setDispenseTimes] = useState('');
+    const [dispenseTimesList, setDispenseTimesList] = useState([]);
 
     const [ isModalVisible, setIsModalVisible ] = useState(false);
     const [ Monday, changeMonday ] = useState(false);
@@ -101,7 +106,6 @@ export default function ManageScreen({ navigation }) {
     }
  
     const addMedication = () => {
-
         const auth = getAuth();
         const user = auth.currentUser;
 
@@ -114,25 +118,69 @@ export default function ManageScreen({ navigation }) {
         const schedArray = [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday];
         setWeeklySchedule(schedArray);
 
-        const docInfo = {
+        const timesList = dispenseTimes.split(',');
+        setDispenseTimesList(timesList);
+
+        // console.log(dispenseTimesList);
+
+        const medsDocInfo = {
             user: user.uid,
             medicationName: medicationName,
             pillQuantity: pillQuantity,
             startDate: startDate,
             endDate: endDate,
             dispenserNumber: dispenserNumber,
+            pillsInDispenser: 0,
             weeklySchedule: weeklySchedule,
-            dispenseTimes: dispenseTimes
+            dispenseTimes: dispenseTimesList
         };
-        addDoc(collection(db, "meds"), docInfo)
+        addDoc(collection(db, "meds"), medsDocInfo)
         .then(() => {
             console.log("Successfully added medication.");
-            toggleModal();
+
+            for (let i = 0; i < weeklySchedule.length; i++) {
+                for (let j = 0; j < dispenseTimesList.length; j++) {
+                    // console.log("dispense time j is ", dispenseTimesList[j]);
+
+                    scheduleWeeklyNotification(medicationName, i, dispenseTimesList[j], (notifId) => {
+
+                        if (weeklySchedule[i] == true) {
+                            // console.log("if statement here");
+                            let schedDocInfo = {
+                                user: user.uid,
+                                medicationName: medicationName,
+                                dayOfWeek: i,
+                                dispenseTime: dispenseTimesList[j],
+                                status: 'Scheduled',
+                                delayedTo: '',
+                                startDate: startDate,
+                                endDate: endDate,
+                                pillQuantity: pillQuantity,
+                                notificationId: notifId
+                            }
+                            addDoc(collection(db, "sched"), schedDocInfo)
+                            .then(() => {
+                                console.log("Successfully added schedule for medication.");
+                                // console.log(schedDocInfo);
+                                toggleModal();
+                            })
+                            .catch((error) => {
+                                const errorCode = error.code;
+                                const errorMessage = error.message;
+                                console.log(errorCode, errorMessage);
+                            })
+                        }
+
+                    })
+
+                    
+                }
+            }
         })
         .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
-            console.log(errorMessage);
+            console.log(errorCode, errorMessage);
         })
     }
 

@@ -24,9 +24,7 @@ npm start
 // scan the QR code, and wait for the project to load
 
 
-// Steps for accessing AWS and database features/functionality 
-// Note : you will need this to test user registration/login, authentication, adding medication, viewing medication, etc.
-Use the following link to download the AWS CLI on your local machine:
-https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
-In your terminal, run the 'aws configure' command. 
-Enter the access key ID (given to you), secret access key ID (given to you), 'us-east-2' for the region-name, and keep the default for the default output format (just press enter).
+// For expo notifications to work...create an expo account or use an existing account. Run...
+expo login
+// Enter your username and password when prompted.
+// Create a project for SmartDose and copy the project id. Replace project id variable for all notification functionality with the id. 
