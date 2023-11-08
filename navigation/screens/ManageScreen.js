@@ -325,8 +325,8 @@ export default function ManageScreen({ navigation }) {
                             <TextInput style={styles.input} placeholder="End Date" placeholderTextColor={'grey'} 
                                 onChangeText={text => setEndDate(text)}
                             />
-                            <Text style={styles.text}>Dispenser Number</Text>
-                            <TextInput style={[styles.input, {backgroundColor: 'lightgray'}]} value= {Dispenser1 ? "1" : "2"} editable={false} placeholder="Dispenser Number" placeholderTextColor={'grey'}
+                            <Text style={styles.text}>Medication Dispenser</Text>
+                            <TextInput style={[styles.input, {backgroundColor: 'lightgray'}]} value= {Dispenser1 ? "A" : "B"} editable={false} placeholder="Dispenser (A or B)" placeholderTextColor={'grey'}
                                 onChangeText={text => setDispenserNumber(text)}
                             />
                             <Text style={styles.text}>Select Weekly Schedule</Text>
