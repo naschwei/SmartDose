@@ -4,6 +4,11 @@ import Modal from 'react-native-modal';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useState} from 'react';
 
+import { getAuth, updatePassword } from 'firebase/auth';
+import { doc, setDoc, collection, increment, updateDoc, deleteDoc } from 'firebase/firestore';
+import { auth, db } from "../../firebase.js"
+
+
 export default function SettingsScreen({ navigation }) {
     const [ isModalOneVisible, setIsModalOneVisible ] = useState(false);
     const [ isModalTwoVisible, setIsModalTwoVisible ] = useState(false);
@@ -18,16 +23,23 @@ export default function SettingsScreen({ navigation }) {
     const [ Dispenser1, changeDispenserOne ] = useState(false);
     const [ Dispenser2, changeDispenserTwo ] = useState(false);
 
-    const [medicationName, setMedicationName] = useState("")
-    const [pillQuantity, setPillQuantity] = useState("")
-    const [startDate, setStartDate] = useState("")
-    const [endDate, setEndDate] = useState("")
-    const [dispenserNumber, setDispenserNumber] = useState("")
-    const [weeklySchedule, setWeeklySchedule] = useState([])
-    const [dispenseTimes, setDispenseTimes] = useState("")
+    const [medicationName, setMedicationName] = useState("");
+    const [pillsInDispenser, setPillsInDispenser] = useState(0);
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
+    const [dispenserNumber, setDispenserNumber] = useState("");
+    const [weeklySchedule, setWeeklySchedule] = useState([]);
+    const [dispenseTimes, setDispenseTimes] = useState("");
+    const [dispenseTimesList, setDispenseTimesList] = useState([]);
 
     const [ medicationOne, changeMedicationOne ] = useState(false);
     const [ medicationTwo, changeMedicationTwo ] = useState(false);
+
+    const [ medicationOneDocId, setMedicationOneDocId ] = useState("");
+    const [ medicationTwoDocId, setMedicationTwoDocId ] = useState("");
+
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
     const handleMondayClick = () => {changeMonday(!Monday);};
     const handleTuesdayClick = () => {changeTuesday(!Tuesday);};
@@ -76,13 +88,14 @@ export default function SettingsScreen({ navigation }) {
         //      represented by the boolean variables medicationOne and medicationTwo
         //      medicationOne = True = change Medication in container A.
 
-        // CONFIRM NEW PASSWORD AND CONFIRM NEW PASSWORD ARE THE SAME
-        const new_password = "";
-        const confirm_new_password = "";
-        
-        if (new_password != confirm_new_password) {
-            alert('YOU FOOL');
-        }
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        const schedArray = [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday];
+        setWeeklySchedule(schedArray);
+
+        const timesList = dispenseTimes.split(',');
+        setDispenseTimesList(timesList);
 
         if (medicationOne) {
             // UPDATE MEDICATION ONE!!!
@@ -90,10 +103,69 @@ export default function SettingsScreen({ navigation }) {
             //      change weekly schedule, and change daily schedule
             // ESHA: all you should have to do is scrape the text off each user input and query the db to update the info.
             // NOTE: Refill Medication should add the user inputted number to the existing number in the db
-            alert('THIS BUTTON WOULD UPDATE MEDICATION ONE INFO')
+
+            // TODO: update notification times with this....lot of work lol
+            // TODO: delete notifications from sched db with this also
+
+            // get docid to reference specific doc in meds
+            db.collection("meds").where("user", "==", user.uid)
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    if (doc.data().dispenserNumber == "1") {
+                        setMedicationOneDocId(doc.id);
+                        console.log("docid is ", doc.id);
+                    }
+                })
+            })
+            .then(() => {
+                updateDoc(doc(db, "meds", medicationOneDocId), {
+                    startDate: startDate,
+                    endDate: endDate,
+                    weeklySchedule: weeklySchedule,
+                    dispenseTimes: dispenseTimesList,
+                    pillsInDispenser: increment(pillsInDispenser)
+                })
+            })
+            .then(() => {
+                console.log("Medication updated successfully");
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode, errorMessage);
+            })
+
         } else {
             // UPDATE MEDICATION TWO!!!
-            alert('THIS BUTTON WOULD UPDATE MEDICATION TWO INFO');
+            // get docid to reference specific doc in meds
+            db.collection("meds").where("user", "==", user.uid)
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    if (doc.data().dispenserNumber == "2") {
+                        setMedicationTwoDocId(doc.id);
+                        console.log("docid is ", doc.id);
+                    }
+                })
+            })
+            .then(() => {
+                updateDoc(doc(db, "meds", medicationTwoDocId), {
+                    startDate: startDate,
+                    endDate: endDate,
+                    weeklySchedule: weeklySchedule,
+                    dispenseTimes: dispenseTimes,
+                    pillsInDispenser: increment(pillsInDispenser)
+                })
+            })
+            .then(() => {
+                console.log("Medication updated successfully");
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode, errorMessage);
+            })
         }
     }
 
@@ -101,24 +173,134 @@ export default function SettingsScreen({ navigation }) {
         // Delete medication A or B or both!!
         // ESHA: The medications to delete are represented by the boolean variables Dispenser1 and Dispenser2
         //      If chosen, all you should have to do is delete any db entry for those containers.
+
+        // TODO: delete all notifications for respective dispensers
+
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        // Helper function to delete medication from the 'sched' collection
+        const deleteMedicationFromSched = async (dispenserNumber) => {
+            try {
+                const schedSnapshot = await db.collection("sched").where("user", "==", user.uid).get();
+
+                // Use Promise.all to wait for all deletion operations to complete
+                await Promise.all(
+                    schedSnapshot.docs.map(async (medToDelete) => {
+                        if (medToDelete.data().dispenserNumber == dispenserNumber) {
+                            console.log("Doc id for sched delete is ", medToDelete.id);
+                            // TODO: delete notifications somewhere here ?
+                            await deleteDoc(doc(db, "sched", medToDelete.id));
+                            console.log("Deleted doc id ", medToDelete.id);
+                        }
+                    })
+                );
+
+                console.log("Deleted meds from sched");
+            } catch (error) {
+                console.error("Error deleting medication from 'sched' collection:", error);
+                throw error; // Propagate the error up to the outer catch block
+            }
+        };
+
+        // Helper function to delete medication from the 'meds' collection
+        const deleteMedicationFromMeds = async (dispenserNumber) => {
+            try {
+                const medsSnapshot = await db.collection("meds").where("user", "==", user.uid).get();
+
+                // Use Promise.all to wait for all deletion operations to complete
+                await Promise.all(
+                    medsSnapshot.docs.map(async (medToDelete) => {
+                        if (medToDelete.data().dispenserNumber == dispenserNumber) {
+                            console.log("Doc id for meds delete is ", medToDelete.id);
+                            await deleteDoc(doc(db, "meds", medToDelete.id));
+                            console.log("Deleted doc id ", medToDelete.id);
+                        }
+                    })
+                );
+                console.log("Deleted meds from meds");
+            } catch (error) {
+                console.error("Error deleting medication from 'meds' collection:", error);
+                throw error; // Propagate the error up to the outer catch block
+            }
+        };
+
+
         if (Dispenser1 && !Dispenser2) {
             // DELETE ONLY DISPENSER ONE
             alert('THIS BUTTON WOULD DELETE DISPENSER 1');
+
+            deleteMedicationFromSched("1")
+            .then(() => {
+                // Additional deletion logic specific to Dispenser1 if needed
+                return deleteMedicationFromMeds("1")
+            })
+            .catch((error) => {
+                // Handle errors from the deletion process
+                console.error("Error deleting medication from Dispenser 1:", error);
+                // Add any specific error handling for Dispenser1 here
+            });
+
+
         } else if (!Dispenser1 && Dispenser2) {
             // DELETE ONLY DISPENSER TWO
             alert('THIS BUTTON WOULD DELETE DISPENSER 2');
+
+            deleteMedicationFromSched("2")
+            .then(() => {
+                // Additional deletion logic specific to Dispenser1 if needed
+                return deleteMedicationFromMeds("2")
+            })
+            .catch((error) => {
+                // Handle errors from the deletion process
+                console.error("Error deleting medication from Dispenser 2:", error);
+            });
+
         } else if (Dispenser1 && Dispenser2) {
             // DELETE BOTH DISPENSERS
             alert('THIS BUTTON WOULD DELETE DISPENSER 1 AND DISPENSER 2');
+
+            deleteMedicationFromSched("1")
+            .then(() => {
+                deleteMedicationFromMeds("1");
+            })
+            .then(() => {
+                deleteMedicationFromSched("2");
+            })
+            .then(() => {
+                deleteMedicationFromMeds("2");
+            })
+            .catch((error) => {
+                console.error("Error deleting medication from Dispenser 1 and 2:", error);
+            });
+
+
         } else {
             alert('PLEASE CHOOSE A DISPENSER');
         }
     }
 
     const __changeCredentials = () => {
-        // ESHA: You should just have to scrape the info off of the user inputs and 
-        //      query the db to change the credentials for the user.
-        alert('THIS BUTTON WOULD CHANGE THE CREDENTIALS OF ThE CURRENT USER');
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        // CONFIRM NEW PASSWORD AND CONFIRM NEW PASSWORD ARE THE SAME
+        if (newPassword != confirmNewPassword) {
+            alert('YOU FOOL');
+            return;
+        }
+
+        updatePassword(user, newPassword).then(() => {
+            console.log("Password update successful");
+            alert("Password update successful!");
+            // Update successful.
+        }).catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorCode, errorMessage);
+        });
+
+
     }
 
     return (
@@ -153,8 +335,8 @@ export default function SettingsScreen({ navigation }) {
                             </Pressable>
                             <Text style={styles.title}>CHANGE CREDENTIALS</Text> 
                         </View>
-                        <TextInput style={styles.input} placeholder="New Password" placeholderTextColor={'grey'}/>
-                        <TextInput style={styles.input} placeholder="Confirm New Password" placeholderTextColor={'grey'}/>
+                        <TextInput style={styles.input} placeholder="New Password" placeholderTextColor={'grey'} onChangeText={text => setNewPassword(text)}/>
+                        <TextInput style={styles.input} placeholder="Confirm New Password" placeholderTextColor={'grey'} onChangeText={text => setConfirmNewPassword(text)}/>
                         <Pressable style={{width: 200, height: 30, backgroundColor: 'mediumpurple', borderWidth: 2, borderRadius: 5, borderColor: 'black', justifyContent: 'center', alignItems: 'center', marginTop: 5, marginBottom: 10, padding: 2}} 
                             onPress={__changeCredentials}>
                             <Text style={{fontWeight: 'bold', fontSize: 15, color: 'white'}}>Change Credentials</Text>
@@ -178,7 +360,7 @@ export default function SettingsScreen({ navigation }) {
                                 <TextInput style={[styles.input, {backgroundColor: 'lightgray'}]} editable={false} value={medicationOne ? "A" : "B"}/>
                                 <Text style={styles.text}>Refill Medication?</Text>
                                 <TextInput style={styles.input} placeholder="Pill Quantity" placeholderTextColor={'grey'} 
-                                    onChangeText={text => setPillQuantity(text)}
+                                    onChangeText={text => setPillsInDispenser(text)}
                                     keyboardType='numeric'
                                 />
                                 <Text style={styles.text}>Change Start Date?</Text>

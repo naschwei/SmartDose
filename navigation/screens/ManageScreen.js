@@ -21,7 +21,7 @@ import { setNotifications, scheduleWeeklyNotification } from '../../notifs.js';
 export default function ManageScreen({ navigation }) {
 
     const [medicationName, setMedicationName] = useState("");
-    const [pillQuantity, setPillQuantity] = useState("");
+    const [pillQuantity, setPillQuantity] = useState(0);
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [dispenserNumber, setDispenserNumber] = useState("");
@@ -110,11 +110,11 @@ export default function ManageScreen({ navigation }) {
         const auth = getAuth();
         const user = auth.currentUser;
 
-        if (Dispenser1) {
-            setDispenserNumber("1");
-        } else {
-            setDispenserNumber("2");
-        }
+        // if (Dispenser1) {
+        //     setDispenserNumber("1");
+        // } else {
+        //     setDispenserNumber("2");
+        // }
 
         const schedArray = [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday];
         setWeeklySchedule(schedArray);
@@ -146,7 +146,6 @@ export default function ManageScreen({ navigation }) {
                     scheduleWeeklyNotification(medicationName, i, dispenseTimesList[j], (notifId) => {
 
                         if (weeklySchedule[i] == true) {
-                            // console.log("if statement here");
                             let schedDocInfo = {
                                 user: user.uid,
                                 medicationName: medicationName,
@@ -157,7 +156,8 @@ export default function ManageScreen({ navigation }) {
                                 startDate: startDate,
                                 endDate: endDate,
                                 pillQuantity: pillQuantity,
-                                notificationId: notifId
+                                notificationId: notifId,
+                                dispenserNumber: dispenserNumber,
                             }
                             addDoc(collection(db, "sched"), schedDocInfo)
                             .then(() => {
