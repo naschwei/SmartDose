@@ -278,9 +278,11 @@ export default function ManageScreen({ navigation }) {
         </Camera>
         )) : (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Text style={{top: -110, fontWeight: 'bold', fontSize: 28}}>Select Dispenser</Text>
-            <Text style={{width: 300, top:-90, fontSize: 14}}>(1) The grid below matches the containers on your SmartDose Dispenser</Text>
-            <Text style={{width: 300, top: -80, fontSize: 14}}>(2) Select a container and hit the 'Add New Medication' button!</Text>
+            <Text style={{top: -40, fontWeight: 'bold', fontSize: 28}}>Select Dispenser</Text>
+            <View style={{top: -50, margin: 50, width: 350, height: 100, backgroundColor: 'grey', borderWidth: 5, borderRadius: 5, borderColor: 'black', justifyContent: 'center', alignItems: 'center'}}>
+                <Text style={{width: 300, fontSize: 14, color: 'white', fontWeight: 'bold'}}>(1) The grid below matches the containers on your SmartDose Dispenser</Text>
+                <Text style={{width: 300, fontSize: 14, color: 'white', fontWeight: 'bold'}}>(2) Select a container and hit the 'Add New Medication' button!</Text>
+            </View>
             <View style={{top: -50, height: 300, width: 375, backgroundColor: 'grey', borderWidth: 10, borderRadius: 25, borderColor: 'black', justifyContent: 'center', alignItems: 'center'}}>
                 <View style={{flexDirection: 'row', justifyContent: 'space-evenly', width: 350}}>
                     <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
