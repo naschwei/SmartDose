@@ -8,6 +8,8 @@ import { getAuth, updatePassword } from 'firebase/auth';
 import { doc, setDoc, collection, increment, updateDoc, deleteDoc } from 'firebase/firestore';
 import { auth, db } from "../../firebase.js"
 
+import { setNotifications, scheduleWeeklyNotification, cancelNotification } from '../../notifs.js';
+
 
 export default function SettingsScreen({ navigation }) {
     const [ isModalOneVisible, setIsModalOneVisible ] = useState(false);
@@ -84,9 +86,6 @@ export default function SettingsScreen({ navigation }) {
 
     const __changeMedication = () => {
         // Determine which medication needs to be changed
-        // ESHA: The medications they are chosing to change is A or B, 
-        //      represented by the boolean variables medicationOne and medicationTwo
-        //      medicationOne = True = change Medication in container A.
 
         const auth = getAuth();
         const user = auth.currentUser;
@@ -101,11 +100,11 @@ export default function SettingsScreen({ navigation }) {
             // UPDATE MEDICATION ONE!!!
             // User has the option to refill medication, change start date, change end date, 
             //      change weekly schedule, and change daily schedule
-            // ESHA: all you should have to do is scrape the text off each user input and query the db to update the info.
             // NOTE: Refill Medication should add the user inputted number to the existing number in the db
 
-            // TODO: update notification times with this....lot of work lol
-            // TODO: delete notifications from sched db with this also
+            // TODO: update notification times with this....lot of work lol (SECOND)
+            // TODO: delete notifications from sched db with this also (FIRST)
+            // TODO: add logic to keep track of if inputs are empty. if empty, do not update in db
 
             // get docid to reference specific doc in meds
             db.collection("meds").where("user", "==", user.uid)
@@ -171,10 +170,6 @@ export default function SettingsScreen({ navigation }) {
 
     const __deleteMedication = () => {
         // Delete medication A or B or both!!
-        // ESHA: The medications to delete are represented by the boolean variables Dispenser1 and Dispenser2
-        //      If chosen, all you should have to do is delete any db entry for those containers.
-
-        // TODO: delete all notifications for respective dispensers
 
         const auth = getAuth();
         const user = auth.currentUser;
@@ -184,12 +179,12 @@ export default function SettingsScreen({ navigation }) {
             try {
                 const schedSnapshot = await db.collection("sched").where("user", "==", user.uid).get();
 
-                // Use Promise.all to wait for all deletion operations to complete
                 await Promise.all(
                     schedSnapshot.docs.map(async (medToDelete) => {
                         if (medToDelete.data().dispenserNumber == dispenserNumber) {
                             console.log("Doc id for sched delete is ", medToDelete.id);
                             // TODO: delete notifications somewhere here ?
+                            await cancelNotification(medToDelete.data().notificationId);
                             await deleteDoc(doc(db, "sched", medToDelete.id));
                             console.log("Deleted doc id ", medToDelete.id);
                         }
@@ -208,7 +203,6 @@ export default function SettingsScreen({ navigation }) {
             try {
                 const medsSnapshot = await db.collection("meds").where("user", "==", user.uid).get();
 
-                // Use Promise.all to wait for all deletion operations to complete
                 await Promise.all(
                     medsSnapshot.docs.map(async (medToDelete) => {
                         if (medToDelete.data().dispenserNumber == dispenserNumber) {
@@ -221,7 +215,7 @@ export default function SettingsScreen({ navigation }) {
                 console.log("Deleted meds from meds");
             } catch (error) {
                 console.error("Error deleting medication from 'meds' collection:", error);
-                throw error; // Propagate the error up to the outer catch block
+                throw error; 
             }
         };
 

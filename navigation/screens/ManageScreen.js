@@ -110,11 +110,11 @@ export default function ManageScreen({ navigation }) {
         const auth = getAuth();
         const user = auth.currentUser;
 
-        // if (Dispenser1) {
-        //     setDispenserNumber("1");
-        // } else {
-        //     setDispenserNumber("2");
-        // }
+        if (Dispenser1) {
+            setDispenserNumber("1");
+        } else {
+            setDispenserNumber("2");
+        }
 
         const schedArray = [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday];
         setWeeklySchedule(schedArray);

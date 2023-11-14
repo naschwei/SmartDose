@@ -126,7 +126,7 @@ export default function HomeScreen() {
                     <StyledButton onPress={handleSignOut}>
                             <ButtonText> Logout </ButtonText>
                     </StyledButton>
-                    <StyledButtonRefresh onPress={() => alert("This will REFRESH the screen. Are you sure you want to REFRESH?")}>
+                    <StyledButtonRefresh onPress={getDailyMedications}>
                             <ButtonText> Refresh </ButtonText>
                     </StyledButtonRefresh>
                 </View>
