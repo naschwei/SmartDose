@@ -3,6 +3,7 @@ import { View, Text, Image, StyleSheet, Dimensions, Button } from 'react-native'
 import {StatusBar} from 'expo-status-bar';
 
 import {Octicons, Ionicons, Fontisto} from '@expo/vector-icons';
+import { IconButton } from 'react-native-paper';
 
 
 import {
@@ -10,7 +11,7 @@ import {
     InnerContainer,
     StyledButton,
     ButtonText,
-    WelcomeImage,
+    StyledButtonRefresh,
     Avatar
 } from './../../components/styles';
 
@@ -116,12 +117,19 @@ export default function HomeScreen() {
                         }}>Email: { getAuth().currentUser?.email }</Text>
                     </View>
                     <View style={{width:"45%",alignItems:"flex-end"}}>
-                        <Avatar resizeMode="cover" source={require('./../../assets/icon.png')} />
+                        <Avatar resizeMode="cover" source={require('./../../assets/smart_dose_logo.png')} />
                     </View>
                 </View>
-                <StyledButton onPress={handleSignOut}>
+                <View style={{ flexDirection:"row",
+                                justifyContent: "space-between",  
+                                alignItems: "center" }}>
+                    <StyledButton onPress={handleSignOut}>
                             <ButtonText> Logout </ButtonText>
-                </StyledButton>
+                    </StyledButton>
+                    <StyledButtonRefresh onPress={() => alert("This will REFRESH the screen. Are you sure you want to REFRESH?")}>
+                            <ButtonText> Refresh </ButtonText>
+                    </StyledButtonRefresh>
+                </View>
             </View>
             
             <InnerContainer>

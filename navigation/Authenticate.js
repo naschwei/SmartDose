@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Button } from 'react-native';
-import { IconButton } from 'react-native-paper';
 
 // imports for navigation tab
 import { NavigationContainer } from '@react-navigation/native';
@@ -70,14 +69,6 @@ function MainContainer() {
                         headerStyle: {backgroundColor: "#6D28D9"}, 
                         headerTintColor: 'white', 
                         headerTitleStyle: {fontSize: 25}, 
-                        headerRight: () => (
-                            <IconButton
-                                icon="refresh"
-                                iconColor="#FFF"
-                                size={40}
-                                onPress={() => alert("This will REFRESH the screen. Are you sure you want to REFRESH?")}
-                            />
-                        )
                     }}
         />
         <Tab.Screen name={manageName} component={ManageScreen} options={{ headerTitle:'SmartDose', headerStyle: {backgroundColor: "#6D28D9"}, headerTintColor: 'white', headerTitleStyle: {fontSize: 25}}}/> 

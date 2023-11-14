@@ -124,16 +124,25 @@ export const StyledButton = styled.TouchableOpacity`
     background-color: ${brand};
     justify-content: center;
     align-items: center;
+    text-align: center;
     border-radius: 5px;
     margin-vertical: 5px;
     height: 60px;
+    width: 100px;
+    align-items: flex-end;
+    left: 0;
+`;
 
-    /* TODO: These conditions don't work! */
-    /*${(props) => props.google == true && `
-        background-color: ${green};
-        flex-direction: row;
-        justify-content: center;
-    `}*/
+export const StyledButtonRefresh = styled.TouchableOpacity`
+    padding: 15px;
+    background-color: ${brand};
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-radius: 5px;
+    margin-vertical: 5px;
+    height: 60px;
+    width: 120px;
 `;
 
 export const ButtonText = styled.Text`
