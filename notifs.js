@@ -101,7 +101,7 @@ export async function scheduleWeeklyNotification(medName, weekday, time, callbac
     const id = await Notifications.scheduleNotificationAsync({
       content: {
         title: "Time to take your medicine!",
-        body: medName,
+        body: "Medicine Name: ", medName,
         // sound: 'default',
       },
       trigger: {

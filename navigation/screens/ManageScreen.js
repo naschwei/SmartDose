@@ -2,7 +2,7 @@
 import { setStatusBarBackgroundColor } from 'expo-status-bar';
 import { getAuth } from 'firebase/auth';
 import { addDoc, doc, setDoc, collection } from 'firebase/firestore';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { ImageBackground, Switch, Pressable, TouchableOpacity, SafeAreaView, Button, View, TextInput, StyleSheet, Text, KeyboardAvoidingView } from 'react-native';
 import Modal from 'react-native-modal';
 import {Camera, CameraType} from 'expo-camera';
@@ -106,44 +106,56 @@ export default function ManageScreen({ navigation }) {
         }
     }
  
-    const addMedication = () => {
-        const auth = getAuth();
-        const user = auth.currentUser;
+    const addMedication = async () => {
 
-        if (Dispenser1) {
-            setDispenserNumber("1");
-        } else {
-            setDispenserNumber("2");
-        }
+        try {
+            const auth = getAuth();
+            const user = auth.currentUser;
 
-        const schedArray = [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday];
-        setWeeklySchedule(schedArray);
+            const updateStateAndContinue = async () => {
+                console.log("gets inside updatestatesnadcontinue")
+                const schedArray = [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday];
+                setWeeklySchedule(schedArray);
 
-        const timesList = dispenseTimes.split(',');
-        setDispenseTimesList(timesList);
+                console.log("setsweeklsyschedule")
 
-        // console.log(dispenseTimesList);
+                const timesList = dispenseTimes.split(',');
+                setDispenseTimesList(timesList);
 
-        const medsDocInfo = {
-            user: user.uid,
-            medicationName: medicationName,
-            pillQuantity: pillQuantity,
-            startDate: startDate,
-            endDate: endDate,
-            dispenserNumber: dispenserNumber,
-            pillsInDispenser: 0,
-            weeklySchedule: weeklySchedule,
-            dispenseTimes: dispenseTimesList
-        };
-        addDoc(collection(db, "meds"), medsDocInfo)
-        .then(() => {
+                console.log("stsdispensetimes")
+
+                if (Dispenser1) {
+                    setDispenserNumber("1");
+                } else {
+                    setDispenserNumber("2");
+                }
+                
+                console.log("sets dispenser num")
+            };
+
+            await updateStateAndContinue();
+
+            const medsDocInfo = {
+                user: user.uid,
+                medicationName: medicationName,
+                pillQuantity: pillQuantity,
+                startDate: startDate,
+                endDate: endDate,
+                dispenserNumber: dispenserNumber,
+                pillsInDispenser: 0,
+                weeklySchedule: weeklySchedule,
+                dispenseTimes: dispenseTimesList
+            };
+
+            await addDoc(collection(db, "meds"), medsDocInfo);
+            
             console.log("Successfully added medication.");
 
             for (let i = 0; i < weeklySchedule.length; i++) {
                 for (let j = 0; j < dispenseTimesList.length; j++) {
                     // console.log("dispense time j is ", dispenseTimesList[j]);
 
-                    scheduleWeeklyNotification(medicationName, i, dispenseTimesList[j], (notifId) => {
+                    scheduleWeeklyNotification(medicationName, i, dispenseTimesList[j], async (notifId) => {
 
                         if (weeklySchedule[i] == true) {
                             let schedDocInfo = {
@@ -159,17 +171,10 @@ export default function ManageScreen({ navigation }) {
                                 notificationId: notifId,
                                 dispenserNumber: dispenserNumber,
                             }
-                            addDoc(collection(db, "sched"), schedDocInfo)
-                            .then(() => {
-                                console.log("Successfully added schedule for medication.");
-                                // console.log(schedDocInfo);
-                                toggleModal();
-                            })
-                            .catch((error) => {
-                                const errorCode = error.code;
-                                const errorMessage = error.message;
-                                console.log(errorCode, errorMessage);
-                            })
+                            await addDoc(collection(db, "sched"), schedDocInfo);
+                            console.log("Successfully added schedule for medication.");
+                            // console.log(schedDocInfo);
+                            toggleModal();
                         }
 
                     })
@@ -177,12 +182,12 @@ export default function ManageScreen({ navigation }) {
                     
                 }
             }
-        })
-        .catch((error) => {
+        } catch (error) {
             const errorCode = error.code;
             const errorMessage = error.message;
             console.log(errorCode, errorMessage);
-        })
+        }
+
     }
 
     const CameraPreview = ({photo}) => {
