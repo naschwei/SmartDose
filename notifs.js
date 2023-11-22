@@ -166,8 +166,18 @@ async function registerForPushNotificationsAsync() {
   return token;
 }
 
+// Cancels notification given notification identifier
 export async function cancelNotification(notifId){
   await Notifications.cancelScheduledNotificationAsync(notifId);
+}
+
+// Cancels all notifications
+export async function cancelAllNotifications() {
+  Notifications.getAllScheduledNotificationsAsync()
+  .then((output) => {
+    console.log(output);
+  })
+  await Notifications.cancelAllScheduledNotificationsAsync();
 }
 
 

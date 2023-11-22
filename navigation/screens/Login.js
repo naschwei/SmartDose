@@ -56,7 +56,6 @@ const Login = () => {
             .then(userCredentials => {
                 const user = userCredentials.user;
                 console.log('Logged in with: ', user.email);
-                alert(user.email);
             })
             .catch((error) => {
                 const errorCode = error.code;

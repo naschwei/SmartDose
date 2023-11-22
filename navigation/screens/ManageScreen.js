@@ -1,7 +1,7 @@
 //import * as React from 'react';
 import { setStatusBarBackgroundColor } from 'expo-status-bar';
 import { getAuth } from 'firebase/auth';
-import { addDoc, doc, setDoc, collection } from 'firebase/firestore';
+import { addDoc, doc, setDoc, collection, getDocs } from 'firebase/firestore';
 import React, {useState, useEffect} from 'react';
 import { ImageBackground, Switch, Pressable, TouchableOpacity, SafeAreaView, Button, View, TextInput, StyleSheet, Text, KeyboardAvoidingView } from 'react-native';
 import Modal from 'react-native-modal';
@@ -16,6 +16,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { auth, db } from "../../firebase.js"
 
 import { setNotifications, scheduleWeeklyNotification } from '../../notifs.js';
+import { Timeline } from 'react-native-calendars';
 
 
 export default function ManageScreen({ navigation }) {
@@ -56,21 +57,53 @@ export default function ManageScreen({ navigation }) {
     }
 
     const toggleModal = () => {
-        if (Dispenser1 && Dispenser2) {
-            alert('PLEASE SELECT ONLY ONE DISPENSER');
-        } else if (Dispenser1 == false && Dispenser2 == false) {
-            alert('PLEASE SELECT A DISPENSER');
-        } else {
-            setIsModalVisible(!isModalVisible);
 
-            // set the number of the dispenser selected.
-            if (isModalVisible) {
-                if (Dispenser1) {
-                    setDispenserNumber('1');
+        const user = auth.currentUser;
+
+        if (Dispenser1 && Dispenser2) {
+            alert('Please select only one dispenser.');
+        } else if (Dispenser1 == false && Dispenser2 == false) {
+            alert('Please select a dispenser.');
+        } else {
+
+            let dispenserOneTaken = false;
+            let dispenserTwoTaken = false;
+
+            db.collection("meds").where("user", "==", user.uid)
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    if (doc.data().dispenserNumber == '1') {
+                        dispenserOneTaken = true;
+                    } else if (doc.data().dispenserNumber == '2') {
+                        dispenserTwoTaken = true;
+                    }
+                });
+            })
+            .then(() => {
+                if (Dispenser1 && dispenserOneTaken) {
+                    alert('Dispenser 1 already has a medication assigned to it.');
+                    return;
+                } else if (Dispenser2 && dispenserTwoTaken) {
+                    alert('Dispenser 2 already has a medication assigned to it.');
+                    return;
                 } else {
-                    setDispenserNumber('2');
+                    setIsModalVisible(!isModalVisible);
+                    // set the number of the dispenser selected.
+                    if (isModalVisible) {
+                        if (Dispenser1) {
+                            setDispenserNumber('1');
+                        } else {
+                            setDispenserNumber('2');
+                        }
+                    }
+                    return;
                 }
-            }
+            })
+            .catch((error) => {
+                console.log( error);
+            })
+            
         }
     };
 
@@ -105,7 +138,31 @@ export default function ManageScreen({ navigation }) {
             alert('Access denied');
         }
     }
+
+    const resetStates = async () => {
+        await setMedicationName("");
+        await setPillQuantity(0);
+        await setStartDate("");
+        await setEndDate("");
+        await setDispenserNumber("");
+        await setWeeklySchedule([]);
+        await setDispenseTimes("");
+        await setDispenseTimesList([]);
+
+        await setIsModalVisible(false);
+        await changeMonday(false);
+        await changeTuesday(false);
+        await changeWednesday(false);
+        await changeThursday(false);
+        await changeFriday(false);
+        await changeSaturday(false);
+        await changeSunday(false);
+
+        await changeDispenserOne(false);
+        await changeDispenserTwo(false);
+    }
  
+
     const addMedication = async () => {
 
         try {
@@ -114,20 +171,21 @@ export default function ManageScreen({ navigation }) {
 
             const updateStateAndContinue = async () => {
                 console.log("gets inside updatestatesnadcontinue")
-                const schedArray = [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday];
-                setWeeklySchedule(schedArray);
+
+                await setWeeklySchedule([Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]);
+                console.log("weeklyschedule is ", weeklySchedule);
 
                 console.log("setsweeklsyschedule")
 
-                const timesList = dispenseTimes.split(',');
-                setDispenseTimesList(timesList);
+                await setDispenseTimesList(dispenseTimes.split(','));
+                console.log("timeslist is ", dispenseTimesList);
 
                 console.log("stsdispensetimes")
 
                 if (Dispenser1) {
-                    setDispenserNumber("1");
+                    await setDispenserNumber("1");
                 } else {
-                    setDispenserNumber("2");
+                    await setDispenserNumber("2");
                 }
                 
                 console.log("sets dispenser num")
@@ -135,46 +193,63 @@ export default function ManageScreen({ navigation }) {
 
             await updateStateAndContinue();
 
+
+            const tempWeeklySchedule = [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday];
+            const tempDispenseTimesList = dispenseTimes.split(',');
+            let tempDispenserNumber = "";
+
+            if (Dispenser1) {
+                tempDispenserNumber = "1";
+            } else {
+                tempDispenserNumber = "2";
+            }
+
+            console.log(tempWeeklySchedule);
+            console.log(tempDispenseTimesList);
+            console.log(tempDispenserNumber);
+
             const medsDocInfo = {
                 user: user.uid,
                 medicationName: medicationName,
                 pillQuantity: pillQuantity,
                 startDate: startDate,
                 endDate: endDate,
-                dispenserNumber: dispenserNumber,
+                dispenserNumber: tempDispenserNumber,
                 pillsInDispenser: 0,
-                weeklySchedule: weeklySchedule,
-                dispenseTimes: dispenseTimesList
+                weeklySchedule: tempWeeklySchedule,
+                dispenseTimes: tempDispenseTimesList
             };
 
             await addDoc(collection(db, "meds"), medsDocInfo);
             
             console.log("Successfully added medication.");
 
-            for (let i = 0; i < weeklySchedule.length; i++) {
-                for (let j = 0; j < dispenseTimesList.length; j++) {
+            for (let i = 0; i < tempWeeklySchedule.length; i++) {
+                for (let j = 0; j < tempDispenseTimesList.length; j++) {
                     // console.log("dispense time j is ", dispenseTimesList[j]);
 
-                    scheduleWeeklyNotification(medicationName, i, dispenseTimesList[j], async (notifId) => {
+                    console.log("gets inside for loop for ", i, j);
 
-                        if (weeklySchedule[i] == true) {
+                    scheduleWeeklyNotification(medicationName, i, tempDispenseTimesList[j], async (notifId) => {
+
+                        if (tempWeeklySchedule[i] == true) {
                             let schedDocInfo = {
                                 user: user.uid,
                                 medicationName: medicationName,
                                 dayOfWeek: i,
-                                dispenseTime: dispenseTimesList[j],
+                                dispenseTime: tempDispenseTimesList[j],
                                 status: 'Scheduled',
                                 delayedTo: '',
                                 startDate: startDate,
                                 endDate: endDate,
                                 pillQuantity: pillQuantity,
                                 notificationId: notifId,
-                                dispenserNumber: dispenserNumber,
+                                dispenserNumber: tempDispenserNumber,
                             }
                             await addDoc(collection(db, "sched"), schedDocInfo);
                             console.log("Successfully added schedule for medication.");
                             // console.log(schedDocInfo);
-                            toggleModal();
+                            
                         }
 
                     })
@@ -182,6 +257,9 @@ export default function ManageScreen({ navigation }) {
                     
                 }
             }
+            await resetStates();
+            setIsModalVisible(!isModalVisible);
+            // toggleModal();
         } catch (error) {
             const errorCode = error.code;
             const errorMessage = error.message;
@@ -189,6 +267,10 @@ export default function ManageScreen({ navigation }) {
         }
 
     }
+
+
+   
+
 
     const CameraPreview = ({photo}) => {
         // console.log('sdsfds', photo)

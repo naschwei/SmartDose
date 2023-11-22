@@ -183,7 +183,7 @@ export default function SettingsScreen({ navigation }) {
                     schedSnapshot.docs.map(async (medToDelete) => {
                         if (medToDelete.data().dispenserNumber == dispenserNumber) {
                             console.log("Doc id for sched delete is ", medToDelete.id);
-                            // TODO: delete notifications somewhere here ?
+                            // delete notifications here
                             await cancelNotification(medToDelete.data().notificationId);
                             await deleteDoc(doc(db, "sched", medToDelete.id));
                             console.log("Deleted doc id ", medToDelete.id);

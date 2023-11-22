@@ -23,8 +23,5 @@ npm install --save react-native-paper
 npm start
 // scan the QR code, and wait for the project to load
 
-
-// For expo notifications to work...create an expo account or use an existing account. Run...
-expo login
-// Enter your username and password when prompted.
-// Create a project for SmartDose and copy the project id. Replace project id variable for all notification functionality with the id. 
+// If the above doesn't work, try running...
+npm expo start --tunnel -c

@@ -28,7 +28,7 @@ import { useNavigation } from '@react-navigation/native';
 
 
 import * as Notifications from 'expo-notifications';
-import { setNotifications, immediateNotification } from '../../notifs.js';
+import { setNotifications, immediateNotification, cancelAllNotifications } from '../../notifs.js';
 
 
 
