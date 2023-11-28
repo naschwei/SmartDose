@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, Dimensions, Button } from 'react-native';
+import { View, Text, Image, StyleSheet, Dimensions, Button, TouchableOpacity } from 'react-native';
 import {StatusBar} from 'expo-status-bar';
 
 import {Octicons, Ionicons, Fontisto} from '@expo/vector-icons';
 import { IconButton } from 'react-native-paper';
 
+import { Agenda } from "react-native-calendars";
+import AgendaCard from './../../components/agendaCard';
 
 import {
     Colors,
@@ -83,6 +85,62 @@ export default function HomeScreen() {
 
     }, []);
 
+    const timeToString = (time) => {
+        const date = new Date(time);
+        return date.toISOString().split('T')[0];
+    }
+
+    const PillTracker = () => {
+        const [items, setItmes] = useState({});
+    
+        const loadItems = (day) => {
+            setTimeout(() => {
+                for (let i = -15; i < 85; i++) {
+                    const time = day.timestamp + i * 24 * 60 * 60 * 1000;
+                    const strTime = timeToString(time);
+            
+                    if (!items[strTime]) {
+                    items[strTime] = [];
+                    
+                    const numItems = Math.floor(Math.random() * 3 + 1);
+                    for (let j = 0; j < numItems; j++) {
+                        items[strTime].push({
+                        name: 'Item for ' + strTime + ' #' + j,
+                        height: Math.max(50, Math.floor(Math.random() * 150)),
+                        day: strTime
+                        });
+                    }
+                    }
+                }
+              
+                const newItems = {};
+                Object.keys(items).forEach(key => {
+                    newItems[key] = items[key];
+                    });
+                    setItmes(newItems);
+                }, 1000);
+            };
+        
+        const renderItem = (item) => {
+            return (
+                <TouchableOpacity style= {{marginRight: 10, marginTop: 17}}>
+                    <AgendaCard>
+                        <Text> Medication </Text>
+                    </AgendaCard>
+                </TouchableOpacity>
+            )
+        }
+        return (
+            <View style={{flex: 1}}>
+                <Agenda
+                    items={items}
+                    loadItemsForMonth={loadItems}
+                    selected={'2023-11-01'}
+                    renderItem={renderItem}
+                />
+            </View>
+        );
+    }
 
 
     return (
@@ -144,6 +202,8 @@ export default function HomeScreen() {
                     </View>
                 )}
             </InnerContainer>
+
+            <PillTracker></PillTracker>
             </>
         </View>
     );
