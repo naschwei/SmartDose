@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, Dimensions, Button, TouchableOpacity } from 'react-native';
 import {StatusBar} from 'expo-status-bar';
+import moment from "moment";
 
 import {Octicons, Ionicons, Fontisto} from '@expo/vector-icons';
 import { IconButton } from 'react-native-paper';
@@ -14,7 +15,7 @@ import {
     StyledButton,
     ButtonText,
     StyledButtonRefresh,
-    Avatar
+    StyledButtonTODAY
 } from './../../components/styles';
 
 const {primary, tertiary, brand, darkLight} = Colors;
@@ -32,7 +33,38 @@ import { useNavigation } from '@react-navigation/native';
 import * as Notifications from 'expo-notifications';
 import { setNotifications, immediateNotification, cancelAllNotifications } from '../../notifs.js';
 
-
+// NEW: This stuff is to add conditional rendering so that the cards only show up on the correct day (ie. TODAY)
+function MedicationCard () { 
+    return (
+    <InnerContainer>
+        {userMedications.map(med => 
+            <View style= {styles.cardContainer}>
+                <View style={styles.cardContent}> 
+                    <Text style={styles.titleStyle}> {med.medicationName} </Text>
+                    <Text> {med.pillQuantity} pills</Text>
+                    <Text> {med.dispenseTime} </Text>
+                    <Ionicons name="checkmark-circle-outline" size={50} iconColor="#5F8575" style={{ position: 'absolute', right: 0 }}/>
+                </View>
+            </View>
+        )}
+    </InnerContainer>
+    );
+}
+class MedCard extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            name: props.name,
+            pillQuantity: props.pillQuantity,
+            dosgeTime: props.dosageTime,
+            scheduledDay: props.dayOfWeek
+        }
+    }
+    render() {
+        const today_day_of_week = moment().format('dddd'); ;
+        return this.state.dayOfWeek === today_day_of_week ? <MedicationCard/> : null;
+    }
+}
 
 export default function HomeScreen() {
 
@@ -53,7 +85,6 @@ export default function HomeScreen() {
         });
     }
 
-    // for possible refresh button?
     const getDailyMedications = () => {
         // where 0 refers to sunday, 1 refers to monday, 2 to tuesday, ... etc.
         const d = new Date();
@@ -80,130 +111,60 @@ export default function HomeScreen() {
     }
 
     useEffect(() => {
-
         getDailyMedications();
-
     }, []);
 
-    const timeToString = (time) => {
-        const date = new Date(time);
-        return date.toISOString().split('T')[0];
-    }
-
-    const PillTracker = () => {
-        const [items, setItmes] = useState({});
-    
-        const loadItems = (day) => {
-            setTimeout(() => {
-                for (let i = -15; i < 85; i++) {
-                    const time = day.timestamp + i * 24 * 60 * 60 * 1000;
-                    const strTime = timeToString(time);
-            
-                    if (!items[strTime]) {
-                    items[strTime] = [];
-                    
-                    const numItems = Math.floor(Math.random() * 3 + 1);
-                    for (let j = 0; j < numItems; j++) {
-                        items[strTime].push({
-                        name: 'Item for ' + strTime + ' #' + j,
-                        height: Math.max(50, Math.floor(Math.random() * 150)),
-                        day: strTime
-                        });
-                    }
-                    }
-                }
-              
-                const newItems = {};
-                Object.keys(items).forEach(key => {
-                    newItems[key] = items[key];
-                    });
-                    setItmes(newItems);
-                }, 1000);
-            };
-        
-        const renderItem = (item) => {
-            return (
-                <TouchableOpacity style= {{marginRight: 10, marginTop: 17}}>
-                    <AgendaCard>
-                        <Text> Medication </Text>
-                    </AgendaCard>
-                </TouchableOpacity>
-            )
-        }
-        return (
-            <View style={{flex: 1}}>
-                <Agenda
-                    items={items}
-                    loadItemsForMonth={loadItems}
-                    selected={'2023-11-01'}
-                    renderItem={renderItem}
-                />
-            </View>
-        );
-    }
-
-
     return (
-        // <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
         <View style={{flex: 1, backgroundColor: "#FFF"}}>
             <>
             <StatusBar style="light" />
             <View style={{
                     backgroundColor: "#CBC3E3",
-                    height:"35%",
+                    height:"25%",
                     borderBottomLeftRadius:20,
                     borderBottomRightRadius:20,
                     paddingHorizontal:20
             }}
             >
                 <View style={{
-                   flexDirection:"row",
                    alignItems:"center",
                    marginTop:25,
-                   width:"100%"
+                   width:"100%", 
                }}>
-                    <View style={{width:"50%"}}>
+                    <View style = {{alignItems: "center"}}>
                         <Text style={{
-                            fontSize:28,
-                            color:"#FFF",
+                            fontSize:20,
+                            color: brand,
                             fontWeight:"bold",
-                        }}>Welcome { getAuth().currentUser?.displayName }</Text>
+                            textAlign: "center"
+                        }}>Welcome { getAuth().currentUser?.displayName } !</Text>
                         <Text style={{
                             fontSize:14,
-                            color:"#FFF",
+                            color:"#000",
                             fontWeight:"bold",
+                            textAlign: "center"
                         }}>Email: { getAuth().currentUser?.email }</Text>
                     </View>
-                    <View style={{width:"45%",alignItems:"flex-end"}}>
-                        <Avatar resizeMode="cover" source={require('./../../assets/smart_dose_logo.png')} />
-                    </View>
                 </View>
-                <View style={{ flexDirection:"row",
-                                justifyContent: "space-between",  
-                                alignItems: "center" }}>
-                    <StyledButton onPress={handleSignOut}>
-                            <ButtonText> Logout </ButtonText>
-                    </StyledButton>
+                <View style={{alignItems:"center"}}>
                     <StyledButtonRefresh onPress={getDailyMedications}>
-                            <ButtonText> Refresh </ButtonText>
+                            <ButtonText> Refresh Page </ButtonText>
                     </StyledButtonRefresh>
                 </View>
             </View>
             
-            <InnerContainer>
-                {userMedications.map(med => 
-                    <View style= {styles.cardContainer}>
-                        <View style={styles.cardContent}> 
-                            <Text style={styles.titleStyle}> {med.medicationName} </Text>
-                            <Text> {med.pillQuantity} pills</Text>
-                            <Text> {med.dispenseTime} </Text>
-                            <Ionicons name="checkmark-circle-outline" size={50} iconColor="#5F8575" style={{ position: 'absolute', right: 0 }}/>
-                        </View>
-                    </View>
-                )}
-            </InnerContainer>
-
-            <PillTracker></PillTracker>
+            <View>
+                <StyledButtonTODAY onPress={() => alert('SimpleButtonPressed')}> 
+                    <Text style={{fontSize:16,
+                                color:"#FFF",
+                                fontWeight:"bold",
+                                textAlign: "center"
+                    }}>
+                        TODAY 
+                    </Text>
+                </StyledButtonTODAY>
+                <MedCard/>
+            </View>
             </>
         </View>
     );

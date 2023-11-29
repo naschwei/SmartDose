@@ -119,18 +119,28 @@ export const RightIcon = styled.TouchableOpacity`
     z-index: 1;
 `;
 
-export const StyledButton = styled.TouchableOpacity`
-    padding: 15px;
+export const StyledButtonTODAY = styled.TouchableOpacity`
     background-color: ${brand};
     justify-content: center;
     align-items: center;
     text-align: center;
     border-radius: 5px;
-    margin-vertical: 5px;
+    margin-vertical: 10px;
+    margin-horizontal: 10px;
+    height: 30px;
+    width: 110px;
+`;
+
+export const StyledButton = styled.TouchableOpacity`
+    background-color: ${brand};
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-radius: 5px;
+    margin-vertical: 10px;
+    margin-horizontal: 10px;
     height: 60px;
-    width: 100px;
-    align-items: flex-end;
-    left: 0;
+    width: 110px;
 `;
 
 export const StyledButtonRefresh = styled.TouchableOpacity`
@@ -141,13 +151,13 @@ export const StyledButtonRefresh = styled.TouchableOpacity`
     text-align: center;
     border-radius: 5px;
     margin-vertical: 5px;
-    height: 60px;
-    width: 120px;
+    height: 50px;
+    width: 150px;
 `;
 
 export const ButtonText = styled.Text`
     color: ${primary};
-    font-size: 16px;
+    font-size: 14px;
 
     /*${(props) => props.google == true && `
         padding: 25px;
