@@ -8,7 +8,31 @@ import { getAuth, updatePassword } from 'firebase/auth';
 import { doc, setDoc, collection, increment, updateDoc, deleteDoc } from 'firebase/firestore';
 import { auth, db } from "../../firebase.js"
 
+import { signOut } from 'firebase/auth';
+
 import { setNotifications, scheduleWeeklyNotification, cancelNotification } from '../../notifs.js';
+
+import {
+    Colors,
+    InnerContainer,
+    StyledButton,
+    ButtonText,
+    StyledButtonRefresh,
+    Avatar
+} from './../../components/styles';
+
+const handleSignOut = () => {
+    signOut(getAuth(),)
+    .then(() => {
+        navigation.replace("Login");
+        console.log('Logged out');
+    })
+    .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        alert(errorMessage);
+    });
+}
 
 
 export default function SettingsScreen({ navigation }) {
@@ -297,28 +321,24 @@ export default function SettingsScreen({ navigation }) {
 
     }
 
+    const deleteAccount = () => {
+        alert('delete account');
+    }
+
     return (
-        <View style={{alignItems: 'center', justifyContent: 'center'}}>
-            <View style={{width: 400, height: 100, backgroundColor: 'grey', borderWidth: 5, borderRadius: 20, borderColor:'black', justifyContent: 'center', alignItems: 'center', marginTop: 70}}>
-                <Pressable style={{width: 300, height: 50, backgroundColor: 'mediumpurple', borderWidth: 5, borderRadius: 20, borderColor: 'black', justifyContent: 'center', alignItems: 'center'}} onPress={toggleModalOne}>
-                    <Text style={{fontWeight: 'bold', fontSize: 20, color: '#f8ffff'}}>CHANGE MY CREDENTIALS</Text>  
-                </Pressable>
-            </View>
-            <View style={{width: 400, height: 100, backgroundColor: 'grey', borderWidth: 5, borderRadius: 20, borderColor:'black', justifyContent: 'center', alignItems: 'center', marginTop: 50}}>
-                <Pressable style={{width: 300, height: 50, backgroundColor: 'mediumpurple', borderWidth: 5, borderRadius: 20, borderColor: 'black', justifyContent: 'center', alignItems: 'center'}} onPress={toggleModalTwoA}>
-                    <Text style={{fontWeight: 'bold', fontSize: 20, color: '#f8ffff'}}>MANAGE MEDICATION A</Text>  
-                </Pressable>
-            </View>
-            <View style={{width: 400, height: 100, backgroundColor: 'grey', borderWidth: 5, borderRadius: 20, borderColor:'black', justifyContent: 'center', alignItems: 'center', marginTop: 50}}>
-                <Pressable style={{width: 300, height: 50, backgroundColor: 'mediumpurple', borderWidth: 5, borderRadius: 20, borderColor: 'black', justifyContent: 'center', alignItems: 'center'}} onPress={toggleModalTwoB}>
-                    <Text style={{fontWeight: 'bold', fontSize: 20, color: '#f8ffff'}}>MANAGE MEDICATION B</Text>  
-                </Pressable>
-            </View>
-            <View style={{width: 400, height: 100, backgroundColor: 'grey', borderWidth: 5, borderRadius: 20, borderColor:'black', justifyContent: 'center', alignItems: 'center', marginTop: 50}}>
-                <Pressable style={{width: 300, height: 50, backgroundColor: 'mediumpurple', borderWidth: 5, borderRadius: 20, borderColor: 'black', justifyContent: 'center', alignItems: 'center'}} onPress={toggleModalThree}>
-                    <Text style={{fontWeight: 'bold', fontSize: 20, color: '#f8ffff'}}>DELETE MEDICATION</Text>  
-                </Pressable>
-            </View>
+        <View style={{marginTop: 60, height: '80%', alignItems: 'center', justifyContent: 'space-between'}}>
+            <StyledButton onPress={toggleModalOne} style={{width: 300, justifyContent: 'center', alignItems: 'center'}}>
+                <ButtonText> Change My Credentials </ButtonText>
+            </StyledButton>
+            <StyledButton onPress={deleteAccount} style={{width: 300, justifyContent: 'center', alignItems: 'center'}}>
+                <ButtonText> Delete My Account </ButtonText>
+            </StyledButton>
+            <StyledButton onPress={toggleModalThree} style={{width: 300, justifyContent: 'center', alignItems: 'center'}}>
+                <ButtonText> Delete Medication </ButtonText>
+            </StyledButton>
+            <StyledButton onPress={handleSignOut} style={{width: 300, justifyContent: 'center', alignItems: 'center'}}>
+                <ButtonText> Logout </ButtonText>
+            </StyledButton>
             <Modal isVisible={isModalOneVisible}>
                 <View style={styles.container1}>
                     <View style={{marginTop: 5, justifyContent: 'center', alignItems: 'center'}}>

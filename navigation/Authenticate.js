@@ -42,7 +42,7 @@ function MainContainer() {
                     } else if (rn === settingsName) {
                         iconName = focused ? 'settings' : 'settings-outline'
                     } else if (rn === manageName) {
-                        iconName = focused ? 'add-circle' : 'add-circle-outline' 
+                        iconName = focused ? 'add-circle' : 'add-circle-outline'
                     }
 
                     return <Ionicons name={iconName} size={size} color={color}/>
@@ -71,7 +71,7 @@ function MainContainer() {
                         headerTitleStyle: {fontSize: 25}, 
                     }}
         />
-        <Tab.Screen name={manageName} component={ManageScreen} options={{ headerTitle:'SmartDose', headerStyle: {backgroundColor: "#6D28D9"}, headerTintColor: 'white', headerTitleStyle: {fontSize: 25}}}/> 
+        <Tab.Screen name={manageName} component={ManageScreen} options={{ headerTitle:'SmartDose', headerStyle: {backgroundColor: "#6D28D9"}, headerTintColor: 'white', headerTitleStyle: {fontSize: 25}}}/>  
         <Tab.Screen name={historyName} component={HistoryScreen} options={{ headerTitle:'SmartDose', headerStyle: {backgroundColor: "#6D28D9"}, headerTintColor: 'white', headerTitleStyle: {fontSize: 25}}}/>
         <Tab.Screen name={settingsName} component={SettingsScreen} options={{ headerTitle:'SmartDose', headerStyle: {backgroundColor: "#6D28D9"}, headerTintColor: 'white', headerTitleStyle: {fontSize: 25}}}/>
 
