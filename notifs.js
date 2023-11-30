@@ -101,7 +101,7 @@ export async function scheduleWeeklyNotification(medName, weekday, time, callbac
     const id = await Notifications.scheduleNotificationAsync({
       content: {
         title: "Time to take your medicine!",
-        body: "Medicine Name: ", medName,
+        body: ("Medicine Name: ", medName),
         // sound: 'default',
       },
       trigger: {
@@ -177,7 +177,14 @@ export async function cancelAllNotifications() {
   .then((output) => {
     console.log(output);
   })
-  await Notifications.cancelAllScheduledNotificationsAsync();
+  .then(() => {
+    Notifications.cancelAllScheduledNotificationsAsync();
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    console.log(errorCode, errorMessage);
+  })
 }
 
 

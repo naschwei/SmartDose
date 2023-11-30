@@ -101,7 +101,9 @@ export default function ManageScreen({ navigation }) {
                 }
             })
             .catch((error) => {
-                console.log( error);
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode, errorMessage);
             })
             
         }
@@ -125,6 +127,92 @@ export default function ManageScreen({ navigation }) {
         alert('update schedules, close the modal');
         toggleEditModal();
     }
+
+    const changeMedication = () => {
+        // Determine which medication needs to be changed
+
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        const schedArray = [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday];
+        setWeeklySchedule(schedArray);
+
+        const timesList = dispenseTimes.split(',');
+        setDispenseTimesList(timesList);
+
+        if (medicationOne) {
+            // UPDATE MEDICATION ONE!!!
+            // User has the option to refill medication, change start date, change end date, 
+            //      change weekly schedule, and change daily schedule
+            // NOTE: Refill Medication should add the user inputted number to the existing number in the db
+
+            // TODO: update notification times with this....lot of work lol (SECOND)
+            // TODO: delete notifications from sched db with this also (FIRST)
+            // TODO: add logic to keep track of if inputs are empty. if empty, do not update in db
+
+            // get docid to reference specific doc in meds
+            db.collection("meds").where("user", "==", user.uid)
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    if (doc.data().dispenserNumber == "1") {
+                        setMedicationOneDocId(doc.id);
+                        console.log("docid is ", doc.id);
+                    }
+                })
+            })
+            .then(() => {
+                updateDoc(doc(db, "meds", medicationOneDocId), {
+                    startDate: startDate,
+                    endDate: endDate,
+                    weeklySchedule: weeklySchedule,
+                    dispenseTimes: dispenseTimesList,
+                    pillsInDispenser: increment(pillsInDispenser)
+                })
+            })
+            .then(() => {
+                console.log("Medication updated successfully");
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode, errorMessage);
+            })
+
+        } else {
+            // UPDATE MEDICATION TWO!!!
+            // get docid to reference specific doc in meds
+            db.collection("meds").where("user", "==", user.uid)
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    if (doc.data().dispenserNumber == "2") {
+                        setMedicationTwoDocId(doc.id);
+                        console.log("docid is ", doc.id);
+                    }
+                })
+            })
+            .then(() => {
+                updateDoc(doc(db, "meds", medicationTwoDocId), {
+                    startDate: startDate,
+                    endDate: endDate,
+                    weeklySchedule: weeklySchedule,
+                    dispenseTimes: dispenseTimes,
+                    pillsInDispenser: increment(pillsInDispenser)
+                })
+            })
+            .then(() => {
+                console.log("Medication updated successfully");
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode, errorMessage);
+            })
+        }
+    }
+
+
 
     
 
@@ -298,6 +386,7 @@ export default function ManageScreen({ navigation }) {
 
     }
 
+
     const CameraPreview = ({photo}) => {
         // console.log('sdsfds', photo)
         return (
@@ -375,13 +464,13 @@ export default function ManageScreen({ navigation }) {
         if (active) {
         Animated.timing(transformX, {
             toValue: 1,
-            duration: 300,
+            duration: 100,
             useNativeDriver: true
         }).start()
         } else {
         Animated.timing(transformX, {
             toValue: 0,
-            duration: 300,
+            duration: 100,
             useNativeDriver: true
         }).start()
         }
@@ -391,6 +480,7 @@ export default function ManageScreen({ navigation }) {
         inputRange: [0, 1],
         outputRange: [2, Dimensions.get('screen').width / 2]
     })
+
     
     return (startCamera ? ( previewVisible && capturedImage ? (
         <CameraPreview photo={capturedImage} retakePicture={__retakePicture} />
@@ -552,7 +642,7 @@ export default function ManageScreen({ navigation }) {
                                     </View>  
                                 )}
                             </View>
-                            <Text style={styles.text}>Weekley Schedule:</Text>
+                            <Text style={styles.text}>Weekly Schedule:</Text>
                         </View>
                         <View style={{top: -33, justifyContent: 'space-evenly', alignItems: 'right', gap: 10}}>
                             <View style={{left: 40, borderColor: 'black', borderRadius: 15, borderWidth: 2, height: 30, width: 30, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center'}}>
