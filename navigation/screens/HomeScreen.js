@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, Image, StyleSheet, Dimensions, Button, TouchableOpacity } from 'react-native';
 import {StatusBar} from 'expo-status-bar';
 import moment from "moment";
+import Modal from 'react-native-modal';
 
 import {Octicons, Ionicons, Fontisto} from '@expo/vector-icons';
 import { IconButton } from 'react-native-paper';
@@ -21,6 +22,8 @@ import {
 const {primary, tertiary, brand, darkLight} = Colors;
 
 import Card from './../../components/card';
+import DatePicker from 'react-native-modern-datepicker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { auth, db } from "../../firebase.js"
 
@@ -67,10 +70,22 @@ class MedCard extends React.Component {
     }
 }
 
+class DisplayRevertDate extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isCurrentDay: true
+        }
+    }
+
+    render() {
+        return this.state.isCurrentDay ? null : <Calendar onDayPress={this.setState({ isCurrentDay : false})}/>;
+    }
+}
+
 export default function HomeScreen() {
 
     const [userMedications, setUserMedications] = useState([]);
-
     const navigation = useNavigation()
 
     const handleSignOut = () => {
@@ -112,11 +127,46 @@ export default function HomeScreen() {
         })
     }
 
-
-
     useEffect(() => {
         getDailyMedications();
     }, []);
+
+
+    // NEW: CALENDAR TOGGLE
+    const [show, setShow] = useState(false);
+    const [date, setDate] = useState(new Date());
+    const [text, setText] = useState("TODAY");
+    const [showRevert, setShowRevert] = useState(false);
+
+    function handleShow() {
+        setShow(true);
+    }
+
+    function handleChange(e, selectedDate) {
+        setDate(selectedDate);
+        setShow(false);
+
+        var today_date = new Date().getDate();
+        var today_month = new Date().getMonth() + 1;
+        var today_year = new Date().getFullYear();
+
+        if (selectedDate.getDate() === today_date && (selectedDate.getMonth() + 1) === today_month && selectedDate.getFullYear() === today_year) {
+            setText("TODAY");
+            setShowRevert(false);
+        }
+        else {
+            setShowRevert(true);
+            let fDate = (selectedDate.getMonth() + 1) + '/' +  selectedDate.getDate() + '/' + selectedDate.getFullYear();
+            setText(fDate);
+        }
+    }
+
+    function handleRevert() {
+        alert("Go back to Today?");
+        setDate(new Date());
+        setText("TODAY");
+        setShowRevert(false); 
+    }
 
     return (
         <View style={{flex: 1, backgroundColor: "#FFF"}}>
@@ -157,16 +207,48 @@ export default function HomeScreen() {
                 </View>
             </View>
             
-            <View>
-                <StyledButtonTODAY onPress={() => alert('SimpleButtonPressed')}> 
-                    <Text style={{fontSize:16,
-                                color:"#FFF",
-                                fontWeight:"bold",
-                                textAlign: "center"
-                    }}>
-                        TODAY 
-                    </Text>
-                </StyledButtonTODAY>
+            <View style = {{
+                alignItems: 'flex-start',
+                justifyContent: 'center',
+                flexDirection: 'column'
+            }}>
+                <View style = {{
+                    alignItems: 'center',
+                    flexDirection: 'row'
+                }}> 
+                    <StyledButtonTODAY onPress={handleShow}> 
+                        <Text style={{fontSize:16,
+                                    color:"#FFF",
+                                    fontWeight:"bold",
+                                    textAlign: "center"
+                        }}>
+                            {text} 
+                        </Text>
+                    </StyledButtonTODAY>
+                    
+                    {
+                        showRevert &&  (          
+                            <Button
+                                onPress={handleRevert}
+                                title="Back to Today"
+                                color={brand}
+                                accessibilityLabel="Learn more about this purple button"
+                            /> 
+                        )
+                    }
+                </View>
+
+                {
+                    show && (
+                        <DateTimePicker 
+                            ref={(ref) => (this.datePicker = ref)}
+                            mode='date'
+                            value={date}
+                            onChange={handleChange} 
+                            />
+                    )
+                }
+
                 <MedCard/>
             </View>
             </>
