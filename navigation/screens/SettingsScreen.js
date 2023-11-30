@@ -4,7 +4,7 @@ import Modal from 'react-native-modal';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useState} from 'react';
 
-import { getAuth, updatePassword } from 'firebase/auth';
+import { getAuth, updatePassword, deleteUser } from 'firebase/auth';
 import { doc, setDoc, collection, increment, updateDoc, deleteDoc } from 'firebase/firestore';
 import { auth, db } from "../../firebase.js"
 
@@ -108,89 +108,89 @@ export default function SettingsScreen({ navigation }) {
         changeMedicationTwo(false);
     }
 
-    const __changeMedication = () => {
-        // Determine which medication needs to be changed
+    // const __changeMedication = () => {
+    //     // Determine which medication needs to be changed
 
-        const auth = getAuth();
-        const user = auth.currentUser;
+    //     const auth = getAuth();
+    //     const user = auth.currentUser;
 
-        const schedArray = [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday];
-        setWeeklySchedule(schedArray);
+    //     const schedArray = [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday];
+    //     setWeeklySchedule(schedArray);
 
-        const timesList = dispenseTimes.split(',');
-        setDispenseTimesList(timesList);
+    //     const timesList = dispenseTimes.split(',');
+    //     setDispenseTimesList(timesList);
 
-        if (medicationOne) {
-            // UPDATE MEDICATION ONE!!!
-            // User has the option to refill medication, change start date, change end date, 
-            //      change weekly schedule, and change daily schedule
-            // NOTE: Refill Medication should add the user inputted number to the existing number in the db
+    //     if (medicationOne) {
+    //         // UPDATE MEDICATION ONE!!!
+    //         // User has the option to refill medication, change start date, change end date, 
+    //         //      change weekly schedule, and change daily schedule
+    //         // NOTE: Refill Medication should add the user inputted number to the existing number in the db
 
-            // TODO: update notification times with this....lot of work lol (SECOND)
-            // TODO: delete notifications from sched db with this also (FIRST)
-            // TODO: add logic to keep track of if inputs are empty. if empty, do not update in db
+    //         // TODO: update notification times with this....lot of work lol (SECOND)
+    //         // TODO: delete notifications from sched db with this also (FIRST)
+    //         // TODO: add logic to keep track of if inputs are empty. if empty, do not update in db
 
-            // get docid to reference specific doc in meds
-            db.collection("meds").where("user", "==", user.uid)
-            .get()
-            .then((querySnapshot) => {
-                querySnapshot.forEach((doc) => {
-                    if (doc.data().dispenserNumber == "1") {
-                        setMedicationOneDocId(doc.id);
-                        console.log("docid is ", doc.id);
-                    }
-                })
-            })
-            .then(() => {
-                updateDoc(doc(db, "meds", medicationOneDocId), {
-                    startDate: startDate,
-                    endDate: endDate,
-                    weeklySchedule: weeklySchedule,
-                    dispenseTimes: dispenseTimesList,
-                    pillsInDispenser: increment(pillsInDispenser)
-                })
-            })
-            .then(() => {
-                console.log("Medication updated successfully");
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.log(errorCode, errorMessage);
-            })
+    //         // get docid to reference specific doc in meds
+    //         db.collection("meds").where("user", "==", user.uid)
+    //         .get()
+    //         .then((querySnapshot) => {
+    //             querySnapshot.forEach((doc) => {
+    //                 if (doc.data().dispenserNumber == "1") {
+    //                     setMedicationOneDocId(doc.id);
+    //                     console.log("docid is ", doc.id);
+    //                 }
+    //             })
+    //         })
+    //         .then(() => {
+    //             updateDoc(doc(db, "meds", medicationOneDocId), {
+    //                 startDate: startDate,
+    //                 endDate: endDate,
+    //                 weeklySchedule: weeklySchedule,
+    //                 dispenseTimes: dispenseTimesList,
+    //                 pillsInDispenser: increment(pillsInDispenser)
+    //             })
+    //         })
+    //         .then(() => {
+    //             console.log("Medication updated successfully");
+    //         })
+    //         .catch((error) => {
+    //             const errorCode = error.code;
+    //             const errorMessage = error.message;
+    //             console.log(errorCode, errorMessage);
+    //         })
 
-        } else {
-            // UPDATE MEDICATION TWO!!!
-            // get docid to reference specific doc in meds
-            db.collection("meds").where("user", "==", user.uid)
-            .get()
-            .then((querySnapshot) => {
-                querySnapshot.forEach((doc) => {
-                    if (doc.data().dispenserNumber == "2") {
-                        setMedicationTwoDocId(doc.id);
-                        console.log("docid is ", doc.id);
-                    }
-                })
-            })
-            .then(() => {
-                updateDoc(doc(db, "meds", medicationTwoDocId), {
-                    startDate: startDate,
-                    endDate: endDate,
-                    weeklySchedule: weeklySchedule,
-                    dispenseTimes: dispenseTimes,
-                    pillsInDispenser: increment(pillsInDispenser)
-                })
-            })
-            .then(() => {
-                console.log("Medication updated successfully");
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.log(errorCode, errorMessage);
-            })
-        }
-    }
+    //     } else {
+    //         // UPDATE MEDICATION TWO!!!
+    //         // get docid to reference specific doc in meds
+    //         db.collection("meds").where("user", "==", user.uid)
+    //         .get()
+    //         .then((querySnapshot) => {
+    //             querySnapshot.forEach((doc) => {
+    //                 if (doc.data().dispenserNumber == "2") {
+    //                     setMedicationTwoDocId(doc.id);
+    //                     console.log("docid is ", doc.id);
+    //                 }
+    //             })
+    //         })
+    //         .then(() => {
+    //             updateDoc(doc(db, "meds", medicationTwoDocId), {
+    //                 startDate: startDate,
+    //                 endDate: endDate,
+    //                 weeklySchedule: weeklySchedule,
+    //                 dispenseTimes: dispenseTimes,
+    //                 pillsInDispenser: increment(pillsInDispenser)
+    //             })
+    //         })
+    //         .then(() => {
+    //             console.log("Medication updated successfully");
+    //         })
+    //         .catch((error) => {
+    //             const errorCode = error.code;
+    //             const errorMessage = error.message;
+    //             console.log(errorCode, errorMessage);
+    //         })
+    //     }
+    // }
 
     const __deleteMedication = () => {
         // Delete medication A or B or both!!
@@ -246,7 +246,6 @@ export default function SettingsScreen({ navigation }) {
 
         if (Dispenser1 && !Dispenser2) {
             // DELETE ONLY DISPENSER ONE
-            alert('THIS BUTTON WOULD DELETE DISPENSER 1');
 
             deleteMedicationFromSched("1")
             .then(() => {
@@ -262,7 +261,6 @@ export default function SettingsScreen({ navigation }) {
 
         } else if (!Dispenser1 && Dispenser2) {
             // DELETE ONLY DISPENSER TWO
-            alert('THIS BUTTON WOULD DELETE DISPENSER 2');
 
             deleteMedicationFromSched("2")
             .then(() => {
@@ -276,7 +274,6 @@ export default function SettingsScreen({ navigation }) {
 
         } else if (Dispenser1 && Dispenser2) {
             // DELETE BOTH DISPENSERS
-            alert('THIS BUTTON WOULD DELETE DISPENSER 1 AND DISPENSER 2');
 
             deleteMedicationFromSched("1")
             .then(() => {
@@ -321,8 +318,32 @@ export default function SettingsScreen({ navigation }) {
 
     }
 
-    const deleteAccount = () => {
-        alert('delete account');
+    const deleteAccount = async () => {
+
+        try {
+            const auth = getAuth();
+            const user = auth.currentUser;
+
+            const credentials = auth.EmailAuthProvider.credential(user.email, user.password);
+            await reauthenticateWithCredential(user, credentials);
+
+            changeDispenserOne(true);
+            changeDispenserTwo(true);
+
+            await __deleteMedication();
+            console.log("Deleted medications from db");
+
+            await deleteUser(user);
+            console.log("User successfully deleted.");
+
+            alert("Account has been deleted.");
+            navigation.replace("Signup");
+
+        } catch (error) {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorCode, errorMessage);
+        }
     }
 
     return (

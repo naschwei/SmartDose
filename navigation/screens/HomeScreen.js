@@ -50,6 +50,7 @@ function MedicationCard () {
     </InnerContainer>
     );
 }
+
 class MedCard extends React.Component {
     constructor(props) {
         super(props);
@@ -84,6 +85,7 @@ export default function HomeScreen() {
             alert(errorMessage);
         });
     }
+    
 
     const getDailyMedications = () => {
         // where 0 refers to sunday, 1 refers to monday, 2 to tuesday, ... etc.
@@ -109,6 +111,8 @@ export default function HomeScreen() {
             console.log("Error getting schedule data: ", error);
         })
     }
+
+
 
     useEffect(() => {
         getDailyMedications();
