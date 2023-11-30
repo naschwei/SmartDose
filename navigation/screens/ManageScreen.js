@@ -481,6 +481,16 @@ export default function ManageScreen({ navigation }) {
         outputRange: [2, Dimensions.get('screen').width / 2]
     })
 
+    const [showStartDate, setShowStartDate] = useState(false);
+    const [showEndDate, setShowEndDate] = useState(false);
+
+    const toggleStartDate = () => {
+        showMode('date');
+    }
+
+    const showMode = (currentMode) => {
+        setShowEndDate(!showEndDate);
+    }
     
     return (startCamera ? ( previewVisible && capturedImage ? (
         <CameraPreview photo={capturedImage} retakePicture={__retakePicture} />
@@ -719,17 +729,18 @@ export default function ManageScreen({ navigation }) {
                                 />
                                 <View style={{height: 40, width: 290, margin: 5, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                                     <Text style={[{left: -5}, styles.text]}>Start Date</Text>
-                                    <DateTimePicker 
+                                    {showStartDate && (<DateTimePicker 
                                         mode="date"
                                         value={start}
-                                    />  
+                                    />)}  
                                 </View>
                                 <View style={{height: 40, width: 290, margin: 5, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                                     <Text style={[{left: -5}, styles.text]}>End Date</Text>
-                                    <DateTimePicker 
+                                    <Button style={{height: 40, width: 40}} title="E" onPress={toggleStartDate}/>
+                                    {showEndDate && (<DateTimePicker 
                                         mode="date"
                                         value={start}
-                                    />  
+                                    />)}  
                                 </View>
                                 <Text style={styles.text}>Medication Dispenser</Text>
                                 <TextInput style={[styles.inputAdd, {backgroundColor: 'lightgray'}]} value= {active ? "B" : "A"} editable={false} placeholder="Dispenser (A or B)" placeholderTextColor={'grey'}
