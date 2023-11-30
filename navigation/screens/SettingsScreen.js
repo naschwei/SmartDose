@@ -34,7 +34,6 @@ const handleSignOut = () => {
     });
 }
 
-
 export default function SettingsScreen({ navigation }) {
     const [ isModalOneVisible, setIsModalOneVisible ] = useState(false);
     const [ isModalTwoVisible, setIsModalTwoVisible ] = useState(false);
