@@ -1,5 +1,5 @@
 import { getAuth } from 'firebase/auth';
-import { addDoc, doc, setDoc, collection, getDocs } from 'firebase/firestore';
+import { addDoc, doc, setDoc, collection, getDocs, updateDoc, increment } from 'firebase/firestore';
 import React, {useState, useEffect, useRef} from 'react';
 import { FlatList, Animated, Dimensions, ImageBackground, Switch, Pressable, TouchableOpacity, SafeAreaView, Button, View, TextInput, StyleSheet, Text, KeyboardAvoidingView } from 'react-native';
 import Modal from 'react-native-modal';
@@ -19,8 +19,8 @@ export default function ManageScreen({ navigation }) {
 
     const [medicationName, setMedicationName] = useState("");
     const [pillQuantity, setPillQuantity] = useState(0);
-    const [startDate, setStartDate] = useState("");
-    const [endDate, setEndDate] = useState("");
+    // const [startDate, setStartDate] = useState("");
+    // const [endDate, setEndDate] = useState("");
     const [weeklySchedule, setWeeklySchedule] = useState([]);
     const [dispenseTimes, setDispenseTimes] = useState('');
     const [dispenseTimesList, setDispenseTimesList] = useState([]);
@@ -28,6 +28,7 @@ export default function ManageScreen({ navigation }) {
     const [ isModalVisible, setIsModalVisible ] = useState(false);
     const [ isEditModal, setIsEditModal ] = useState(false);
     const [ isRefill, setIsRefill ] = useState(false);
+    const [refillValue, setRefillValue] = useState(0);
 
     const [ Monday, changeMonday ] = useState(false);
     const [ Tuesday, changeTuesday ] = useState(false);
@@ -37,8 +38,10 @@ export default function ManageScreen({ navigation }) {
     const [ Saturday, changeSaturday ] = useState(false);
     const [ Sunday, changeSunday ] = useState(false);
 
-    const [ Dispenser1, changeDispenserOne ] = useState(false);
-    const [ Dispenser2, changeDispenserTwo ] = useState(false);
+    const [ medicationOneDocId, setMedicationOneDocId ] = useState("");
+    const [ medicationTwoDocId, setMedicationTwoDocId ] = useState("");
+
+    const [dispenserInfo, setDispenserInfo] = useState([]);
 
     const [previewVisible, setPreviewVisible] = useState(false);
     const [capturedImage, setCapturedImage] = useState(null);
@@ -46,6 +49,30 @@ export default function ManageScreen({ navigation }) {
     const [start, setStart] = useState(new Date());
     const [end, setEnd] = useState(new Date());
     const [time, setTime] = useState(new Date());
+
+    const [editStart, setEditStart] = useState(new Date());
+    const [editEnd, setEditEnd] = useState(new Date());
+    const [editTime, setEditTime] = useState(new Date());
+
+    const [checkChangeStartDate, setCheckChangeStartDate] = useState(false);
+    const [checkChangeEndDate, setCheckChangeEndDate] = useState(false);
+    const [checkChangeDispenseTimes, setCheckChangeDispenseTimes] = useState(false);
+    const [checkChangeWeeklySched, setCheckChangeWeeklySched] = useState(false);
+
+
+    const handleMondayClick = () => {changeMonday(!Monday);};
+    const handleTuesdayClick = () => {changeTuesday(!Tuesday);};
+    const handleWednesdayClick = () => {changeWednesday(!Wednesday);};
+    const handleThursdayClick = () => {changeThursday(!Thursday);};
+    const handleFridayClick = () => {changeFriday(!Friday);};
+    const handleSaturdayClick = () => {changeSaturday(!Saturday);};
+    const handleSundayClick = () => {changeSunday(!Sunday);};
+
+    const imageToTextApiKey = 'yqfk5vqF5e/nVAhECxZgRw==1JSnGDvmDsKjxB3t';
+
+    const [type, setType] = useState(CameraType.back);
+    const [permission, requestPermission] = Camera.useCameraPermissions();
+    const [startCamera, setStartCamera] = useState(false);
  
     const __takePicture = async () => {
         if (!camera) {
@@ -61,7 +88,7 @@ export default function ManageScreen({ navigation }) {
     const toggleModal = () => {
 
         const user = auth.currentUser;
-
+        
         if (active != true && active != false) {
             alert('Dispenser not selected');
         } else {
@@ -89,14 +116,7 @@ export default function ManageScreen({ navigation }) {
                     return;
                 } else {
                     setIsModalVisible(!isModalVisible);
-                    // set the number of the dispenser selected.
-                    if (isModalVisible) {
-                        if (!active) {
-                            setDispenserNumber('1');
-                        } else {
-                            setDispenserNumber('2');
-                        }
-                    }
+                    resetStates();
                     return;
                 }
             })
@@ -111,98 +131,246 @@ export default function ManageScreen({ navigation }) {
 
     const toggleEditModal = () => {
         setIsEditModal(!isEditModal);
+        resetStates();
     }
 
+    function firestoreTimeToJS(timestampObject) {
+        if (!timestampObject || !timestampObject.seconds) {
+            // Handle invalid or missing timestamp
+            return null;
+        }
+
+        const milliseconds = timestampObject.seconds * 1000 + (timestampObject.nanoseconds || 0) / 1e6;
+        return new Date(milliseconds);
+    }
+
+    // convert start and end dates into human readable objects HOW TO USE ABOVE FUNCTION
+    // let timestampObject = firestoreTimeToJS(dispenserOneInfo.startDate);
+    // let startDate = (new Date(timestampObject.seconds * 1000 + timestampObject.nanoseconds / 1e6)).toDateString();
+    // console.log(timestampObject.toDateString());'
+
+    const getDayName = (index) => {
+        const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        return daysOfWeek[index];
+    };
+
+    const getDispenserData = async () => {
+        const user = auth.currentUser;
+
+        let dispenserOneTaken = false;
+        let dispenserTwoTaken = false;
+
+        let dispenserOneInfo = {};
+        let dispenserTwoInfo = {};
+
+        try {
+
+            const querySnapshot = await db.collection("meds").where("user", "==", user.uid).get();
+            querySnapshot.forEach((doc) => {
+                if (doc.data().dispenserNumber == '1') {
+                    dispenserOneTaken = true;
+                    console.log("data 1 is ", doc.data());
+                    dispenserOneInfo = doc.data();
+                } else if (doc.data().dispenserNumber == '2') {
+                    dispenserTwoTaken = true;
+                    console.log("data 2 is ", doc.data());
+                    dispenserTwoInfo = doc.data();
+                }
+            });
+
+            console.log("dispenseroneinfo is ", dispenserOneInfo);
+            console.log("dispensertwoinfo is ", dispenserTwoInfo);
+
+            console.log("dispenser1taken is ", dispenserOneTaken);
+            console.log("dispenser2taken is ", dispenserTwoTaken);
+
+            console.log(active);
+
+
+            if (!active && dispenserOneTaken) {
+                await setDispenserInfo(dispenserOneInfo);
+            } else if (!active && !dispenserOneTaken) {
+                await setDispenserInfo({});
+            } else if (active && dispenserTwoTaken) {
+                await setDispenserInfo(dispenserTwoInfo);
+            } else if (active & !dispenserTwoTaken) {
+                await setDispenserInfo({});
+            }
+
+            console.log("dispenser info is ", dispenserInfo);
+
+        } catch (error) {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorCode, errorMessage);
+
+        }
+    }
+
+    
     const toggleRefill = () => {
         setIsRefill(!isRefill);
+        resetStates();
+        getDispenserData();
     }
 
     const refillFunction = () => {
-        alert("QUERY DATABASE TO MODIFY PILL COUNT");
+
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        if (!active) {
+
+            db.collection("meds")
+            .where("user", "==", user.uid)
+            .where("dispenserNumber", "==", "1")
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    console.log("docid is ", doc.id)
+
+                    const medicationOneRef = doc.ref;
+                    updateDoc(medicationOneRef, {
+                        pillsInDispenser: increment(refillValue),
+                    })
+                    
+                    .then(() => {
+                        console.log("Dispenser 1 refilled successfully");
+                    })
+                    .catch((error) => {
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        console.log(errorCode, errorMessage);
+                    });
+                })
+            })
+
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode, errorMessage);
+            })
+        } else {
+
+            db.collection("meds")
+            .where("user", "==", user.uid)
+            .where("dispenserNumber", "==", "2")
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    console.log("docid is ", doc.id)
+
+                    const medicationTwoRef = doc.ref;
+                    updateDoc(medicationTwoRef, {
+                        pillsInDispenser: increment(refillValue),
+                    })
+                    .then(() => {
+                        console.log("Dispenser 1 refilled successfully");
+                    })
+                    .catch((error) => {
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        console.log(errorCode, errorMessage);
+                    });
+                })
+            })
+
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode, errorMessage);
+            })
+        }
+
         toggleRefill();
     }
 
     const changeInfo = () => {
         // Esha - this function would only need to change the weekly schedule and daily schedule in the database
         alert('update schedules, close the modal');
+
+        if (checkChangeStartDate) {
+            console.log("value of start date to change to is ", editStart);
+            changeStartDate();
+        }
+        if (checkChangeEndDate) {
+            console.log("value of end date to change to is ", editEnd);
+            changeEndDate();
+        }
+
+        if (checkChangeDispenseTimes && !checkChangeWeeklySched) {
+            alert("Changing dispense times will also affect the weekly schedule. Please also choose days on the weekly schedule that correspond.");
+            return;
+        }
+
+        if (!checkChangeDispenseTimes && checkChangeWeeklySched) {
+            alert("Changing weekly schedule will also affect dispense times. Please also choose dispense times that correspond.");
+            return;
+        }
+
+        if (checkChangeDispenseTimes && checkChangeWeeklySched) {
+            editAndDelete();
+        }
+
         toggleEditModal();
+
     }
 
-    const changeMedication = () => {
-        // Determine which medication needs to be changed
+    const changeStartDate = () => {
 
         const auth = getAuth();
         const user = auth.currentUser;
 
-        const schedArray = [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday];
-        setWeeklySchedule(schedArray);
-
-        const timesList = dispenseTimes.split(',');
-        setDispenseTimesList(timesList);
-
-        if (medicationOne) {
-            // UPDATE MEDICATION ONE!!!
-            // User has the option to refill medication, change start date, change end date, 
-            //      change weekly schedule, and change daily schedule
-            // NOTE: Refill Medication should add the user inputted number to the existing number in the db
-
-            // TODO: update notification times with this....lot of work lol (SECOND)
-            // TODO: delete notifications from sched db with this also (FIRST)
-            // TODO: add logic to keep track of if inputs are empty. if empty, do not update in db
-
-            // get docid to reference specific doc in meds
-            db.collection("meds").where("user", "==", user.uid)
+        if (!active) {
+            db.collection("meds")
+            .where("user", "==", user.uid)
+            .where("dispenserNumber", "==", "1")
             .get()
             .then((querySnapshot) => {
                 querySnapshot.forEach((doc) => {
-                    if (doc.data().dispenserNumber == "1") {
-                        setMedicationOneDocId(doc.id);
-                        console.log("docid is ", doc.id);
-                    }
+                    console.log("docid is ", doc.id);
+
+                    const medicationOneRef = doc.ref;
+                    updateDoc(medicationOneRef, {
+                        startDate: editStart,
+                    })
+                    .then(() => {
+                        console.log("Dispenser 1 Start Date updated successfully");
+                    })
+                    .catch((error) => {
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        console.log(errorCode, errorMessage);
+                    });
                 })
-            })
-            .then(() => {
-                updateDoc(doc(db, "meds", medicationOneDocId), {
-                    startDate: startDate,
-                    endDate: endDate,
-                    weeklySchedule: weeklySchedule,
-                    dispenseTimes: dispenseTimesList,
-                    pillsInDispenser: increment(pillsInDispenser)
-                })
-            })
-            .then(() => {
-                console.log("Medication updated successfully");
             })
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
                 console.log(errorCode, errorMessage);
             })
-
         } else {
-            // UPDATE MEDICATION TWO!!!
-            // get docid to reference specific doc in meds
-            db.collection("meds").where("user", "==", user.uid)
+            db.collection("meds")
+            .where("user", "==", user.uid)
+            .where("dispenserNumber", "==", "2")
             .get()
             .then((querySnapshot) => {
                 querySnapshot.forEach((doc) => {
-                    if (doc.data().dispenserNumber == "2") {
-                        setMedicationTwoDocId(doc.id);
-                        console.log("docid is ", doc.id);
-                    }
+                    console.log("docid is ", doc.id);
+
+                    const medicationTwoRef = doc.ref;
+                    updateDoc(medicationTwoRef, {
+                        startDate: editStart,
+                    })
+                    .then(() => {
+                        console.log("Dispenser 2 Start Date updated successfully");
+                    })
+                    .catch((error) => {
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        console.log(errorCode, errorMessage);
+                    });
                 })
-            })
-            .then(() => {
-                updateDoc(doc(db, "meds", medicationTwoDocId), {
-                    startDate: startDate,
-                    endDate: endDate,
-                    weeklySchedule: weeklySchedule,
-                    dispenseTimes: dispenseTimes,
-                    pillsInDispenser: increment(pillsInDispenser)
-                })
-            })
-            .then(() => {
-                console.log("Medication updated successfully");
             })
             .catch((error) => {
                 const errorCode = error.code;
@@ -212,26 +380,394 @@ export default function ManageScreen({ navigation }) {
         }
     }
 
+    const editStartDateInput = (event, selectedDate) => {
+        setEditStart(selectedDate);
+        console.log("selected date is ",selectedDate);
+        setCheckChangeStartDate(true);
+    }
+
+    const changeEndDate = () => {
+
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        if (!active) {
+            db.collection("meds")
+            .where("user", "==", user.uid)
+            .where("dispenserNumber", "==", "1")
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    console.log("docid is ", doc.id);
+
+                    const medicationOneRef = doc.ref;
+                    updateDoc(medicationOneRef, {
+                        endDate: editEnd,
+                    })
+                    .then(() => {
+                        console.log("Dispenser 1 End Date updated successfully");
+                    })
+                    .catch((error) => {
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        console.log(errorCode, errorMessage);
+                    });
+                })
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode, errorMessage);
+            })
+        } else {
+            db.collection("meds")
+            .where("user", "==", user.uid)
+            .where("dispenserNumber", "==", "2")
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    console.log("docid is ", doc.id);
+
+                    const medicationTwoRef = doc.ref;
+                    updateDoc(medicationTwoRef, {
+                        endDate: editEnd,
+                    })
+                    .then(() => {
+                        console.log("Dispenser 2 End Date updated successfully");
+                    })
+                    .catch((error) => {
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        console.log(errorCode, errorMessage);
+                    });
+                })
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode, errorMessage);
+            })
+        }
+    }
+
+    const editEndDateInput = (event, selectedDate) => {
+        setEditEnd(selectedDate);
+        console.log("selected end date is ",selectedDate);
+        setCheckChangeEndDate(true);
+    }
+
+
+
+    const editAndDelete = async () => {
+
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        const deleteMedicationFromSched = async (dispenserNumber) => {
+            try {
+                const schedSnapshot = await db.collection("sched").where("user", "==", user.uid).get();
+
+                await Promise.all(
+                    schedSnapshot.docs.map(async (medToDelete) => {
+                        if (medToDelete.data().dispenserNumber == dispenserNumber) {
+                            console.log("Doc id for sched delete is ", medToDelete.id);
+                            // delete notifications here
+                            await cancelNotification(medToDelete.data().notificationId);
+                            await deleteDoc(doc(db, "sched", medToDelete.id));
+                            console.log("Deleted doc id ", medToDelete.id);
+                        }
+                    })
+                );
+
+                console.log("Deleted meds from sched");
+            } catch (error) {
+                console.error("Error deleting medication from 'sched' collection:", error);
+                throw error; // Propagate the error up to the outer catch block
+            }
+        };
+
+
+        try {
+
+            const tempWeeklySchedule = [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday];
+
+            let dbMedName = "";
+            let dbStartDate = new Date();
+            let dbEndDate = new Date();
+            let dbPillQuantity = "";
+
+            if (!active) {
+                
+                // delete old notifications and delete entries from sched db
+                await deleteMedicationFromSched("1");
+                // edit meds db
+                await changeDispenseTimesInput();
+                await changeWeeklySchedInput();
+
+                // query meds db for info
+                const querySnapshot = await db.collection("sched").where("user", "==", user.uid).get();
+                querySnapshot.forEach((doc) => {
+                    if (doc.data().dispenserNumber == "1") {
+                        dbMedName = doc.data().medicationName;
+                        dbStartDate = doc.data().startDate;
+                        dbEndDate = doc.data().endDate;
+                        dbPillQuantity = doc.data().pillQuantity;
+                    }
+                });
+                console.log(medications);
+                setUserMedications(medications);
+
+
+                for (let i = 0; i < tempWeeklySchedule.length; i++) {
+                    for (let j = 0; j < dailyTimes.length; j++) {
+                        console.log("gets inside for loop for ", i, j);
+
+                        scheduleWeeklyNotification(medicationName, i, dailyTimes[j], async (notifId) => {
+
+                            if (tempWeeklySchedule[i] == true) {
+                                let schedDocInfo = {
+                                    user: user.uid,
+                                    medicationName: dbMedName,
+                                    dayOfWeek: i,
+                                    dispenseTime: dailyTimes[j],
+                                    status: 'Scheduled',
+                                    delayedTo: '',
+                                    startDate: dbStartDate,
+                                    endDate: dbEndDate,
+                                    pillQuantity: dbPillQuantity,
+                                    notificationId: notifId,
+                                    dispenserNumber: "1",
+                                }
+                                await addDoc(collection(db, "sched"), schedDocInfo);
+                                console.log("Successfully added schedule for medication.");
+                                // console.log(schedDocInfo);
+                                
+                            }
+
+                        })
+
+                    }
+                }
+
+                
+
+
+
+            } else {
+
+                await deleteMedicationFromSched("2");
+
+                await changeDispenseTimesInput();
+                await changeWeeklySchedInput();
+
+                // query meds db for info
+                const querySnapshot = await db.collection("sched").where("user", "==", user.uid).get();
+                querySnapshot.forEach((doc) => {
+                    if (doc.data().dispenserNumber == "2") {
+                        dbMedName = doc.data().medicationName;
+                        dbStartDate = doc.data().startDate;
+                        dbEndDate = doc.data().endDate;
+                        dbPillQuantity = doc.data().pillQuantity;
+                    }
+                });
+                console.log(medications);
+                setUserMedications(medications);
+
+
+                for (let i = 0; i < tempWeeklySchedule.length; i++) {
+                    for (let j = 0; j < dailyTimes.length; j++) {
+                        console.log("gets inside for loop for ", i, j);
+
+                        scheduleWeeklyNotification(medicationName, i, dailyTimes[j], async (notifId) => {
+
+                            if (tempWeeklySchedule[i] == true) {
+                                let schedDocInfo = {
+                                    user: user.uid,
+                                    medicationName: dbMedName,
+                                    dayOfWeek: i,
+                                    dispenseTime: dailyTimes[j],
+                                    status: 'Scheduled',
+                                    delayedTo: '',
+                                    startDate: dbStartDate,
+                                    endDate: dbEndDate,
+                                    pillQuantity: dbPillQuantity,
+                                    notificationId: notifId,
+                                    dispenserNumber: "2",
+                                }
+                                await addDoc(collection(db, "sched"), schedDocInfo);
+                                console.log("Successfully added schedule for medication.");
+                                // console.log(schedDocInfo);
+                                
+                            }
+
+                        })
+
+                    }
+                }
+
+            }
+
+            await resetStates();
+
+        } catch (error) {
+
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorCode, errorMessage);
+        }
+
+    }
+
+
+    const changeDispenseTimesInput = () => {
+
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        if (!active) {
+            db.collection("meds")
+            .where("user", "==", user.uid)
+            .where("dispenserNumber", "==", "1")
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    console.log("docid is ", doc.id);
+
+                    const medicationOneRef = doc.ref;
+                    updateDoc(medicationOneRef, {
+                        dispenseTimes: dailyTimes
+                    })
+                    .then(() => {
+                        console.log("Dispenser 1 Dispense Times updated successfully");
+                    })
+                    .catch((error) => {
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        console.log(errorCode, errorMessage);
+                    });
+                })
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode, errorMessage);
+            })
+        } else {
+            db.collection("meds")
+            .where("user", "==", user.uid)
+            .where("dispenserNumber", "==", "2")
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    console.log("docid is ", doc.id);
+
+                    const medicationTwoRef = doc.ref;
+                    updateDoc(medicationTwoRef, {
+                        dispenseTimes: dailyTimes
+                    })
+                    .then(() => {
+                        console.log("Dispenser 2 Dispense Times updated successfully");
+                    })
+                    .catch((error) => {
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        console.log(errorCode, errorMessage);
+                    });
+                })
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode, errorMessage);
+            })
+        }
+    }
+
+    const editTimeInput = (event, selectedTime) => {
+        setEditTime(selectedTime);
+        console.log("selected dispense times are ",selectedTime);
+        setCheckChangeDispenseTimes(true);
+    }
+
+    const changeWeeklySchedInput = () => {
+
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        const tempWeeklySchedule = [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday];
+
+        if (!active) {
+            db.collection("meds")
+            .where("user", "==", user.uid)
+            .where("dispenserNumber", "==", "1")
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    console.log("docid is ", doc.id);
+
+                    const medicationOneRef = doc.ref;
+                    updateDoc(medicationOneRef, {
+                        weeklySchedule: tempWeeklySchedule,
+                    })
+                    .then(() => {
+                        console.log("Dispenser 1 Weekly Schedule updated successfully");
+                    })
+                    .catch((error) => {
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        console.log(errorCode, errorMessage);
+                    });
+                })
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode, errorMessage);
+            })
+        } else {
+            db.collection("meds")
+            .where("user", "==", user.uid)
+            .where("dispenserNumber", "==", "2")
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    console.log("docid is ", doc.id);
+
+                    const medicationTwoRef = doc.ref;
+                    updateDoc(medicationTwoRef, {
+                        weeklySchedule: tempWeeklySchedule,
+                    })
+                    .then(() => {
+                        console.log("Dispenser 2 Weekly Sched updated successfully");
+                    })
+                    .catch((error) => {
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        console.log(errorCode, errorMessage);
+                    });
+                })
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode, errorMessage);
+            })
+        }
+    }
+
+    const editWeeklySched = () => {
+        setCheckChangeWeeklySched(true);
+    }
+
+
+
+
 
 
     
 
-    const handleMondayClick = () => {changeMonday(!Monday);};
-    const handleTuesdayClick = () => {changeTuesday(!Tuesday);};
-    const handleWednesdayClick = () => {changeWednesday(!Wednesday);};
-    const handleThursdayClick = () => {changeThursday(!Thursday);};
-    const handleFridayClick = () => {changeFriday(!Friday);};
-    const handleSaturdayClick = () => {changeSaturday(!Saturday);};
-    const handleSundayClick = () => {changeSunday(!Sunday);};
+    
 
-    const handleDispenserOne = () => {changeDispenserOne(!Dispenser1);};
-    const handleDispenserTwo = () => {changeDispenserTwo(!Dispenser2);};
-
-    const imageToTextApiKey = 'yqfk5vqF5e/nVAhECxZgRw==1JSnGDvmDsKjxB3t';
-
-    const [type, setType] = useState(CameraType.back);
-    const [permission, requestPermission] = Camera.useCameraPermissions();
-    const [startCamera, setStartCamera] = useState(false);
 
     function toggleCameraType() {
         setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
@@ -260,14 +796,14 @@ export default function ManageScreen({ navigation }) {
     const resetStates = async () => {
         await setMedicationName("");
         await setPillQuantity(0);
-        await setStartDate("");
-        await setEndDate("");
-        await setDispenserNumber("");
+        // await setStartDate("");
+        // await setEndDate("");
+        // await setDispenserNumber("");
         await setWeeklySchedule([]);
         await setDispenseTimes("");
         await setDispenseTimesList([]);
 
-        await setIsModalVisible(false);
+        // await setIsModalVisible(false);
         await changeMonday(false);
         await changeTuesday(false);
         await changeWednesday(false);
@@ -276,8 +812,18 @@ export default function ManageScreen({ navigation }) {
         await changeSaturday(false);
         await changeSunday(false);
 
-        await changeDispenserOne(false);
-        await changeDispenserTwo(false);
+        await setStart(new Date());
+        await setEnd(new Date());
+        await setTime(new Date());
+
+        await setEditStart(new Date());
+        await setEditEnd(new Date());
+        await setEditTime(new Date());
+
+        await setDailyTimes([]);
+
+        // await setDispenserInfo([]);
+
     }
  
 
@@ -287,33 +833,7 @@ export default function ManageScreen({ navigation }) {
             const auth = getAuth();
             const user = auth.currentUser;
 
-            const updateStateAndContinue = async () => {
-                console.log("gets inside updatestatesnadcontinue")
-
-                await setWeeklySchedule([Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]);
-                console.log("weeklyschedule is ", weeklySchedule);
-
-                console.log("setsweeklsyschedule")
-
-                await setDispenseTimesList(dispenseTimes.split(','));
-                console.log("timeslist is ", dispenseTimesList);
-
-                console.log("stsdispensetimes")
-
-                if (Dispenser1) {
-                    await setDispenserNumber("1");
-                } else {
-                    await setDispenserNumber("2");
-                }
-                
-                console.log("sets dispenser num")
-            };
-
-            await updateStateAndContinue();
-
-
             const tempWeeklySchedule = [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday];
-            const tempDispenseTimesList = dispenseTimes.split(',');
             let tempDispenserNumber = "";
 
             if (!active) {
@@ -323,43 +843,44 @@ export default function ManageScreen({ navigation }) {
             }
 
             console.log(tempWeeklySchedule);
-            console.log(tempDispenseTimesList);
             console.log(tempDispenserNumber);
 
             const medsDocInfo = {
                 user: user.uid,
                 medicationName: medicationName,
                 pillQuantity: pillQuantity,
-                startDate: startDate,
-                endDate: endDate,
+                startDate: start,
+                endDate: end,
                 dispenserNumber: tempDispenserNumber,
                 pillsInDispenser: 0,
                 weeklySchedule: tempWeeklySchedule,
-                dispenseTimes: tempDispenseTimesList
+                dispenseTimes: dailyTimes
             };
+
+            console.log("meddocinfo is ",medsDocInfo);
 
             await addDoc(collection(db, "meds"), medsDocInfo);
             
             console.log("Successfully added medication.");
 
             for (let i = 0; i < tempWeeklySchedule.length; i++) {
-                for (let j = 0; j < tempDispenseTimesList.length; j++) {
+                for (let j = 0; j < dailyTimes.length; j++) {
                     // console.log("dispense time j is ", dispenseTimesList[j]);
 
                     console.log("gets inside for loop for ", i, j);
 
-                    scheduleWeeklyNotification(medicationName, i, tempDispenseTimesList[j], async (notifId) => {
+                    scheduleWeeklyNotification(medicationName, i, dailyTimes[j], async (notifId) => {
 
                         if (tempWeeklySchedule[i] == true) {
                             let schedDocInfo = {
                                 user: user.uid,
                                 medicationName: medicationName,
                                 dayOfWeek: i,
-                                dispenseTime: tempDispenseTimesList[j],
+                                dispenseTime: dailyTimes[j],
                                 status: 'Scheduled',
                                 delayedTo: '',
-                                startDate: startDate,
-                                endDate: endDate,
+                                startDate: start,
+                                endDate: end,
                                 pillQuantity: pillQuantity,
                                 notificationId: notifId,
                                 dispenserNumber: tempDispenserNumber,
@@ -377,7 +898,6 @@ export default function ManageScreen({ navigation }) {
             }
             await resetStates();
             setIsModalVisible(!isModalVisible);
-            // toggleModal();
         } catch (error) {
             const errorCode = error.code;
             const errorMessage = error.message;
@@ -427,6 +947,14 @@ export default function ManageScreen({ navigation }) {
     const changeTime = (event, selectedTime) => {
         setTime(selectedTime);
     }
+    
+    const changeStart = (event, selectedStart) => {
+        setStart(selectedStart);
+    }
+
+    const changeEnd = (event, selectedEnd) => {
+        setEnd(selectedEnd);
+    }
 
     const __retakePicture = () => {
         setCapturedImage(null);
@@ -461,18 +989,21 @@ export default function ManageScreen({ navigation }) {
     let transformX = useRef(new Animated.Value(0)).current
 
     useEffect(() => {
+        resetStates();
+        getDispenserData();
+
         if (active) {
-        Animated.timing(transformX, {
-            toValue: 1,
-            duration: 100,
-            useNativeDriver: true
-        }).start()
+            Animated.timing(transformX, {
+                toValue: 1,
+                duration: 100,
+                useNativeDriver: true
+            }).start()
         } else {
-        Animated.timing(transformX, {
-            toValue: 0,
-            duration: 100,
-            useNativeDriver: true
-        }).start()
+            Animated.timing(transformX, {
+                toValue: 0,
+                duration: 100,
+                useNativeDriver: true
+            }).start()
         }
     }, [active]);
 
@@ -481,12 +1012,6 @@ export default function ManageScreen({ navigation }) {
         outputRange: [2, Dimensions.get('screen').width / 2]
     })
 
-    const [showStartDate, setShowStartDate] = useState(false);
-    const [showEndDate, setShowEndDate] = useState(false);
-
-    const toggleStartDate = () => {
-        showMode('date');
-    }
 
     const showMode = (currentMode) => {
         setShowEndDate(!showEndDate);
@@ -577,22 +1102,35 @@ export default function ManageScreen({ navigation }) {
             </SafeAreaView>
             <View style={{marginTop: 10, height: 300, width: 400, flex: 14, gap: 70, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center'}}>
                 <View style={{left: 20, top: 0, height: 400, width: 300, justifyContent: 'space-between', alignItems: 'center'}}>
-                    <Text style={{marginTop: 5, fontSize: 20, fontWeight: 'bold', textDecorationLine: 'underline', color: 'black'}}>Med Name</Text>
+                    <Text style={{marginTop: 5, fontSize: 20, fontWeight: 'bold', textDecorationLine: 'underline', color: 'black'}}>Med Name: {dispenserInfo.medicationName}</Text>
                         <View style={{marginTop: 5, height: 200, width: 220, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                             <View style={{top: -10, left: -20, justifyContent: 'space-evenly', alignItems: 'left', gap: 27}}>
-                                <Text style={{fontWeight: 'bold', color: 'black', fontSize: 15}}>Start Date:</Text>
+                                <Text style={{fontWeight: 'bold', color: 'black', fontSize: 15}}>Start Date: </Text>
                                 <Text style={{fontWeight: 'bold', color: 'black', fontSize: 15}}>End Date:</Text>
-                                <Text style={{fontWeight: 'bold', color: 'black', fontSize: 15}}>Weekley Schedule:</Text>
+                                <Text style={{fontWeight: 'bold', color: 'black', fontSize: 15}}>Weekly Schedule:</Text>
                                 <Text style={{fontWeight: 'bold', color: 'black', fontSize: 15}}>Daily Schedule:</Text>
-                                <Text style={{fontWeight: 'bold', color: 'black', fontSize: 15}}>Pill Quantity:</Text>
+                                <Text style={{fontWeight: 'bold', color: 'black', fontSize: 15}}>Pill Quantity Per Dispense:</Text>
+                                <Text style={{fontWeight: 'bold', color: 'black', fontSize: 15}}>Pills In Dispenser:</Text>
                             </View>
                             <View style={{top: -10, justifyContent: 'space-evenly', alignItems: 'right', gap: 19}}>
-                                <TextInput style={styles.input} editable={false}/>
-                                <TextInput style={styles.input} editable={false}/>
-                                <TextInput style={styles.input} editable={false}/>
-                                <TextInput style={styles.input} editable={false}/>
+                                <Text style={styles.text}>{dispenserInfo.startDate ? firestoreTimeToJS(dispenserInfo.startDate).toDateString() : 'Invalid Date'}</Text>
+                                <Text style={styles.text}>{dispenserInfo.endDate ? firestoreTimeToJS(dispenserInfo.endDate).toDateString() : 'Invalid Date'}</Text>
+                                <Text style={styles.text}>{dispenserInfo.weeklySchedule
+                                    ? dispenserInfo.weeklySchedule.map((isScheduled, index) =>
+                                        isScheduled ? getDayName(index) : null
+                                    ).filter(day => day !== null).join(', ')
+                                    : 'Invalid Schedule'}
+                                </Text>
+                                <Text style={styles.text}>{dispenserInfo.dispenseTimes
+                                    ? dispenserInfo.dispenseTimes.map(timestamp =>
+                                        firestoreTimeToJS(timestamp).toLocaleTimeString([], { hour: 'numeric', minute: 'numeric' })
+                                    ).join(', ')
+                                    : 'Invalid Dispense Times'}
+                                </Text>
+                                <Text style={styles.text}>{dispenserInfo.pillQuantity ? dispenserInfo.pillQuantity : 'Invalid Pill Quantity'}</Text>
+
                                 <View style={{left: 40, borderColor: 'black', borderRadius: 15, borderWidth: 2, height: 30, width: 30, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center'}}>
-                                    <Text style={{color: 'black'}}>#</Text>
+                                    <Text style={{color: 'black'}}>{dispenserInfo.pillsInDispenser}</Text>
                                 </View>
                             </View>
                         </View>
@@ -620,22 +1158,24 @@ export default function ManageScreen({ navigation }) {
                                 <Text style={[{left: 0}, styles.text]}>Start Date</Text>
                                 <DateTimePicker 
                                     mode="date"
-                                    value={start}
+                                    value={editStart}
+                                    onChange={editStartDateInput}
                                 />  
                             </View>
                             <View style={{height: 40, width: 290, margin: 0, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                                 <Text style={[{left: 0}, styles.text]}>End Date</Text>
                                 <DateTimePicker 
                                     mode="date"
-                                    value={end}
+                                    value={editEnd}
+                                    onChange={editEndDateInput}
                                 />  
                             </View>
                             <View style={{height: 40, width: 290, margin: 0, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                                 <Text style={[{left: -0}, styles.text]}>Dispense Times</Text>
                                 <DateTimePicker 
                                     mode="time"
-                                    value={time}
-                                    onChange={changeTime}
+                                    value={editTime}
+                                    onChange={editTimeInput}
                                 />  
                                 <Pressable style={{height: 35, width: 50, backgroundColor: 'lightgrey', borderWidth: 2, borderColor: 'black', borderRadius: 10, justifyContent: 'center', alignItems: 'center'}}
                                     onPress={addNewTime}>
@@ -661,25 +1201,25 @@ export default function ManageScreen({ navigation }) {
                         </View>
                     </View>
                     <View style={styles.days}>
-                        <Pressable style={[styles.day, {backgroundColor: Monday ? '#6D28D9': 'mediumpurple'}]} onPress={handleMondayClick}>
+                        <Pressable style={[styles.day, {backgroundColor: Monday ? '#6D28D9': 'mediumpurple'}]} onPress={() => { handleMondayClick(); editWeeklySched(); }}>
                             <Text style={styles.dayText}>Mo</Text>   
                         </Pressable>
-                        <Pressable style={[styles.day, {backgroundColor: Tuesday ? '#6D28D9': 'mediumpurple'}]} onPress={handleTuesdayClick}>
+                        <Pressable style={[styles.day, {backgroundColor: Tuesday ? '#6D28D9': 'mediumpurple'}]} onPress={() => { handleTuesdayClick(); editWeeklySched(); }}>
                             <Text style={styles.dayText}>Tu</Text>
                         </Pressable>
-                        <Pressable style={[styles.day, {backgroundColor: Wednesday ? '#6D28D9': 'mediumpurple'}]} onPress={handleWednesdayClick}>
+                        <Pressable style={[styles.day, {backgroundColor: Wednesday ? '#6D28D9': 'mediumpurple'}]} onPress={() => { handleWednesdayClick(); editWeeklySched(); }}>
                             <Text style={styles.dayText}>We</Text>
                         </Pressable>
-                        <Pressable style={[styles.day, {backgroundColor: Thursday ? '#6D28D9': 'mediumpurple'}]} onPress={handleThursdayClick}>
+                        <Pressable style={[styles.day, {backgroundColor: Thursday ? '#6D28D9': 'mediumpurple'}]} onPress={() => { handleThursdayClick(); editWeeklySched(); }}>
                             <Text style={styles.dayText}>Th</Text>
                         </Pressable>
-                        <Pressable style={[styles.day, {backgroundColor: Friday ? '#6D28D9': 'mediumpurple'}]} onPress={handleFridayClick}>
+                        <Pressable style={[styles.day, {backgroundColor: Friday ? '#6D28D9': 'mediumpurple'}]} onPress={() => { handleFridayClick(); editWeeklySched(); }}>
                             <Text style={styles.dayText}>Fr</Text>
                         </Pressable>
-                        <Pressable style={[styles.day, {backgroundColor: Saturday ? '#6D28D9': 'mediumpurple'}]} onPress={handleSaturdayClick}>
+                        <Pressable style={[styles.day, {backgroundColor: Saturday ? '#6D28D9': 'mediumpurple'}]} onPress={() => { handleSaturdayClick(); editWeeklySched(); }}>
                             <Text style={styles.dayText}>Sa</Text>
                         </Pressable>
-                        <Pressable style={[styles.day, {backgroundColor: Sunday ? '#6D28D9': 'mediumpurple'}]} onPress={handleSundayClick}>
+                        <Pressable style={[styles.day, {backgroundColor: Sunday ? '#6D28D9': 'mediumpurple'}]} onPress={() => { handleSundayClick(); editWeeklySched(); }}>
                             <Text style={styles.dayText}>Su</Text>
                         </Pressable>
                     </View>
@@ -696,7 +1236,7 @@ export default function ManageScreen({ navigation }) {
                         <Text style={{color: 'white', fontWeight: 'bold', fontSize: 20}}>X</Text>
                     </Pressable>
                     <Text style={{color: 'black', fontWeight: 'bold', fontSize: 20}}>Refill Quantity?</Text>
-                    <TextInput style={[styles.input, {height: 40, marginTop: 20, width: 200}]} keyboardType='numeric'/>
+                    <TextInput style={[styles.input, {height: 40, marginTop: 20, width: 200}]} keyboardType='numeric' onChangeText={num => setRefillValue(num)}/>
                     <Pressable style={{marginTop: 20, top: -0, left: 0, width: 200, height: 30, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'black', borderRadius: 5}}
                         onPress={refillFunction}>
                         <Text style={{color: 'white', fontWeight: 'bold', fontSize: 20}}>SUBMIT</Text>
@@ -729,22 +1269,23 @@ export default function ManageScreen({ navigation }) {
                                 />
                                 <View style={{height: 40, width: 290, margin: 5, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                                     <Text style={[{left: -5}, styles.text]}>Start Date</Text>
-                                    {showStartDate && (<DateTimePicker 
+                                    <DateTimePicker 
                                         mode="date"
                                         value={start}
-                                    />)}  
+                                        onChange={changeStart}
+                                    />
                                 </View>
                                 <View style={{height: 40, width: 290, margin: 5, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                                     <Text style={[{left: -5}, styles.text]}>End Date</Text>
-                                    <Button style={{height: 40, width: 40}} title="E" onPress={toggleStartDate}/>
-                                    {showEndDate && (<DateTimePicker 
+                                    <DateTimePicker 
                                         mode="date"
                                         value={start}
-                                    />)}  
+                                        onChange={changeEnd}
+                                    />
                                 </View>
                                 <Text style={styles.text}>Medication Dispenser</Text>
                                 <TextInput style={[styles.inputAdd, {backgroundColor: 'lightgray'}]} value= {active ? "B" : "A"} editable={false} placeholder="Dispenser (A or B)" placeholderTextColor={'grey'}
-                                    onChangeText={text => setDispenserNumber(text)}
+                                    // onChangeText={text => setDispenserNumber(text)}
                                 />
                                 <Text style={styles.text}>Select Weekly Schedule</Text>
                                 <View style={styles.days}>

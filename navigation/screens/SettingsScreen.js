@@ -4,7 +4,7 @@ import Modal from 'react-native-modal';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useState} from 'react';
 
-import { getAuth, updatePassword, deleteUser } from 'firebase/auth';
+import { getAuth, updatePassword, deleteUser, EmailAuthProvider } from 'firebase/auth';
 import { doc, setDoc, collection, increment, updateDoc, deleteDoc } from 'firebase/firestore';
 import { auth, db } from "../../firebase.js"
 
@@ -112,89 +112,6 @@ export default function SettingsScreen({ navigation }) {
         setConfirmPasswordModal(!confirmPasswordModal);
     }
 
-    // const __changeMedication = () => {
-    //     // Determine which medication needs to be changed
-
-    //     const auth = getAuth();
-    //     const user = auth.currentUser;
-
-    //     const schedArray = [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday];
-    //     setWeeklySchedule(schedArray);
-
-    //     const timesList = dispenseTimes.split(',');
-    //     setDispenseTimesList(timesList);
-
-    //     if (medicationOne) {
-    //         // UPDATE MEDICATION ONE!!!
-    //         // User has the option to refill medication, change start date, change end date, 
-    //         //      change weekly schedule, and change daily schedule
-    //         // NOTE: Refill Medication should add the user inputted number to the existing number in the db
-
-    //         // TODO: update notification times with this....lot of work lol (SECOND)
-    //         // TODO: delete notifications from sched db with this also (FIRST)
-    //         // TODO: add logic to keep track of if inputs are empty. if empty, do not update in db
-
-    //         // get docid to reference specific doc in meds
-    //         db.collection("meds").where("user", "==", user.uid)
-    //         .get()
-    //         .then((querySnapshot) => {
-    //             querySnapshot.forEach((doc) => {
-    //                 if (doc.data().dispenserNumber == "1") {
-    //                     setMedicationOneDocId(doc.id);
-    //                     console.log("docid is ", doc.id);
-    //                 }
-    //             })
-    //         })
-    //         .then(() => {
-    //             updateDoc(doc(db, "meds", medicationOneDocId), {
-    //                 startDate: startDate,
-    //                 endDate: endDate,
-    //                 weeklySchedule: weeklySchedule,
-    //                 dispenseTimes: dispenseTimesList,
-    //                 pillsInDispenser: increment(pillsInDispenser)
-    //             })
-    //         })
-    //         .then(() => {
-    //             console.log("Medication updated successfully");
-    //         })
-    //         .catch((error) => {
-    //             const errorCode = error.code;
-    //             const errorMessage = error.message;
-    //             console.log(errorCode, errorMessage);
-    //         })
-
-    //     } else {
-    //         // UPDATE MEDICATION TWO!!!
-    //         // get docid to reference specific doc in meds
-    //         db.collection("meds").where("user", "==", user.uid)
-    //         .get()
-    //         .then((querySnapshot) => {
-    //             querySnapshot.forEach((doc) => {
-    //                 if (doc.data().dispenserNumber == "2") {
-    //                     setMedicationTwoDocId(doc.id);
-    //                     console.log("docid is ", doc.id);
-    //                 }
-    //             })
-    //         })
-    //         .then(() => {
-    //             updateDoc(doc(db, "meds", medicationTwoDocId), {
-    //                 startDate: startDate,
-    //                 endDate: endDate,
-    //                 weeklySchedule: weeklySchedule,
-    //                 dispenseTimes: dispenseTimes,
-    //                 pillsInDispenser: increment(pillsInDispenser)
-    //             })
-    //         })
-    //         .then(() => {
-    //             console.log("Medication updated successfully");
-    //         })
-    //         .catch((error) => {
-    //             const errorCode = error.code;
-    //             const errorMessage = error.message;
-    //             console.log(errorCode, errorMessage);
-    //         })
-    //     }
-    // }
 
     const __deleteMedication = () => {
         // Delete medication A or B or both!!
@@ -324,11 +241,13 @@ export default function SettingsScreen({ navigation }) {
 
     const deleteAccount = async () => {
 
+        // TODO: have the user reauthenticate with their password to confirm deletion
+
         try {
             const auth = getAuth();
             const user = auth.currentUser;
 
-            const credentials = auth.EmailAuthProvider.credential(user.email, user.password);
+            const credentials = EmailAuthProvider.credential(user.email, ___);
             await reauthenticateWithCredential(user, credentials);
 
             changeDispenserOne(true);
@@ -438,7 +357,7 @@ export default function SettingsScreen({ navigation }) {
                                 <TextInput style={styles.input} placeholder="Change Dispense Times (Each Day)" placeholderTextColor={'grey'} onChangeText={text => setDispenseTimes(text)} />
                             </View>
                             <Pressable style={{width: 200, height: 30, backgroundColor: 'mediumpurple', borderWidth: 2, borderRadius: 5, borderColor: 'black', justifyContent: 'center', alignItems: 'center', marginTop: 3, marginBottom: 10, padding: 2}}
-                                onPress={__changeMedication}>
+                                onPress={alert("hi")}>
                                 <Text style={{fontWeight: 'bold', fontSize: 15, color: 'white'}}>Change Medication</Text>
                             </Pressable>
                         </View>
