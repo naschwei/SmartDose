@@ -608,21 +608,21 @@ export default function ManageScreen({ navigation }) {
                         <View style={{top: -10, left: -20, justifyContent: 'space-evenly', alignItems: 'left', gap: 20}}>
                             <View style={{height: 40, width: 290, margin: 0, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                                 <Text style={[{left: 0}, styles.text]}>Start Date</Text>
-                                <RNDateTimePicker 
+                                <DateTimePicker 
                                     mode="date"
                                     value={start}
                                 />  
                             </View>
                             <View style={{height: 40, width: 290, margin: 0, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                                 <Text style={[{left: 0}, styles.text]}>End Date</Text>
-                                <RNDateTimePicker 
+                                <DateTimePicker 
                                     mode="date"
                                     value={end}
                                 />  
                             </View>
                             <View style={{height: 40, width: 290, margin: 0, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                                 <Text style={[{left: -0}, styles.text]}>Dispense Times</Text>
-                                <RNDateTimePicker 
+                                <DateTimePicker 
                                     mode="time"
                                     value={time}
                                     onChange={changeTime}
@@ -719,14 +719,14 @@ export default function ManageScreen({ navigation }) {
                                 />
                                 <View style={{height: 40, width: 290, margin: 5, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                                     <Text style={[{left: -5}, styles.text]}>Start Date</Text>
-                                    <RNDateTimePicker 
+                                    <DateTimePicker 
                                         mode="date"
                                         value={start}
                                     />  
                                 </View>
                                 <View style={{height: 40, width: 290, margin: 5, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                                     <Text style={[{left: -5}, styles.text]}>End Date</Text>
-                                    <RNDateTimePicker 
+                                    <DateTimePicker 
                                         mode="date"
                                         value={start}
                                     />  
@@ -761,7 +761,7 @@ export default function ManageScreen({ navigation }) {
                                 </View>
                                 <View style={{height: 40, width: 290, margin: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                                     <Text style={[{left: -10}, styles.text]}>Dispense Times</Text>
-                                    <RNDateTimePicker 
+                                    <DateTimePicker 
                                         mode="time"
                                         value={time}
                                         onChange={changeTime}
