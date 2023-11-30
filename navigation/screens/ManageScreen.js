@@ -478,7 +478,6 @@ export default function ManageScreen({ navigation }) {
             <View style={{marginTop: 10, height: 300, width: 400, flex: 14, gap: 70, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center'}}>
                 <View style={{left: 20, top: 0, height: 400, width: 300, justifyContent: 'space-between', alignItems: 'center'}}>
                     <Text style={{marginTop: 5, fontSize: 20, fontWeight: 'bold', textDecorationLine: 'underline', color: 'black'}}>Med Name</Text>
-                    <KeyboardAwareScrollView contentContainerStyle={{top: 40, left: 30, width: 280}}>
                         <View style={{marginTop: 5, height: 200, width: 220, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                             <View style={{top: -10, left: -20, justifyContent: 'space-evenly', alignItems: 'left', gap: 27}}>
                                 <Text style={{fontWeight: 'bold', color: 'black', fontSize: 15}}>Start Date:</Text>
@@ -497,7 +496,6 @@ export default function ManageScreen({ navigation }) {
                                 </View>
                             </View>
                         </View>
-                    </KeyboardAwareScrollView>
                     <Pressable style={{marginBottom: 10, height: 30, width: 220, borderWidth: 2, borderRadius: 20, borderColor: 'black', backgroundColor: 'white', justifyContent: 'center', alignItems: 'center'}} onPress={toggleRefill}>
                         <Text style={{fontWeight: 'bold', color: 'black', fontSize: 15}}>REFILL THIS MEDICATION</Text>
                     </Pressable>
@@ -505,7 +503,7 @@ export default function ManageScreen({ navigation }) {
                         <Text style={{fontWeight: 'bold', color: 'black', fontSize: 15}}>EDIT INFO</Text>
                     </Pressable>
                 </View>
-                <Pressable style={{top: 230, left: -30, width: 70, height: 70, backgroundColor: 'mediumpurple', borderWidth: 5, borderRadius: 35, borderColor: 'black', justifyContent: 'center', alignItems: 'center'}} title="Add New Medication" onPress={toggleModal}>
+                <Pressable style={{top: 200, left: -40, width: 70, height: 70, backgroundColor: 'mediumpurple', borderWidth: 5, borderRadius: 35, borderColor: 'black', justifyContent: 'center', alignItems: 'center'}} title="Add New Medication" onPress={toggleModal}>
                     <Text style={{left: 1, top: -3, fontWeight: 'bold', fontSize: 40, color: '#f8ffff'}}>+</Text>  
                 </Pressable>
             </View>
@@ -523,17 +521,13 @@ export default function ManageScreen({ navigation }) {
                                 <RNDateTimePicker 
                                     mode="date"
                                     value={start}
-                                    textColor='black'
-                                    themeVariant='light'
                                 />  
                             </View>
                             <View style={{height: 40, width: 290, margin: 0, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                                 <Text style={[{left: 0}, styles.text]}>End Date</Text>
                                 <RNDateTimePicker 
                                     mode="date"
-                                    value={start}
-                                    textColor='black'
-                                    themeVariant='light'
+                                    value={end}
                                 />  
                             </View>
                             <View style={{height: 40, width: 290, margin: 0, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -541,9 +535,6 @@ export default function ManageScreen({ navigation }) {
                                 <RNDateTimePicker 
                                     mode="time"
                                     value={time}
-                                    textColor='black'
-                                    themeVariant='light'
-                                    style={{}}
                                     onChange={changeTime}
                                 />  
                                 <Pressable style={{height: 35, width: 50, backgroundColor: 'lightgrey', borderWidth: 2, borderColor: 'black', borderRadius: 10, justifyContent: 'center', alignItems: 'center'}}
@@ -641,8 +632,6 @@ export default function ManageScreen({ navigation }) {
                                     <RNDateTimePicker 
                                         mode="date"
                                         value={start}
-                                        textColor='black'
-                                        themeVariant='light'
                                     />  
                                 </View>
                                 <View style={{height: 40, width: 290, margin: 5, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -650,8 +639,6 @@ export default function ManageScreen({ navigation }) {
                                     <RNDateTimePicker 
                                         mode="date"
                                         value={start}
-                                        textColor='black'
-                                        themeVariant='light'
                                     />  
                                 </View>
                                 <Text style={styles.text}>Medication Dispenser</Text>
@@ -687,9 +674,6 @@ export default function ManageScreen({ navigation }) {
                                     <RNDateTimePicker 
                                         mode="time"
                                         value={time}
-                                        textColor='black'
-                                        themeVariant='light'
-                                        style={{}}
                                         onChange={changeTime}
                                     />  
                                     <Pressable style={{height: 35, width: 50, backgroundColor: 'lightgrey', borderWidth: 2, borderColor: 'black', borderRadius: 10, justifyContent: 'center', alignItems: 'center'}}

@@ -39,6 +39,7 @@ export default function SettingsScreen({ navigation }) {
     const [ isModalOneVisible, setIsModalOneVisible ] = useState(false);
     const [ isModalTwoVisible, setIsModalTwoVisible ] = useState(false);
     const [ isModalThreeVisible, setIsModalThreeVisible ] = useState(false);
+    const [ confirmPasswordModal, setConfirmPasswordModal ] = useState(false); // modal for confirming password on delete account
     const [ Monday, changeMonday ] = useState(false);
     const [ Tuesday, changeTuesday ] = useState(false);
     const [ Wednesday, changeWednesday ] = useState(false);
@@ -106,6 +107,10 @@ export default function SettingsScreen({ navigation }) {
 
         changeMedicationOne(false);
         changeMedicationTwo(false);
+    }
+
+    const toggleDeleteAccountModal = () => {
+        setConfirmPasswordModal(!confirmPasswordModal);
     }
 
     const __changeMedication = () => {
@@ -330,7 +335,7 @@ export default function SettingsScreen({ navigation }) {
             <StyledButton onPress={toggleModalOne} style={{width: 300, justifyContent: 'center', alignItems: 'center'}}>
                 <ButtonText> Change My Credentials </ButtonText>
             </StyledButton>
-            <StyledButton onPress={deleteAccount} style={{width: 300, justifyContent: 'center', alignItems: 'center'}}>
+            <StyledButton onPress={toggleDeleteAccountModal} style={{width: 300, justifyContent: 'center', alignItems: 'center'}}>
                 <ButtonText> Delete My Account </ButtonText>
             </StyledButton>
             <StyledButton onPress={toggleModalThree} style={{width: 300, justifyContent: 'center', alignItems: 'center'}}>
@@ -446,6 +451,24 @@ export default function SettingsScreen({ navigation }) {
                     <Pressable style={{width: 200, height: 30, backgroundColor: 'mediumpurple', borderWidth: 2, borderRadius: 5, borderColor: 'black', justifyContent: 'center', alignItems: 'center', marginBottom: 10, padding: 2}} 
                         onPress={__deleteMedication}>
                         <Text style={{fontWeight: 'bold', fontSize: 15, color: 'white'}}>DELETE MEDICATION(S)</Text>
+                    </Pressable>
+                </View>
+            </Modal>
+            <Modal isVisible={confirmPasswordModal}>
+                <View style={[styles.container1, {height: 240}]}>
+                    <Pressable style={{top: 10, left: -150, width: 30, height: 30, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'black', borderRadius: 5}}
+                        onPress={toggleDeleteAccountModal}>
+                        <Text style={{color: 'white', fontWeight: 'bold', fontSize: 20}}>X</Text>
+                    </Pressable>
+                    <Text style={[styles.text, {marginTop: 0, fontSize: 30}]}>Delete Account?</Text>
+                    <Text style={[styles.text, {margin: 5, marginBottom: 10}]}>Please Confirm Your Password</Text>
+                    <TextInput style={styles.input}
+                        placeholder='My Password'
+                        placeholderTextColor={'gray'}
+                    />
+                    <Pressable style={{margin: 15, width: 200, height: 30, backgroundColor: 'red', borderWidth: 2, borderRadius: 5, borderColor: 'black', justifyContent: 'center', alignItems: 'center', marginBottom: 10, padding: 2}}
+                        onPress={deleteAccount}>
+                        <Text style={{color: 'white', fontWeight: 'bold', fontSize: 15}}>SUBMIT</Text>
                     </Pressable>
                 </View>
             </Modal>
