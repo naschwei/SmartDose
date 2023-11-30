@@ -132,6 +132,7 @@ export default function ManageScreen({ navigation }) {
     const toggleEditModal = () => {
         setIsEditModal(!isEditModal);
         resetStates();
+        getDispenserData();
     }
 
     function firestoreTimeToJS(timestampObject) {
