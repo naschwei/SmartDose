@@ -117,6 +117,7 @@ export default function ManageScreen({ navigation }) {
                 } else {
                     setIsModalVisible(!isModalVisible);
                     resetStates();
+                    getDispenserData();
                     return;
                 }
             })
