@@ -92,34 +92,32 @@ const Login = () => {
         behavior="padding"
     >
         <PageLogo resizeMode="cover" source={require('./../../assets/icon.png')} />
-        <View style={{
-            flexDirection: 'column'
-        }}> 
+        <View style={styles.inputContainer}> 
             <MyTextInput 
                     label="Email Address"
                     icon="mail"
-                    placeholder="hello-world@gmail.com"
+                    placeholder="my_email@gmail.com"
                     placeholderTextColor={darkLight}
                     onChangeText={text => setEmail(text)}
                     onBlur={() => {}}
                     value={email}
                     keyboardType="email-address"
                     style={styles.input}
-                />
-                <MyTextInput 
-                    label="Password"
-                    icon="lock"
-                    placeholder="* * * * * * * *"
-                    placeholderTextColor={darkLight}
-                    onChangeText={text => setPassword(text)}
-                    onBlur={() => {}}
-                    value={password}
-                    secureTextEntry={hidePassword}
-                    isPassword={true}
-                    hidePassword={hidePassword}
-                    setHidePassword={setHidePassword}
-                    style={styles.input}
-                />
+            />
+            <MyTextInput 
+                label="Password"
+                icon="lock"
+                placeholder="* * * * * * * *"
+                placeholderTextColor={darkLight}
+                onChangeText={text => setPassword(text)}
+                onBlur={() => {}}
+                value={password}
+                secureTextEntry={hidePassword}
+                isPassword={true}
+                hidePassword={hidePassword}
+                setHidePassword={setHidePassword}
+                style={styles.input}
+            />
         </View>
 
       <View style={styles.buttonContainer}>
