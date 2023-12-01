@@ -70,6 +70,23 @@ const Signup = () => {
             style={styles.container}
             behavior="padding"
         >
+        <View>
+            <View style={{ alignItems: 'center'}}> 
+                <Text style={{
+                    fontSize: 25,
+                    fontWeight: 'bold',
+                    color: brand
+                }}> Let's Get Started! </Text>
+                <Text style={{
+                    marginTop: 10,
+                    fontSize: 14,
+                    marginBottom: 30,
+                    color: brand
+                }}
+                > Sign up with a free account! </Text>
+            </View>
+        </View>
+
         <View style={styles.inputContainer}>
             <MyTextInput 
                 label="Full Name"
@@ -83,7 +100,7 @@ const Signup = () => {
             <MyTextInput 
                 label="Email Address"
                 icon="mail"
-                placeholder="hello-world@gmail.com"
+                placeholder="my_email@gmail.com"
                 placeholderTextColor={darkLight}
                 onChangeText={text => setEmail(text)}
                 onBlur={ () => {} }
@@ -232,7 +249,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     inputContainer: {
-        width: '80%'
+        width: '80%',
     },
     input: {
         backgroundColor: 'white',
@@ -245,10 +262,10 @@ const styles = StyleSheet.create({
         width: '60%',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 40,
+        marginTop: 15,
     },
     button: {
-        backgroundColor: '#0782F9',
+        backgroundColor: brand,
         width: '100%',
         padding: 15,
         borderRadius: 10,
@@ -258,7 +275,7 @@ const styles = StyleSheet.create({
     buttonOutline: {
         backgroundColor: 'white',
         marginTop: 5,
-        borderColor: '#0782F9',
+        borderColor: brand,
         borderWidth: 2,
     },
     buttonText: {
@@ -267,7 +284,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     buttonOutlineText: {
-        color: '#0782F9',
+        color: brand,
         fontWeight: '700',
         fontSize: 16,
     },

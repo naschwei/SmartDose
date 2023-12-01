@@ -1,9 +1,9 @@
 import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useEffect } from 'react'
-import { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import {Octicons, Ionicons, Fontisto} from '@expo/vector-icons';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { useNavigation } from '@react-navigation/core';
-import { auth } from "../../firebase.js"
+import { auth } from "../../firebase.js";
 
 
 import {
@@ -28,11 +28,32 @@ import {
     TextLinkContent
 } from '../../components/styles';
 
+const {brand, darkLight, primary} = Colors;
+
+/*
+      <View style={styles.inputContainer}>
+        <TextInput
+            placeholder="Email"
+            value={email}
+            onChangeText={text => setEmail(text)}
+            style={styles.input}
+        />
+        <TextInput
+            placeholder="Password"
+            value={password}
+            onChangeText={text => setPassword(text)}
+            style={styles.input}
+            secureTextEntry
+        />
+      </View>
+*/
+
 
 const Login = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [hidePassword, setHidePassword] = useState(true);
 
     const navigation = useNavigation();
 
@@ -70,21 +91,36 @@ const Login = () => {
         style={styles.container}
         behavior="padding"
     >
-      <View style={styles.inputContainer}>
-        <TextInput
-            placeholder="Email"
-            value={email}
-            onChangeText={text => setEmail(text)}
-            style={styles.input}
-        />
-        <TextInput
-            placeholder="Password"
-            value={password}
-            onChangeText={text => setPassword(text)}
-            style={styles.input}
-            secureTextEntry
-        />
-      </View>
+        <PageLogo resizeMode="cover" source={require('./../../assets/icon.png')} />
+        <View style={{
+            flexDirection: 'column'
+        }}> 
+            <MyTextInput 
+                    label="Email Address"
+                    icon="mail"
+                    placeholder="hello-world@gmail.com"
+                    placeholderTextColor={darkLight}
+                    onChangeText={text => setEmail(text)}
+                    onBlur={() => {}}
+                    value={email}
+                    keyboardType="email-address"
+                    style={styles.input}
+                />
+                <MyTextInput 
+                    label="Password"
+                    icon="lock"
+                    placeholder="* * * * * * * *"
+                    placeholderTextColor={darkLight}
+                    onChangeText={text => setPassword(text)}
+                    onBlur={() => {}}
+                    value={password}
+                    secureTextEntry={hidePassword}
+                    isPassword={true}
+                    hidePassword={hidePassword}
+                    setHidePassword={setHidePassword}
+                    style={styles.input}
+                />
+        </View>
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity
@@ -109,6 +145,23 @@ const Login = () => {
 
 export default Login
 
+const MyTextInput = ({label, icon, isPassword, hidePassword, setHidePassword, ...props}) => {
+    return (
+        <View>
+            <LeftIcon>
+                <Octicons name={icon} size={30} color={brand} />
+            </LeftIcon>
+            <StyledInputLabel> {label} </StyledInputLabel>
+            <StyledTextInput {...props} />
+            {isPassword && (
+                <RightIcon onPress={()=> setHidePassword(!hidePassword)}>
+                    <Ionicons name={hidePassword ? 'md-eye-off' : 'md-eye'} size={30} color={darkLight} />
+                </RightIcon>
+            )}
+        </View>
+    )
+}
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -132,7 +185,7 @@ const styles = StyleSheet.create({
         marginTop: 40,
     },
     button: {
-        backgroundColor: '#0782F9',
+        backgroundColor: brand,
         width: '100%',
         padding: 15,
         borderRadius: 10,
