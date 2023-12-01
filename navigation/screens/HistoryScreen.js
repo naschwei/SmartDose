@@ -1,3 +1,6 @@
+/* SCRAPED */
+
+
 import React, {useState} from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Pressable, Box} from 'react-native';
 import { Agenda } from "react-native-calendars";
