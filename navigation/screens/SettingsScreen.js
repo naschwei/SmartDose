@@ -250,7 +250,7 @@ export default function SettingsScreen({ navigation }) {
             const user = auth.currentUser;
 
             const credentials = EmailAuthProvider.credential(user.email, confirmDeleteAccountPass);
-            await reauthenticateWithCredential(user, credentials);
+            await user.reauthenticateWithCredential(user, credentials);
 
             changeDispenserOne(true);
             changeDispenserTwo(true);
