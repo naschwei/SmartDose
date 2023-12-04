@@ -137,6 +137,8 @@ export default function ManageScreen({ navigation }) {
     }
 
     function firestoreTimeToJS(timestampObject) {
+        alert(timestampObject);
+        alert(timestampObject.seconds);
         if (!timestampObject || !timestampObject.seconds) {
             // Handle invalid or missing timestamp
             return null;
@@ -1199,7 +1201,7 @@ export default function ManageScreen({ navigation }) {
                         <View style={{top: -33, justifyContent: 'space-evenly', alignItems: 'right', gap: 10}}>
                             <View style={{left: 40, borderColor: 'black', borderRadius: 15, borderWidth: 2, height: 30, width: 30, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center'}}>
                                 <Text style={{color: 'black'}}>#</Text>
-                            </View>
+                            </View> 
                         </View>
                     </View>
                     <View style={styles.days}>
