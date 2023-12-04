@@ -67,6 +67,8 @@ export default function SettingsScreen({ navigation }) {
     const [newPassword, setNewPassword] = useState("");
     const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
+    const [confirmDeleteAccountPass, setConfirmDeleteAccountPass] = useState("");
+
     const handleMondayClick = () => {changeMonday(!Monday);};
     const handleTuesdayClick = () => {changeTuesday(!Tuesday);};
     const handleWednesdayClick = () => {changeWednesday(!Wednesday);};
@@ -241,14 +243,14 @@ export default function SettingsScreen({ navigation }) {
 
     const deleteAccount = async () => {
 
-        // TODO: have the user reauthenticate with their password to confirm deletion
+        // TODO: TESTTTT TEST TESTSTTSTSTS
 
         try {
             const auth = getAuth();
             const user = auth.currentUser;
 
-            const credentials = EmailAuthProvider.credential(user.email, ___);
-            await reauthenticateWithCredential(user, credentials);
+            const credentials = EmailAuthProvider.credential(user.email, confirmDeleteAccountPass);
+            await user.reauthenticateWithCredential(user, credentials);
 
             changeDispenserOne(true);
             changeDispenserTwo(true);
@@ -404,6 +406,9 @@ export default function SettingsScreen({ navigation }) {
                     <TextInput style={styles.input}
                         placeholder='My Password'
                         placeholderTextColor={'gray'}
+                        secureTextEntry={true}
+                        value={confirmDeleteAccountPass}
+                        onChangeText={text => setConfirmDeleteAccountPass(text)}
                     />
                     <Pressable style={{margin: 15, width: 200, height: 30, backgroundColor: 'red', borderWidth: 2, borderRadius: 5, borderColor: 'black', justifyContent: 'center', alignItems: 'center', marginBottom: 10, padding: 2}}
                         onPress={deleteAccount}>

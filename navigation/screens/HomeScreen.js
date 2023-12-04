@@ -42,7 +42,7 @@ function MedicationCard () {
     <InnerContainer>
         {userMedications.map(med => 
             <View style= {styles.cardContainer}>
-                <View style={styles.cardContent}> 
+                <View style={styles.cardContent}>
                     <Text style={styles.titleStyle}> {med.medicationName} </Text>
                     <Text> {med.pillQuantity} pills</Text>
                     <Text> {med.dispenseTime} </Text>
@@ -102,11 +102,15 @@ export default function HomeScreen() {
     }
     
 
+    // TODO: order based on start and end dates also, if within range then...
     const getDailyMedications = () => {
         // where 0 refers to sunday, 1 refers to monday, 2 to tuesday, ... etc.
         const d = new Date();
         const day = d.getDay();
         console.log(day);
+
+        // to compare start and end date's with
+        const currentDate = new Date();
 
         const user = auth.currentUser;
         const medications = [];
@@ -116,7 +120,10 @@ export default function HomeScreen() {
         .then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
                 if (doc.data().dayOfWeek === day) {
-                    medications.push(doc.data());
+                    // TODO :: test if this works
+                    if (doc.data().startDate.toDate() <= currentDate && doc.data().startDate.toDate() >= currentDate) {
+                        medications.push(doc.data());
+                    }
                 }
             });
             console.log(medications);
@@ -129,7 +136,7 @@ export default function HomeScreen() {
 
     useEffect(() => {
         getDailyMedications();
-    }, []);
+    }, [date]);
 
 
     // NEW: CALENDAR TOGGLE
