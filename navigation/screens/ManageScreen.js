@@ -1131,8 +1131,9 @@ export default function ManageScreen({ navigation }) {
                                     ).join(', ')
                                     : 'Invalid Dispense Times'}
                                 </Text>
-                                <Text style={styles.text}>{dispenserInfo.pillQuantity ? dispenserInfo.pillQuantity : 'Invalid Pill Quantity'}</Text>
-
+                                <View style={{left: 40, borderColor: 'black', borderRadius: 15, borderWidth: 2, height: 30, width: 30, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center'}}>
+                                    <Text style={styles.text}>{dispenserInfo.pillQuantity ? dispenserInfo.pillQuantity : 'Invalid Pill Quantity'}</Text>
+                                </View>
                                 <View style={{left: 40, borderColor: 'black', borderRadius: 15, borderWidth: 2, height: 30, width: 30, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center'}}>
                                     <Text style={{color: 'black'}}>{dispenserInfo.pillsInDispenser}</Text>
                                 </View>
