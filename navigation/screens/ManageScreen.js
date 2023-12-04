@@ -829,7 +829,6 @@ export default function ManageScreen({ navigation }) {
     const editTimeInput = (event, selectedTime) => {
         setEditTime(selectedTime);
         console.log("selected dispense times are ",selectedTime);
-        setCheckChangeDispenseTimes(true);
     }
 
     const changeWeeklySchedInput = () => {
