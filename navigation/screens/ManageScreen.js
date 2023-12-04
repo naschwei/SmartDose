@@ -934,6 +934,7 @@ export default function ManageScreen({ navigation }) {
         newTimes.push(time);
 
         setDailyTimes(newTimes);
+        setCheckChangeDispenseTimes(true);
     }
 
     const resetStates = async () => {
