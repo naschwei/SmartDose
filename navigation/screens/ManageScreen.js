@@ -1258,7 +1258,7 @@ export default function ManageScreen({ navigation }) {
             </SafeAreaView>
             <View style={{marginTop: 10, height: 300, width: 400, flex: 14, gap: 70, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center'}}>
                 <View style={{left: 20, top: 0, height: 400, width: 300, justifyContent: 'space-between', alignItems: 'center'}}>
-                    <Text style={{marginTop: 5, fontSize: 20, fontWeight: 'bold', textDecorationLine: 'underline', color: 'black'}}>Med Name: {dispenserInfo.medicationName}</Text>
+                    <Text style={{marginTop: 5, fontSize: 20, fontWeight: 'bold', textDecorationLine: 'underline', color: 'black'}}>Med Name: {dispenserInfo.medicationName ? dispenserInfo.medicationName : 'No Info'}</Text>
                         <View style={{marginTop: 5, height: 200, width: 220, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                             <View style={{top: -10, left: -20, justifyContent: 'space-evenly', alignItems: 'left', gap: 27}}>
                                 <Text style={{fontWeight: 'bold', color: 'black', fontSize: 15}}>Start Date: </Text>
