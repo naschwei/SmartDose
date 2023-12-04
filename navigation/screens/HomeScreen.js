@@ -22,11 +22,7 @@ import {
 const {primary, tertiary, brand, darkLight} = Colors;
 
 import Card from './../../components/card';
-<<<<<<< Updated upstream
-//import DatePicker from 'react-native-modern-datepicker';
-=======
 // import DatePicker from 'react-native-modern-datepicker';
->>>>>>> Stashed changes
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { auth, db } from "../../firebase.js"
@@ -167,6 +163,8 @@ export default function HomeScreen() {
         const user = auth.currentUser;
         const medications = [];
 
+        let toAdd = {};
+
         db.collection("sched").where("user", "==", user.uid)
         .get()
         .then((querySnapshot) => {
@@ -182,8 +180,12 @@ export default function HomeScreen() {
                     console.log("end date is ", endDate);
 
                     if (startDate <= currentDate && endDate >= currentDate) {
+                        toAdd = {medicationName: doc.data().medicationName,
+                                pillQuantity: doc.data().pillQuantity,
+                                dispenseTime: doc.data().dispenseTime}
+
                         console.log("getting in if statement");
-                        medications.push(doc.data());
+                        medications.push(toAdd);
                     }
                 }
             });
