@@ -1,5 +1,5 @@
 import { getAuth } from 'firebase/auth';
-import { addDoc, doc, setDoc, collection, getDocs, updateDoc, increment } from 'firebase/firestore';
+import { addDoc, doc, setDoc, collection, getDocs, updateDoc, increment, deleteDoc } from 'firebase/firestore';
 import React, {useState, useEffect, useRef} from 'react';
 import { FlatList, Animated, Dimensions, ImageBackground, Switch, Pressable, TouchableOpacity, SafeAreaView, Button, View, TextInput, StyleSheet, Text, KeyboardAvoidingView } from 'react-native';
 import Modal from 'react-native-modal';
@@ -8,7 +8,7 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import * as MediaLibrary from 'expo-media-library';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { auth, db } from "../../firebase.js"
-import { setNotifications, scheduleWeeklyNotification } from '../../notifs.js';
+import { setNotifications, scheduleWeeklyNotification, cancelNotification } from '../../notifs.js';
 import { Timeline } from 'react-native-calendars';
 
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -137,8 +137,8 @@ export default function ManageScreen({ navigation }) {
     }
 
     function firestoreTimeToJS(timestampObject) {
-        alert(timestampObject);
-        alert(timestampObject.seconds);
+        // alert(timestampObject);
+        // alert(timestampObject.seconds);
         if (!timestampObject || !timestampObject.seconds) {
             // Handle invalid or missing timestamp
             return null;
@@ -325,6 +325,8 @@ export default function ManageScreen({ navigation }) {
         const auth = getAuth();
         const user = auth.currentUser;
 
+        tempStartDateEditFunc();
+
         if (!active) {
             db.collection("meds")
             .where("user", "==", user.uid)
@@ -384,6 +386,71 @@ export default function ManageScreen({ navigation }) {
         }
     }
 
+    const tempStartDateEditFunc = () => {
+
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        if (!active) {
+            db.collection("sched")
+            .where("user", "==", user.uid)
+            .where("dispenserNumber", "==", "1")
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    console.log("docid is ", doc.id);
+
+                    const medicationOneRef = doc.ref;
+                    updateDoc(medicationOneRef, {
+                        startDate: editStart,
+                    })
+                    .then(() => {
+                        console.log("Dispenser 1 start in sched updated successfully");
+                    })
+                    .catch((error) => {
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        console.log(errorCode, errorMessage);
+                    });
+                })
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode, errorMessage);
+            })
+        } else {
+            db.collection("sched")
+            .where("user", "==", user.uid)
+            .where("dispenserNumber", "==", "2")
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    console.log("docid is ", doc.id);
+
+                    const medicationTwoRef = doc.ref;
+                    updateDoc(medicationTwoRef, {
+                        startDate: editStart,
+                    })
+                    .then(() => {
+                        console.log("Dispenser 2 start date in sched updated successfully");
+                    })
+                    .catch((error) => {
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        console.log(errorCode, errorMessage);
+                    });
+                })
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode, errorMessage);
+            })
+        }
+        
+    }
+
     const editStartDateInput = (event, selectedDate) => {
         setEditStart(selectedDate);
         console.log("selected date is ",selectedDate);
@@ -394,6 +461,8 @@ export default function ManageScreen({ navigation }) {
 
         const auth = getAuth();
         const user = auth.currentUser;
+
+        tempEndDateEditFunc();
 
         if (!active) {
             db.collection("meds")
@@ -454,6 +523,71 @@ export default function ManageScreen({ navigation }) {
         }
     }
 
+    const tempEndDateEditFunc = () => {
+
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        if (!active) {
+            db.collection("sched")
+            .where("user", "==", user.uid)
+            .where("dispenserNumber", "==", "1")
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    console.log("docid is ", doc.id);
+
+                    const medicationOneRef = doc.ref;
+                    updateDoc(medicationOneRef, {
+                        endDate: editEnd,
+                    })
+                    .then(() => {
+                        console.log("Dispenser 1 end in sched updated successfully");
+                    })
+                    .catch((error) => {
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        console.log(errorCode, errorMessage);
+                    });
+                })
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode, errorMessage);
+            })
+        } else {
+            db.collection("sched")
+            .where("user", "==", user.uid)
+            .where("dispenserNumber", "==", "2")
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    console.log("docid is ", doc.id);
+
+                    const medicationTwoRef = doc.ref;
+                    updateDoc(medicationTwoRef, {
+                        endDate: editEnd,
+                    })
+                    .then(() => {
+                        console.log("Dispenser 2 end date in sched updated successfully");
+                    })
+                    .catch((error) => {
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        console.log(errorCode, errorMessage);
+                    });
+                })
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode, errorMessage);
+            })
+        }
+        
+    }
+
     const editEndDateInput = (event, selectedDate) => {
         setEditEnd(selectedDate);
         console.log("selected end date is ",selectedDate);
@@ -502,11 +636,12 @@ export default function ManageScreen({ navigation }) {
 
             if (!active) {
                 
-                // delete old notifications and delete entries from sched db
-                await deleteMedicationFromSched("1");
+                
                 // edit meds db
                 await changeDispenseTimesInput();
                 await changeWeeklySchedInput();
+
+                console.log("gets here");
 
                 // query meds db for info
                 const querySnapshot = await db.collection("sched").where("user", "==", user.uid).get();
@@ -518,15 +653,21 @@ export default function ManageScreen({ navigation }) {
                         dbPillQuantity = doc.data().pillQuantity;
                     }
                 });
-                console.log(medications);
-                setUserMedications(medications);
+                // console.log(medications);
+                // setUserMedications(medications);
+
+                // delete old notifications and delete entries from sched db
+                await deleteMedicationFromSched("1");
 
 
                 for (let i = 0; i < tempWeeklySchedule.length; i++) {
                     for (let j = 0; j < dailyTimes.length; j++) {
                         console.log("gets inside for loop for ", i, j);
 
-                        scheduleWeeklyNotification(medicationName, i, dailyTimes[j], async (notifId) => {
+                        let newDate = new Date(dailyTimes[j]);
+                        let convertedTime = newDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                        scheduleWeeklyNotification(medicationName, i, convertedTime, async (notifId) => {
 
                             if (tempWeeklySchedule[i] == true) {
                                 let schedDocInfo = {
@@ -559,8 +700,6 @@ export default function ManageScreen({ navigation }) {
 
             } else {
 
-                await deleteMedicationFromSched("2");
-
                 await changeDispenseTimesInput();
                 await changeWeeklySchedInput();
 
@@ -574,8 +713,11 @@ export default function ManageScreen({ navigation }) {
                         dbPillQuantity = doc.data().pillQuantity;
                     }
                 });
-                console.log(medications);
-                setUserMedications(medications);
+                // console.log(medications);
+                // setUserMedications(medications);
+
+                // delete old notifications and delete entries from sched db
+                await deleteMedicationFromSched("2");
 
 
                 for (let i = 0; i < tempWeeklySchedule.length; i++) {
@@ -825,6 +967,11 @@ export default function ManageScreen({ navigation }) {
         await setEditTime(new Date());
 
         await setDailyTimes([]);
+
+        await setCheckChangeStartDate(false);
+        await setCheckChangeEndDate(false);
+        await setCheckChangeDispenseTimes(false);
+        await setCheckChangeWeeklySched(false);
 
         // await setDispenserInfo([]);
 
