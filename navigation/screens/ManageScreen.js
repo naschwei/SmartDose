@@ -137,8 +137,6 @@ export default function ManageScreen({ navigation }) {
     }
 
     function firestoreTimeToJS(timestampObject) {
-        // alert(timestampObject);
-        // alert(timestampObject.seconds);
         if (!timestampObject || !timestampObject.seconds) {
             // Handle invalid or missing timestamp
             return null;
@@ -291,7 +289,6 @@ export default function ManageScreen({ navigation }) {
 
     const changeInfo = () => {
         // Esha - this function would only need to change the weekly schedule and daily schedule in the database
-        alert('update schedules, close the modal');
 
         if (checkChangeStartDate) {
             console.log("value of start date to change to is ", editStart);
@@ -1126,7 +1123,6 @@ export default function ManageScreen({ navigation }) {
         // alert('functionality not yet buddy;');
 
         // set the name of the medication via photo extraction
-        alert('photo extraction');
         console.log(capturedImage);
 
         extractMedicineName(capturedImage.uri, imageToTextApiKey).then(medicineNames => {
@@ -1272,7 +1268,7 @@ export default function ManageScreen({ navigation }) {
                                 <Text style={{fontWeight: 'bold', color: 'black', fontSize: 15}}>Pill Quantity Per Dispense:</Text>
                                 <Text style={{fontWeight: 'bold', color: 'black', fontSize: 15}}>Pills In Dispenser:</Text>
                             </View>
-                            <View style={{top: -10, justifyContent: 'space-evenly', alignItems: 'right', gap: 19}}>
+                            <View style={{top: -10, justifyContent: 'space-evenly', alignItems: 'center', gap: 19}}>
                                 <Text style={styles.text}>{dispenserInfo.startDate ? firestoreTimeToJS(dispenserInfo.startDate).toDateString() : 'Invalid Date'}</Text>
                                 <Text style={styles.text}>{dispenserInfo.endDate ? firestoreTimeToJS(dispenserInfo.endDate).toDateString() : 'Invalid Date'}</Text>
                                 <Text style={styles.text}>{dispenserInfo.weeklySchedule
@@ -1285,13 +1281,13 @@ export default function ManageScreen({ navigation }) {
                                     ? dispenserInfo.dispenseTimes.map(timestamp =>
                                         firestoreTimeToJS(timestamp).toLocaleTimeString([], { hour: 'numeric', minute: 'numeric' })
                                     ).join(', ')
-                                    : 'Invalid Dispense Times'}
+                                    : 'Invalid Time(s)'}
                                 </Text>
-                                <View style={{left: 40, borderColor: 'black', borderRadius: 15, borderWidth: 2, height: 30, width: 30, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center'}}>
-                                    <Text style={styles.text}>{dispenserInfo.pillQuantity ? dispenserInfo.pillQuantity : 'Invalid Pill Quantity'}</Text>
+                                <View style={{left: 0, borderColor: 'black', borderRadius: 15, borderWidth: 2, height: 30, width: 30, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center'}}>
+                                    <Text style={[styles.text, {fontSize: 10, left: -3}]}>{dispenserInfo.pillQuantity ? dispenserInfo.pillQuantity : '0'}</Text>
                                 </View>
-                                <View style={{left: 40, borderColor: 'black', borderRadius: 15, borderWidth: 2, height: 30, width: 30, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center'}}>
-                                    <Text style={{color: 'black'}}>{dispenserInfo.pillsInDispenser}</Text>
+                                <View style={{left: 0, borderColor: 'black', borderRadius: 15, borderWidth: 2, height: 30, width: 30, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center'}}>
+                                    <Text style={[styles.text, {left: -3, fontSize: 10, color: 'black'}]}>{dispenserInfo.pillsInDispenser ? dispenserInfo.pillQuantity : '0'}</Text>
                                 </View>
                             </View>
                         </View>
