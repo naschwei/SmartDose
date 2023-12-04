@@ -180,17 +180,11 @@ export default function HomeScreen() {
                     console.log("end date is ", endDate);
 
                     if (startDate <= currentDate && endDate >= currentDate) {
-<<<<<<< Updated upstream
                         toAdd = {medicationName: doc.data().medicationName,
                                 pillQuantity: doc.data().pillQuantity,
                                 dispenseTime: doc.data().dispenseTime}
-
                         console.log("getting in if statement");
                         medications.push(toAdd);
-=======
-                        console.log("getting in if statement");
-                        medications.push(doc.data());
->>>>>>> Stashed changes
                     }
                 }
             });
