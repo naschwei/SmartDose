@@ -3,7 +3,9 @@ import {StatusBar} from 'expo-status-bar';
 import {Formik} from 'formik';
 import {Octicons, Ionicons, Fontisto} from '@expo/vector-icons';
 
-import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView } from 'react-native'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
 import { getAuth, createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 
 
@@ -66,11 +68,7 @@ const Signup = () => {
     }
 
     return (
-        <KeyboardAvoidingView
-            style={styles.container}
-            behavior="padding"
-        >
-        <View>
+        <ScrollView contentContainerStyle={styles.container}>
             <View style={{ alignItems: 'center'}}> 
                 <Text style={{
                     fontSize: 25,
@@ -85,74 +83,78 @@ const Signup = () => {
                 }}
                 > Sign up with a free account! </Text>
             </View>
-        </View>
 
-        <View style={styles.inputContainer}>
-            <MyTextInput 
-                label="Full Name"
-                icon="person"
-                placeholder="Jane Doe"
-                placeholderTextColor={darkLight}
-                onChangeText={text => setFullName(text)}
-                onBlur={ () => {} }
-                value={fullName}
-            />
-            <MyTextInput 
-                label="Email Address"
-                icon="mail"
-                placeholder="my_email@gmail.com"
-                placeholderTextColor={darkLight}
-                onChangeText={text => setEmail(text)}
-                onBlur={ () => {} }
-                value={email}
-                keyboardType="email-address"
-            />
-            <MyTextInput 
-                label="Password"
-                icon="lock"
-                placeholder="* * * * * * * *"
-                placeholderTextColor={darkLight}
-                onChangeText={text => setPassword(text)}
-                onBlur={ () => {} }
-                value={password}
-                secureTextEntry={hidePassword}
-                isPassword={true}
-                hidePassword={hidePassword}
-                setHidePassword={setHidePassword}
-            />
-            <MyTextInput 
-                label="Confirm Password"
-                icon="lock"
-                placeholder="* * * * * * * *"
-                placeholderTextColor={darkLight}
-                onChangeText={text => setConfirmPassword(text)}
-                onBlur={() => {} }
-                value={confirmPassword}
-                secureTextEntry={hidePassword}
-                isPassword={true}
-                hidePassword={hidePassword}
-                setHidePassword={setHidePassword}
-            />
-        </View>
+            <View style={styles.inputContainer}>
+                <MyTextInput 
+                    label="Full Name"
+                    icon="person"
+                    placeholder="Jane Doe"
+                    placeholderTextColor={darkLight}
+                    onChangeText={text => setFullName(text)}
+                    onBlur={ () => {} }
+                    value={fullName}
+                />
+                <MyTextInput 
+                    label="Email Address"
+                    icon="mail"
+                    placeholder="my_email@gmail.com"
+                    placeholderTextColor={darkLight}
+                    onChangeText={text => setEmail(text)}
+                    onBlur={ () => {} }
+                    value={email}
+                    keyboardType="email-address"
+                />
+                <MyTextInput 
+                    label="Password"
+                    icon="lock"
+                    placeholder="* * * * * * * *"
+                    placeholderTextColor={darkLight}
+                    onChangeText={text => setPassword(text)}
+                    onBlur={ () => {} }
+                    value={password}
+                    secureTextEntry={hidePassword}
+                    isPassword={true}
+                    hidePassword={hidePassword}
+                    setHidePassword={setHidePassword}
+                />
+                <MyTextInput 
+                    label="Confirm Password"
+                    icon="lock"
+                    placeholder="* * * * * * * *"
+                    placeholderTextColor={darkLight}
+                    onChangeText={text => setConfirmPassword(text)}
+                    onBlur={() => {} }
+                    value={confirmPassword}
+                    secureTextEntry={hidePassword}
+                    isPassword={true}
+                    hidePassword={hidePassword}
+                    setHidePassword={setHidePassword}
+                />
+            </View>
 
-        <View style={styles.buttonContainer}>
-            <TouchableOpacity
-                onPress={handleSignUp}
-                style={[styles.button, styles.buttonOutline]}
-            >
-                <Text style={styles.buttonOutlineText}>Register</Text>
-            </TouchableOpacity>
-        </View>
+            <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                    onPress={handleSignUp}
+                    style={[styles.button, styles.buttonOutline]}
+                >
+                    <Text style={styles.buttonOutlineText}>Register</Text>
+                </TouchableOpacity>
+            </View>
 
-        <Line />
+            <Line />
 
-        <ExtraView>
-            <ExtraText> Already have an account? </ExtraText>
-            <TextLink onPress={() => navigation.replace("Login")}> 
-                <TextLinkContent> Login </TextLinkContent>
-            </TextLink>
-        </ExtraView>
-        </KeyboardAvoidingView>
+            <ExtraView>
+                <ExtraText> Already have an account? </ExtraText>
+                <TextLink onPress={() => navigation.replace("Login")}> 
+                    <TextLinkContent> Login </TextLinkContent>
+                </TextLink>
+            </ExtraView>
+
+            <View>
+                
+            </View>
+        </ScrollView>
+
     )
 
 }
