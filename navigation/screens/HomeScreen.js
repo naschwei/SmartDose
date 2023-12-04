@@ -22,7 +22,11 @@ import {
 const {primary, tertiary, brand, darkLight} = Colors;
 
 import Card from './../../components/card';
+<<<<<<< Updated upstream
 //import DatePicker from 'react-native-modern-datepicker';
+=======
+// import DatePicker from 'react-native-modern-datepicker';
+>>>>>>> Stashed changes
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { auth, db } from "../../firebase.js"
@@ -37,56 +41,104 @@ import * as Notifications from 'expo-notifications';
 import { setNotifications, immediateNotification, cancelAllNotifications } from '../../notifs.js';
 
 // NEW: This stuff is to add conditional rendering so that the cards only show up on the correct day (ie. TODAY)
-function MedicationCard () { 
-    return (
-    <InnerContainer>
-        {userMedications.map(med => 
-            <View style= {styles.cardContainer}>
-                <View style={styles.cardContent}>
-                    <Text style={styles.titleStyle}> {med.medicationName} </Text>
-                    <Text> {med.pillQuantity} pills</Text>
-                    <Text> {med.dispenseTime} </Text>
-                    <Ionicons name="checkmark-circle-outline" size={50} iconColor="#5F8575" style={{ position: 'absolute', right: 0 }}/>
-                </View>
-            </View>
-        )}
-    </InnerContainer>
-    );
-}
+// function MedicationCard () { 
+//     return (
+//     <InnerContainer>
+//         {userMedications.map(med => 
+//             <View style= {styles.cardContainer}>
+//                 <View style={styles.cardContent}>
+//                     <Text style={styles.titleStyle}> {med.medicationName} </Text>
+//                     <Text> {med.pillQuantity} pills</Text>
+//                     <Text> {med.dispenseTime} </Text>
+//                     <Ionicons name="checkmark-circle-outline" size={50} iconColor="#5F8575" style={{ position: 'absolute', right: 0 }}/>
+//                 </View>
+//             </View>
+//         )}
+//     </InnerContainer>
+//     );
+// }
 
-class MedCard extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            name: props.name,
-            pillQuantity: props.pillQuantity,
-            dosgeTime: props.dosageTime,
-            scheduledDay: props.dayOfWeek
-        }
-    }
-    render() {
-        const today_day_of_week = moment().format('dddd'); ;
-        return this.state.dayOfWeek === today_day_of_week ? <MedicationCard/> : null;
-    }
-}
+// class MedCard extends React.Component {
+//     constructor(props) {
+//         super(props);
+//         this.state = {
+//             name: props.name,
+//             pillQuantity: props.pillQuantity,
+//             dosgeTime: props.dosageTime,
+//             scheduledDay: props.dayOfWeek
+//         }
+//     }
+//     render() {
+//         const today_day_of_week = moment().format('dddd'); ;
+//         return this.state.dayOfWeek === today_day_of_week ? <MedicationCard/> : null;
+//     }
+// }
 
-class DisplayRevertDate extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            isCurrentDay: true
-        }
-    }
+// class DisplayRevertDate extends React.Component {
+//     constructor(props) {
+//         super(props);
+//         this.state = {
+//             isCurrentDay: true
+//         }
+//     }
 
-    render() {
-        return this.state.isCurrentDay ? null : <Calendar onDayPress={this.setState({ isCurrentDay : false})}/>;
-    }
-}
+//     render() {
+//         return this.state.isCurrentDay ? null : <Calendar onDayPress={this.setState({ isCurrentDay : false})}/>;
+//     }
+// }
 
 export default function HomeScreen() {
 
     const [userMedications, setUserMedications] = useState([]);
     const navigation = useNavigation()
+
+    function MedicationCard () { 
+        return (
+        <InnerContainer>
+            {userMedications.map(med => 
+                <View style= {styles.cardContainer}>
+                    <View style={styles.cardContent}>
+                        <Text style={styles.titleStyle}> {med.medicationName} </Text>
+                        <Text> {med.pillQuantity} pills</Text>
+                        <Text> {med.dispenseTime} </Text>
+                        <Ionicons name="checkmark-circle-outline" size={50} iconColor="#5F8575" style={{ position: 'absolute', right: 0 }}/>
+                    </View>
+                </View>
+            )}
+        </InnerContainer>
+        );
+    }
+
+    class MedCard extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {
+                name: props.name,
+                pillQuantity: props.pillQuantity,
+                dosgeTime: props.dosageTime,
+                scheduledDay: props.dayOfWeek
+            }
+        }
+        render() {
+            const today_day_of_week = moment().format('dddd'); ;
+            return this.state.dayOfWeek === today_day_of_week ? <MedicationCard/> : null;
+        }
+    }
+
+    // class DisplayRevertDate extends React.Component {
+    //     constructor(props) {
+    //         super(props);
+    //         this.state = {
+    //             isCurrentDay: true
+    //         }
+    //     }
+
+    //     render() {
+    //         return this.state.isCurrentDay ? null : <Calendar onDayPress={this.setState({ isCurrentDay : false})}/>;
+    //     }
+    // }
+
+
 
     const handleSignOut = () => {
         signOut(getAuth(),)
@@ -121,7 +173,16 @@ export default function HomeScreen() {
             querySnapshot.forEach((doc) => {
                 if (doc.data().dayOfWeek === day) {
                     // TODO :: test if this works
-                    if (doc.data().startDate.toDate() <= currentDate && doc.data().startDate.toDate() >= currentDate) {
+
+                    let startDate = new Date(doc.data().startDate.toDate());
+                    let endDate = new Date(doc.data().endDate.toDate())
+
+                    console.log("start date is ", startDate);
+                    console.log("current date is ", currentDate);
+                    console.log("end date is ", endDate);
+
+                    if (startDate <= currentDate && endDate >= currentDate) {
+                        console.log("getting in if statement");
                         medications.push(doc.data());
                     }
                 }
