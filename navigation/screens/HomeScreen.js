@@ -163,7 +163,7 @@ export default function HomeScreen() {
         const user = auth.currentUser;
         const medications = [];
 
-        let toAdd = {};
+        let toAdd;
 
         db.collection("sched").where("user", "==", user.uid)
         .get()
