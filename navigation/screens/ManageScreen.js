@@ -1269,19 +1269,19 @@ export default function ManageScreen({ navigation }) {
                                 <Text style={{fontWeight: 'bold', color: 'black', fontSize: 15}}>Pills In Dispenser:</Text>
                             </View>
                             <View style={{top: -10, justifyContent: 'space-evenly', alignItems: 'center', gap: 19}}>
-                                <Text style={styles.text}>{dispenserInfo.startDate ? firestoreTimeToJS(dispenserInfo.startDate).toDateString() : 'Invalid Date'}</Text>
-                                <Text style={styles.text}>{dispenserInfo.endDate ? firestoreTimeToJS(dispenserInfo.endDate).toDateString() : 'Invalid Date'}</Text>
+                                <Text style={styles.text}>{dispenserInfo.startDate ? firestoreTimeToJS(dispenserInfo.startDate).toDateString() : 'No Info'}</Text>
+                                <Text style={styles.text}>{dispenserInfo.endDate ? firestoreTimeToJS(dispenserInfo.endDate).toDateString() : 'No Info'}</Text>
                                 <Text style={styles.text}>{dispenserInfo.weeklySchedule
                                     ? dispenserInfo.weeklySchedule.map((isScheduled, index) =>
                                         isScheduled ? getDayName(index) : null
                                     ).filter(day => day !== null).join(', ')
-                                    : 'Invalid Schedule'}
+                                    : 'No Info'}
                                 </Text>
                                 <Text style={styles.text}>{dispenserInfo.dispenseTimes
                                     ? dispenserInfo.dispenseTimes.map(timestamp =>
                                         firestoreTimeToJS(timestamp).toLocaleTimeString([], { hour: 'numeric', minute: 'numeric' })
                                     ).join(', ')
-                                    : 'Invalid Time(s)'}
+                                    : 'No Info'}
                                 </Text>
                                 <View style={{left: 0, borderColor: 'black', borderRadius: 15, borderWidth: 2, height: 30, width: 30, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center'}}>
                                     <Text style={[styles.text, {fontSize: 10, left: -3}]}>{dispenserInfo.pillQuantity ? dispenserInfo.pillQuantity : '0'}</Text>
