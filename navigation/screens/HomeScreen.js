@@ -22,11 +22,6 @@ import {
 const {primary, tertiary, brand, darkLight} = Colors;
 
 import Card from './../../components/card';
-<<<<<<< Updated upstream
-//import DatePicker from 'react-native-modern-datepicker';
-=======
-// import DatePicker from 'react-native-modern-datepicker';
->>>>>>> Stashed changes
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { auth, db } from "../../firebase.js"
