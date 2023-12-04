@@ -861,6 +861,8 @@ export default function ManageScreen({ navigation }) {
                 dispenseTimes: dailyTimes
             };
 
+            console.log("daily times is ", dailyTimes);
+
             console.log("meddocinfo is ",medsDocInfo);
 
             await addDoc(collection(db, "meds"), medsDocInfo);
@@ -873,7 +875,14 @@ export default function ManageScreen({ navigation }) {
 
                     console.log("gets inside for loop for ", i, j);
 
-                    scheduleWeeklyNotification(medicationName, i, dailyTimes[j], async (notifId) => {
+                    let newDate = new Date(dailyTimes[j]);
+                    let convertedTime = newDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                    console.log("converted time is ", convertedTime);
+
+                    scheduleWeeklyNotification(medicationName, i, convertedTime, async (notifId) => {
+
+                        console.log("scheduled weekly notification")
 
                         if (tempWeeklySchedule[i] == true) {
                             let schedDocInfo = {
@@ -1283,7 +1292,7 @@ export default function ManageScreen({ navigation }) {
                                     <Text style={[{left: -5}, styles.text]}>End Date</Text>
                                     <DateTimePicker 
                                         mode="date"
-                                        value={start}
+                                        value={end}
                                         onChange={changeEnd}
                                     />
                                 </View>
