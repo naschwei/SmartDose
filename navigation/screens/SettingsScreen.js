@@ -216,6 +216,9 @@ export default function SettingsScreen({ navigation }) {
         } else {
             alert('PLEASE CHOOSE A DISPENSER');
         }
+
+        // toggle the delete medicaiton modal
+        setIsModalThreeVisible(!isModalThreeVisible);
     }
 
     const __changeCredentials = () => {
@@ -238,7 +241,8 @@ export default function SettingsScreen({ navigation }) {
             console.log(errorCode, errorMessage);
         });
 
-
+        // toggle the change credentials modal
+        toggleModalOne(!isModalOneVisible);
     }
 
     const deleteAccount = async () => {
