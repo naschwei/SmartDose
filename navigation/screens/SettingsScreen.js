@@ -227,13 +227,12 @@ export default function SettingsScreen({ navigation }) {
 
         // CONFIRM NEW PASSWORD AND CONFIRM NEW PASSWORD ARE THE SAME
         if (newPassword != confirmNewPassword) {
-            alert('YOU FOOL');
+            alert('New Password and Confirm New Password must match!');
             return;
         }
 
         updatePassword(user, newPassword).then(() => {
             console.log("Password update successful");
-            alert("Password update successful!");
             // Update successful.
         }).catch((error) => {
             const errorCode = error.code;
@@ -265,7 +264,6 @@ export default function SettingsScreen({ navigation }) {
             await deleteUser(user);
             console.log("User successfully deleted.");
 
-            alert("Account has been deleted.");
             navigation.replace("Signup");
 
         } catch (error) {
@@ -363,7 +361,7 @@ export default function SettingsScreen({ navigation }) {
                                 <TextInput style={styles.input} placeholder="Change Dispense Times (Each Day)" placeholderTextColor={'grey'} onChangeText={text => setDispenseTimes(text)} />
                             </View>
                             <Pressable style={{width: 200, height: 30, backgroundColor: 'mediumpurple', borderWidth: 2, borderRadius: 5, borderColor: 'black', justifyContent: 'center', alignItems: 'center', marginTop: 3, marginBottom: 10, padding: 2}}
-                                onPress={alert("hi")}>
+                            >
                                 <Text style={{fontWeight: 'bold', fontSize: 15, color: 'white'}}>Change Medication</Text>
                             </Pressable>
                         </View>

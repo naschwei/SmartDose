@@ -11,7 +11,8 @@ import * as Permissions from 'expo-permissions';
 import { firebase } from './firebase';
 import { useEffect } from 'react';
 
-import { setNotifications } from './notifs.js';
+import { setNotifications, registerForPushNotificationsAsync } from './notifs.js';
+
 
 
 // TODO: (keyboard avoiding wrapper) https://youtu.be/tZVKk-V0Xko?si=EnhApZOt76oShmwN
@@ -19,6 +20,9 @@ import { setNotifications } from './notifs.js';
 export default function App() {
 
   setNotifications();
+  useEffect(() => {
+    registerForPushNotificationsAsync();
+  }, []);
 
   return (
     <Authenticate/>
