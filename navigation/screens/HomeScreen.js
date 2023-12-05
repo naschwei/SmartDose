@@ -231,7 +231,6 @@ export default function HomeScreen() {
     }
 
     function handleRevert() {
-        alert("Go back to Today?");
         setDate(new Date());
         setText("TODAY");
         setShowRevert(false); 

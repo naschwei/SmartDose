@@ -901,16 +901,6 @@ export default function ManageScreen({ navigation }) {
         setCheckChangeWeeklySched(true);
     }
 
-
-
-
-
-
-    
-
-    
-
-
     function toggleCameraType() {
         setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
     }
@@ -927,13 +917,19 @@ export default function ManageScreen({ navigation }) {
 
     //var dailyTimes = [];
     const [dailyTimes, setDailyTimes] = useState([]);
+    const [dailyTimesIndex, incDailyTimesIndex] = useState(0);
 
     const addNewTime = () => {
-        const newTimes = dailyTimes; 
-        newTimes.push(time);
-
-        setDailyTimes(newTimes);
-        setCheckChangeDispenseTimes(true);
+        if (dailyTimes.includes(editTime) === false) {
+            console.log(dailyTimes);
+            var newTimes = dailyTimes;
+            newTimes.push(editTime);
+            setDailyTimes(newTimes);
+            setCheckChangeDispenseTimes(true);
+            console.log(dailyTimes);
+        } else {
+            alert('Scheduled Time Already Exists');
+        }
     }
 
     const resetStates = async () => {
@@ -1334,10 +1330,10 @@ export default function ManageScreen({ navigation }) {
                                     value={editTime}
                                     onChange={editTimeInput}
                                 />  
-                                <Pressable style={{height: 35, width: 50, backgroundColor: 'lightgrey', borderWidth: 2, borderColor: 'black', borderRadius: 10, justifyContent: 'center', alignItems: 'center'}}
+                                <TouchableOpacity style={{height: 35, width: 50, backgroundColor: 'lightgrey', borderWidth: 2, borderColor: 'black', borderRadius: 10, justifyContent: 'center', alignItems: 'center'}}
                                     onPress={addNewTime}>
                                     <Text style={{fontWeight: 'bold', fontSize: 20}}>+</Text>
-                                </Pressable>
+                                </TouchableOpacity>
                             </View>
                             <View style={{marginBottom: 5, margin: 0, height: 40, width: 300, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
                                 {dailyTimes.map(t => 
@@ -1380,10 +1376,10 @@ export default function ManageScreen({ navigation }) {
                             <Text style={styles.dayText}>Su</Text>
                         </Pressable>
                     </View>
-                    <Pressable style={{marginBottom: 20, top: -0, left: 0, width: 200, height: 30, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'black', borderRadius: 5}}
+                    <TouchableOpacity style={{marginBottom: 20, top: -0, left: 0, width: 200, height: 30, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'black', borderRadius: 5}}
                         onPress={changeInfo}>
                         <Text style={{color: 'white', fontWeight: 'bold', fontSize: 20}}>DONE</Text>
-                    </Pressable>
+                    </TouchableOpacity>
                 </View>
             </Modal>
             <Modal isVisible={isRefill}>
