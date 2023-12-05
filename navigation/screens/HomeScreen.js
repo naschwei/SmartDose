@@ -148,6 +148,9 @@ export default function HomeScreen() {
             alert(errorMessage);
         });
     }
+
+
+    
     
 
     // TODO: order based on start and end dates also, if within range then...
@@ -158,10 +161,12 @@ export default function HomeScreen() {
         console.log(day);
 
         // to compare start and end dates with
-        const currentDate = new Date();
+        // const currentDate = new Date();
 
         const user = auth.currentUser;
         let medications = [];
+
+        let startDate, endDate;
 
         let toAdd;
 
@@ -172,19 +177,25 @@ export default function HomeScreen() {
                 if (doc.data().dayOfWeek === day) {
                     // TODO :: test if this works
 
-                    let startDate = new Date(doc.data().startDate.toDate());
-                    let endDate = new Date(doc.data().endDate.toDate())
+                    startDate = new Date(doc.data().startDate.toDate());
+                    endDate = new Date(doc.data().endDate.toDate())
 
-                    console.log("start date is ", startDate);
-                    console.log("current date is ", currentDate);
-                    console.log("end date is ", endDate);
+                    console.log(startDate);
+                    console.log(endDate);
 
-                    if (startDate <= currentDate && endDate >= currentDate) {
+                    console.log("start date is ", doc.data().startDate.toDate());
+                    console.log("selected date is ", date);
+                    console.log("end date is ", doc.data().endDate.toDate());
+
+                    if (doc.data().startDate.toDate() <= date && doc.data().endDate.toDate() >= date) {
+
+                        console.log("getting here");
                         toAdd = {medicationName: doc.data().medicationName,
-                                pillQuantity: doc.data().pillQuantity,
-                                dispenseTime: doc.data().dispenseTime}
-                        console.log("getting in if statement");
+                            pillQuantity: doc.data().pillQuantity,
+                            dispenseTimes: doc.data().dispenseTime.toDate()}
                         medications.push(toAdd);
+                        console.log(toAdd);
+                        
                     }
                 }
             });

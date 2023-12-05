@@ -59,6 +59,9 @@ export default function ManageScreen({ navigation }) {
     const [checkChangeDispenseTimes, setCheckChangeDispenseTimes] = useState(false);
     const [checkChangeWeeklySched, setCheckChangeWeeklySched] = useState(false);
 
+    const [aTaken, setATaken] = useState(false);
+    const [bTaken, setBTaken] = useState(false);
+
 
     const handleMondayClick = () => {changeMonday(!Monday);};
     const handleTuesdayClick = () => {changeTuesday(!Tuesday);};
@@ -88,6 +91,8 @@ export default function ManageScreen({ navigation }) {
     const toggleModal = () => {
 
         const user = auth.currentUser;
+
+        setDailyTimes([]);
         
         if (active != true && active != false) {
             alert('Dispenser not selected');
@@ -136,6 +141,29 @@ export default function ManageScreen({ navigation }) {
         getDispenserData();
     }
 
+    const dispenserTaken = async () => {
+
+        const user = auth.currentUser;
+
+        try {
+
+            const querySnapshot = await db.collection("meds").where("user", "==", user.uid).get();
+            querySnapshot.forEach((doc) => {
+                if (doc.data().dispenserNumber == '1') {
+                    setATaken(true);
+                } else if (doc.data().dispenserNumber == '2') {
+                    setBTaken(true);
+                }
+            });
+        } catch (error) {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorCode, errorMessage);
+
+        }
+        
+    }
+
     function firestoreTimeToJS(timestampObject) {
         if (!timestampObject || !timestampObject.seconds) {
             // Handle invalid or missing timestamp
@@ -152,7 +180,7 @@ export default function ManageScreen({ navigation }) {
     // console.log(timestampObject.toDateString());'
 
     const getDayName = (index) => {
-        const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const daysOfWeek = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
         return daysOfWeek[index];
     };
 
@@ -536,7 +564,7 @@ export default function ManageScreen({ navigation }) {
 
                     const medicationOneRef = doc.ref;
                     updateDoc(medicationOneRef, {
-                        endDate: editEnd,
+                        endDate: editEnd, 
                     })
                     .then(() => {
                         console.log("Dispenser 1 end in sched updated successfully");
@@ -922,14 +950,22 @@ export default function ManageScreen({ navigation }) {
     const addNewTime = () => {
         if (dailyTimes.includes(editTime) === false) {
             console.log(dailyTimes);
-            var newTimes = dailyTimes;
-            newTimes.push(editTime);
+            // var newTimes = dailyTimes;
+            // newTimes.push(editTime);
+
+
+            const newTimes = [...dailyTimes, editTime];
             setDailyTimes(newTimes);
             setCheckChangeDispenseTimes(true);
             console.log(dailyTimes);
         } else {
             alert('Scheduled Time Already Exists');
         }
+    }
+
+    const removeDailyTime = (timeToDelete) => {
+        const newTimes = dailyTimes.filter(time => time !== timeToDelete);
+        setDailyTimes(newTimes);
     }
 
     const resetStates = async () => {
@@ -1143,6 +1179,7 @@ export default function ManageScreen({ navigation }) {
     useEffect(() => {
         resetStates();
         getDispenserData();
+        dispenserTaken();
 
         if (active) {
             Animated.timing(transformX, {
@@ -1167,6 +1204,10 @@ export default function ManageScreen({ navigation }) {
 
     const showMode = (currentMode) => {
         setShowEndDate(!showEndDate);
+    }
+
+    const alertFunction = () => {
+        alert('No Medication in Dispenser');
     }
     
     return (startCamera ? ( previewVisible && capturedImage ? (
@@ -1264,7 +1305,7 @@ export default function ManageScreen({ navigation }) {
                                 <Text style={{fontWeight: 'bold', color: 'black', fontSize: 15}}>Pill Quantity Per Dispense:</Text>
                                 <Text style={{fontWeight: 'bold', color: 'black', fontSize: 15}}>Pills In Dispenser:</Text>
                             </View>
-                            <View style={{top: -10, justifyContent: 'space-evenly', alignItems: 'center', gap: 19}}>
+                            <View style={{width: 150, left: -10, top: -5, justifyContent: 'space-evenly', alignItems: 'center', gap: 20}}>
                                 <Text style={styles.text}>{dispenserInfo.startDate ? firestoreTimeToJS(dispenserInfo.startDate).toDateString() : 'No Info'}</Text>
                                 <Text style={styles.text}>{dispenserInfo.endDate ? firestoreTimeToJS(dispenserInfo.endDate).toDateString() : 'No Info'}</Text>
                                 <Text style={styles.text}>{dispenserInfo.weeklySchedule
@@ -1283,28 +1324,32 @@ export default function ManageScreen({ navigation }) {
                                     <Text style={[styles.text, {fontSize: 10, left: -3}]}>{dispenserInfo.pillQuantity ? dispenserInfo.pillQuantity : '0'}</Text>
                                 </View>
                                 <View style={{left: 0, borderColor: 'black', borderRadius: 15, borderWidth: 2, height: 30, width: 30, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center'}}>
-                                    <Text style={[styles.text, {left: -3, fontSize: 10, color: 'black'}]}>{dispenserInfo.pillsInDispenser ? dispenserInfo.pillQuantity : '0'}</Text>
+                                    <Text style={[styles.text, {left: -3, fontSize: 10, color: 'black'}]}>{dispenserInfo.pillsInDispenser ? dispenserInfo.pillsInDispenser : '0'}</Text>
                                 </View>
                             </View>
                         </View>
-                    <Pressable style={{marginBottom: 10, height: 30, width: 220, borderWidth: 2, borderRadius: 20, borderColor: 'black', backgroundColor: 'white', justifyContent: 'center', alignItems: 'center'}} onPress={toggleRefill}>
+                    <TouchableOpacity style={{marginBottom: 0, height: 30, width: 220, borderWidth: 2, borderRadius: 20, borderColor: 'black', backgroundColor: 'white', justifyContent: 'center', alignItems: 'center'}} 
+                        onPress={active && bTaken ? toggleRefill : !active && aTaken ? toggleRefill : alertFunction}>
                         <Text style={{fontWeight: 'bold', color: 'black', fontSize: 15}}>REFILL THIS MEDICATION</Text>
-                    </Pressable>
-                    <Pressable style={{marginBottom: 20, height: 30, width: 220, borderWidth: 2, borderRadius: 20, borderColor: 'black', backgroundColor: 'white', justifyContent: 'center', alignItems: 'center'}} onPress={toggleEditModal}>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                        style={{marginBottom: 30, height: 30, width: 220, borderWidth: 2, borderRadius: 20, borderColor: 'black', backgroundColor: 'white', justifyContent: 'center', alignItems: 'center'}} 
+                        onPress={active && bTaken ? toggleEditModal : !active && aTaken ? toggleEditModal : alertFunction}
+                    >
                         <Text style={{fontWeight: 'bold', color: 'black', fontSize: 15}}>EDIT INFO</Text>
-                    </Pressable>
+                    </TouchableOpacity>
                 </View>
-                <Pressable style={{top: 200, left: -40, width: 70, height: 70, backgroundColor: 'mediumpurple', borderWidth: 5, borderRadius: 35, borderColor: 'black', justifyContent: 'center', alignItems: 'center'}} title="Add New Medication" onPress={toggleModal}>
+                <TouchableOpacity style={{top: 200, left: -40, width: 70, height: 70, backgroundColor: 'mediumpurple', borderWidth: 5, borderRadius: 35, borderColor: 'black', justifyContent: 'center', alignItems: 'center'}} title="Add New Medication" onPress={toggleModal}>
                     <Text style={{left: 1, top: -3, fontWeight: 'bold', fontSize: 40, color: '#f8ffff'}}>+</Text>  
-                </Pressable>
+                </TouchableOpacity>
             </View>
             <Modal isVisible={isEditModal}>
                 <View style={styles.editInfoContainer}>
-                    <Pressable style={{top: 10, left: -150, width: 30, height: 30, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'black', borderRadius: 5}}
+                    <TouchableOpacity style={{top: 10, left: -150, width: 30, height: 30, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'black', borderRadius: 5}}
                         onPress={toggleEditModal}>
                         <Text style={{color: 'white', fontWeight: 'bold', fontSize: 20}}>X</Text>
-                    </Pressable>
-                    <Text style={{top: -15, marginTop: 0, fontSize: 20, fontWeight: 'bold', textDecorationLine: 'underline', color: 'black'}}>Med Name</Text>
+                    </TouchableOpacity>
+                    <Text style={{top: -15, marginTop: 0, fontSize: 20, fontWeight: 'bold', textDecorationLine: 'underline', color: 'black'}}>Edit Info</Text>
                     <View style={{marginTop: 20, height: 200, width: 260, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                         <View style={{top: -10, left: -20, justifyContent: 'space-evenly', alignItems: 'left', gap: 20}}>
                             <View style={{height: 40, width: 290, margin: 0, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -1332,16 +1377,17 @@ export default function ManageScreen({ navigation }) {
                                 />  
                                 <TouchableOpacity style={{height: 35, width: 50, backgroundColor: 'lightgrey', borderWidth: 2, borderColor: 'black', borderRadius: 10, justifyContent: 'center', alignItems: 'center'}}
                                     onPress={addNewTime}>
-                                    <Text style={{fontWeight: 'bold', fontSize: 20}}>+</Text>
+                                    <Text style={{top: -2, fontWeight: 'bold', fontSize: 20}}>+</Text>
                                 </TouchableOpacity>
                             </View>
                             <View style={{marginBottom: 5, margin: 0, height: 40, width: 300, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
                                 {dailyTimes.map(t => 
-                                    <View id="times" style={{borderRadius: 10, borderWidth: 1, borderColor: 'black', height: 20, width: 70, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'lightblue'}}>
-                                        <Text style={{fontSize: 10}}>{t.getHours()}:{t.getMinutes()}</Text>
-                                        <Pressable style={{height: 20, width: 10, justifyContent: 'center', alignItems: 'center'}}>
-                                            <Text style={{fontSize: 10}}>X</Text>
-                                        </Pressable>
+                                    <View id="times" style={{margin: 2, borderRadius: 10, borderWidth: 1, borderColor: 'black', height: 30, width: 70, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'lightgray'}}>
+                                        <Text style={{marginLeft: 2, fontWeight: 'bold', fontSize: 15}}>{t.getHours().toString().padStart(2, '0')}:{t.getMinutes().toString().padStart(2, '0')}</Text>
+                                        <TouchableOpacity style={{right: 0, height: 30, width: 30, justifyContent: 'center', alignItems: 'center'}}
+                                            onPress={() => removeDailyTime(t)}>
+                                            <Text style={{color: 'black', fontWeight: 'bold', fontSize: 15}}>X</Text>
+                                        </TouchableOpacity>
                                     </View>  
                                 )}
                             </View>
@@ -1384,16 +1430,16 @@ export default function ManageScreen({ navigation }) {
             </Modal>
             <Modal isVisible={isRefill}>
                 <View style={styles.refillContainer}>
-                    <Pressable style={{top: 10, left: -150, width: 30, height: 30, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'black', borderRadius: 5}}
+                    <TouchableOpacity style={{top: 10, left: -150, width: 30, height: 30, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'black', borderRadius: 5}}
                         onPress={toggleRefill}>
                         <Text style={{color: 'white', fontWeight: 'bold', fontSize: 20}}>X</Text>
-                    </Pressable>
+                    </TouchableOpacity>
                     <Text style={{color: 'black', fontWeight: 'bold', fontSize: 20}}>Refill Quantity?</Text>
                     <TextInput style={[styles.input, {height: 40, marginTop: 20, width: 200}]} keyboardType='numeric' onChangeText={num => setRefillValue(num)}/>
-                    <Pressable style={{marginTop: 20, top: -0, left: 0, width: 200, height: 30, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'black', borderRadius: 5}}
+                    <TouchableOpacity style={{marginTop: 20, top: -0, left: 0, width: 200, height: 30, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'black', borderRadius: 5}}
                         onPress={refillFunction}>
                         <Text style={{color: 'white', fontWeight: 'bold', fontSize: 20}}>SUBMIT</Text>
-                    </Pressable>
+                    </TouchableOpacity>
                 </View>
             </Modal>
             <Modal isVisible={isModalVisible} id='??'>
@@ -1468,21 +1514,22 @@ export default function ManageScreen({ navigation }) {
                                     <Text style={[{left: -10}, styles.text]}>Dispense Times</Text>
                                     <DateTimePicker 
                                         mode="time"
-                                        value={time}
-                                        onChange={changeTime}
+                                        value={editTime}
+                                        onChange={editTimeInput}
                                     />  
                                     <Pressable style={{height: 35, width: 50, backgroundColor: 'lightgrey', borderWidth: 2, borderColor: 'black', borderRadius: 10, justifyContent: 'center', alignItems: 'center'}}
                                         onPress={addNewTime}>
-                                        <Text style={{fontWeight: 'bold', fontSize: 20}}>+</Text>
+                                        <Text style={{top: -2, fontWeight: 'bold', fontSize: 20}}>+</Text>
                                     </Pressable>
                                 </View>
                                 <View style={{marginBottom: 5, margin: 0, height: 40, width: 300, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
                                     {dailyTimes.map(t => 
-                                        <View id="times" style={{borderRadius: 10, borderWidth: 1, borderColor: 'black', height: 20, width: 70, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'lightblue'}}>
-                                            <Text style={{fontSize: 10}}>{t.getHours()}:{t.getMinutes()}</Text>
-                                            <Pressable style={{height: 20, width: 10, justifyContent: 'center', alignItems: 'center'}}>
-                                                <Text style={{fontSize: 10}}>X</Text>
-                                            </Pressable>
+                                        <View id="times" style={{margin: 2, borderRadius: 10, borderWidth: 1, borderColor: 'black', height: 30, width: 70, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'lightgray'}}>
+                                            <Text style={{marginLeft: 2, fontWeight: 'bold', fontSize: 15}}>{t.getHours().toString().padStart(2, '0')}:{t.getMinutes().toString().padStart(2, '0')}</Text>
+                                            <TouchableOpacity style={{right: 0, height: 30, width: 30, justifyContent: 'center', alignItems: 'center'}}
+                                                onPress={() => removeDailyTime(t)}>
+                                                <Text style={{color: 'black', fontWeight: 'bold', fontSize: 15}}>X</Text>
+                                            </TouchableOpacity>
                                         </View>  
                                     )}
                                 </View>
@@ -1531,7 +1578,7 @@ const styles = StyleSheet.create({
         borderColor: 'black',
     },
     editInfoContainer: {
-        backgroundColor: 'lightgray',
+        backgroundColor: '#E6E6FA',
         alignItems: 'center',
         width: 375,
         height: 400,
