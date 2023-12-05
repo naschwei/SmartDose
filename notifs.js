@@ -162,6 +162,15 @@ async function registerForPushNotificationsAsync() {
       bypassDnd: true,
     });
   }
+  
+  if (Platform.OS === 'ios') {
+    const { status } = await Notifications.requestPermissionsAsync();
+    if (status !== 'granted') {
+      alert('Permission not granted');
+      return;
+    }
+  }
+
 
   return token;
 }
