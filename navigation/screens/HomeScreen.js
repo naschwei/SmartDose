@@ -157,11 +157,11 @@ export default function HomeScreen() {
         const day = d.getDay();
         console.log(day);
 
-        // to compare start and end date's with
+        // to compare start and end dates with
         const currentDate = new Date();
 
         const user = auth.currentUser;
-        const medications = [];
+        let medications = [];
 
         let toAdd;
 

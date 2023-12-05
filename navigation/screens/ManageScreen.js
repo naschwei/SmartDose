@@ -12,7 +12,7 @@ import { setNotifications, scheduleWeeklyNotification, cancelNotification } from
 import { Timeline } from 'react-native-calendars';
 
 import DateTimePicker from '@react-native-community/datetimepicker';
-import RNDateTimePicker from '@react-native-community/datetimepicker';
+// import RNDateTimePicker from '@react-native-community/datetimepicker';
 
 
 export default function ManageScreen({ navigation }) {
