@@ -105,8 +105,10 @@ export default function SettingsScreen({ navigation }) {
         setConfirmPasswordModal(!confirmPasswordModal);
     }
 
+    //const navigation = useNavigation();
+
     const handleSignOut = () => {
-        const navigation = useNavigation()
+        //onst navigation = useNavigation();
     
         signOut(getAuth(),)
         .then(() => {
