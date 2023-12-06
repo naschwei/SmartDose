@@ -26,6 +26,7 @@
     "babel-preset-react": "^6.24.1",
     "babel-register": "^6.26.0",
     "bcrypt": "^5.1.1",
+    "date-fns-tz": "^2.0.0",
     "expo": "^49.0.16",
     "expo-auth-session": "~5.0.2",
     "expo-camera": "^13.6.0",

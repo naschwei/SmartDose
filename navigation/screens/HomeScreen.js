@@ -32,9 +32,12 @@ import { collection, getDocs } from "firebase/firestore";
 
 import { useNavigation } from '@react-navigation/native';
 
-
 import * as Notifications from 'expo-notifications';
 import { setNotifications, immediateNotification, cancelAllNotifications } from '../../notifs.js';
+
+import { format, isBefore, isAfter } from 'date-fns';
+import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
+
 
 // NEW: This stuff is to add conditional rendering so that the cards only show up on the correct day (ie. TODAY)
 // function MedicationCard () { 
@@ -184,8 +187,16 @@ export default function HomeScreen() {
                     console.log("selected date is ", date);
                     console.log("end date is ", doc.data().endDate.toDate());
 
-                    if (doc.data().startDate.toDate() <= date && doc.data().endDate.toDate() >= date) {
+                    const estTimeZone = 'America/New_York';
 
+                    const startDateEST = utcToZonedTime(doc.data().startDate.toDate(), estTimeZone);
+                    const endDateEST = utcToZonedTime(doc.data().endDate.toDate(), estTimeZone);
+                    const currentDateEST = utcToZonedTime(date, estTimeZone);
+
+
+                    if (isBefore(startDateEST, currentDateEST) && isAfter(endDateEST, currentDateEST)) {
+
+                        const dispenseTimeEST = utcToZonedTime(doc.data().dispenseTime.toDate(), estTimeZone);
 
                         dispenseTimeTemp = new Date(doc.data().dispenseTime.toDate()).toLocaleTimeString('en-US', {
                             hour: '2-digit',
@@ -195,7 +206,7 @@ export default function HomeScreen() {
                         console.log("getting here");
                         toAdd = {medicationName: doc.data().medicationName,
                             pillQuantity: doc.data().pillQuantity,
-                            dispenseTime: dispenseTimeTemp}
+                            dispenseTime: dispenseTimeEST}
                         medications.push(toAdd);
                         console.log(toAdd);
                         
