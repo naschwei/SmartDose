@@ -54,10 +54,17 @@ export default function HomeScreen() {
     const [userMedications, setUserMedications] = useState([]);
     const navigation = useNavigation()
 
-    const handleRefresh = () => {
+    const handleDispense = (dispenserAOrB, pillCount) => {
         // Example pill counts, replace with actual values as needed
-        const nearPillACount = 1; // Replace with actual count
-        const farPillBCount = 2; // Replace with actual count
+
+        if (dispenserAOrB == "1") {
+            const nearPillACount = pillCount;
+            const farPillBCount = 0;
+        } else {
+            const nearPillACount = 0;
+            const farPillBCount = pillCount;
+
+        }
 
         sendPillData(nearPillACount, farPillBCount);
     };
@@ -117,7 +124,8 @@ export default function HomeScreen() {
                         console.log("getting here");
                         toAdd = {medicationName: doc.data().medicationName,
                             pillQuantity: doc.data().pillQuantity,
-                            dispenseTime: dispenseTimeTemp}
+                            dispenseTime: dispenseTimeTemp,
+                            dispenser: doc.data().dispenserNumber}
                         medications.push(toAdd);
                         console.log(toAdd);
                         
@@ -205,7 +213,7 @@ export default function HomeScreen() {
                     </View>
                 </View>
                 <View style={{alignItems:"center"}}>
-                    <StyledButtonRefresh onPress={handleRefresh}>
+                    <StyledButtonRefresh onPress={getDailyMedications}>
                             <ButtonText> Refresh Page </ButtonText>
                     </StyledButtonRefresh>
                     <Text style={{margin: 5, marginBottom: 20, fontWeight: 'bold', fontSize: 16, textAlign: 'center'}}>Refresh page to update!</Text>
@@ -265,7 +273,7 @@ export default function HomeScreen() {
                                 </View>
                             </View>
                             <View style={styles.buttonContent}>
-                                <StyledButtonDispense onPress={() => alert("Dispense medication now!")}> 
+                                <StyledButtonDispense onPress={() => handleDispense(med.dispenserNumber, med.pillQuantity)}> 
                                     <ButtonText style={{fontWeight: 'bold', textAlign: 'center'}}>
                                         Dispense Now!
                                     </ButtonText>

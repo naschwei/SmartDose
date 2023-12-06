@@ -11,33 +11,13 @@ import * as Permissions from 'expo-permissions';
 import { firebase } from './firebase';
 import { useEffect } from 'react';
 
-import { setNotifications, registerForPushNotificationsAsync } from './notifs.js';
+import { setNotifications } from './notifs.js';
 
 
 
 // TODO: (keyboard avoiding wrapper) https://youtu.be/tZVKk-V0Xko?si=EnhApZOt76oShmwN
 
 export default function App() {
-
-  useEffect(() => {
-    Permissions.getAsync(Permissions.NOTIFICATIONS).then((statusObj) => {
-    if (statusObj.status !== 'granted') {
-      return Permissions.askAsync(Permissions.NOTIFICATIONS)
-    }
-    return statusObj;
-    }).then((statusObj) => {
-    if (statusObj.status !== 'granted') {
-      return;
-    }
-      })
-  }, [])
-
-  Notifications.setNotificationHandler({
-    handleNotification: async () => {
-    return {
-    shouldShowAlert: true
-    }}
-  })
 
   setNotifications();
 
