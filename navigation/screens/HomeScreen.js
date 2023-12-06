@@ -39,125 +39,10 @@ import { format, isBefore, isAfter } from 'date-fns';
 import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 
 
-// NEW: This stuff is to add conditional rendering so that the cards only show up on the correct day (ie. TODAY)
-// function MedicationCard () { 
-//     return (
-//     <InnerContainer>
-//         {userMedications.map(med => 
-//             <View style= {styles.cardContainer}>
-//                 <View style={styles.cardContent}>
-//                     <Text style={styles.titleStyle}> {med.medicationName} </Text>
-//                     <Text> {med.pillQuantity} pills</Text>
-//                     <Text> {med.dispenseTime} </Text>
-//                     <Ionicons name="checkmark-circle-outline" size={50} iconColor="#5F8575" style={{ position: 'absolute', right: 0 }}/>
-//                 </View>
-//             </View>
-//         )}
-//     </InnerContainer>
-//     );
-// }
-
-// class MedCard extends React.Component {
-//     constructor(props) {
-//         super(props);
-//         this.state = {
-//             name: props.name,
-//             pillQuantity: props.pillQuantity,
-//             dosgeTime: props.dosageTime,
-//             scheduledDay: props.dayOfWeek
-//         }
-//     }
-//     render() {
-//         const today_day_of_week = moment().format('dddd'); ;
-//         return this.state.dayOfWeek === today_day_of_week ? <MedicationCard/> : null;
-//     }
-// }
-
-// class DisplayRevertDate extends React.Component {
-//     constructor(props) {
-//         super(props);
-//         this.state = {
-//             isCurrentDay: true
-//         }
-//     }
-
-//     render() {
-//         return this.state.isCurrentDay ? null : <Calendar onDayPress={this.setState({ isCurrentDay : false})}/>;
-//     }
-// }
-
 export default function HomeScreen() {
 
     const [userMedications, setUserMedications] = useState([]);
     const navigation = useNavigation()
-
-    function MedicationCard () { 
-        return (
-        <InnerContainer>
-            {userMedications.map(med => 
-                <View style= {styles.cardContainer}>
-                    <View style={styles.cardContent}>
-                        <Text style={styles.titleStyle}> {med.medicationName} </Text>
-                        <Text> {med.pillQuantity} pills</Text>
-                        <Text> {med.dispenseTime.toLocaleTimeString('en-US', {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        })} </Text>
-                        <Ionicons name="checkmark-circle-outline" size={50} iconColor="#5F8575" style={{ position: 'absolute', right: 0 }}/>
-                    </View>
-                </View>
-            )}
-        </InnerContainer>
-        );
-    }
-
-    class MedCard extends React.Component {
-        constructor(props) {
-            super(props);
-            this.state = {
-                name: props.name,
-                pillQuantity: props.pillQuantity,
-                dosgeTime: props.dosageTime,
-                scheduledDay: props.dayOfWeek
-            }
-        }
-        render() {
-            const today_day_of_week = moment().format('dddd'); ;
-            return this.state.dayOfWeek === today_day_of_week ? <MedicationCard/> : null;
-        }
-    }
-
-    // class DisplayRevertDate extends React.Component {
-    //     constructor(props) {
-    //         super(props);
-    //         this.state = {
-    //             isCurrentDay: true
-    //         }
-    //     }
-
-    //     render() {
-    //         return this.state.isCurrentDay ? null : <Calendar onDayPress={this.setState({ isCurrentDay : false})}/>;
-    //     }
-    // }
-
-
-
-    const handleSignOut = () => {
-        signOut(getAuth(),)
-        .then(() => {
-            navigation.replace("Login");
-            console.log('Logged out');
-        })
-        .catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            alert(errorMessage);
-        });
-    }
-
-
-    
-    
 
     // TODO: order based on start and end dates also, if within range then...
     const getDailyMedications = () => {
@@ -183,22 +68,30 @@ export default function HomeScreen() {
                 if (doc.data().dayOfWeek === day) {
                     // TODO :: test if this works
 
-                    console.log("start date is ", doc.data().startDate.toDate());
-                    console.log("selected date is ", date);
-                    console.log("end date is ", doc.data().endDate.toDate());
-
                     const estTimeZone = 'America/New_York';
 
                     const startDateEST = utcToZonedTime(doc.data().startDate.toDate(), estTimeZone);
                     const endDateEST = utcToZonedTime(doc.data().endDate.toDate(), estTimeZone);
-                    const currentDateEST = utcToZonedTime(date, estTimeZone);
+                    const currentDateUTC = zonedTimeToUtc(date, "UTC");
+                    const currentDateEST = utcToZonedTime(currentDateUTC, estTimeZone);
+
+                    const starttemp = new Date(startDateEST).setHours(0, 0, 0, 0);
+                    const endtemp = new Date(endDateEST).setHours(0, 0, 0, 0);
+                    const currenttemp = new Date(currentDateEST).setHours(0, 0, 0, 0);
+
+                    console.log(startDateEST);
+                    console.log(endDateEST);
+                    console.log(starttemp);
+                    console.log(endtemp);
+                    console.log(currenttemp);
 
 
-                    if (isBefore(startDateEST, currentDateEST) && isAfter(endDateEST, currentDateEST)) {
+                    if (starttemp <= currenttemp && endtemp >= currenttemp) {
+
 
                         const dispenseTimeEST = utcToZonedTime(doc.data().dispenseTime.toDate(), estTimeZone);
 
-                        dispenseTimeTemp = new Date(doc.data().dispenseTime.toDate()).toLocaleTimeString('en-US', {
+                        dispenseTimeTemp = new Date(dispenseTimeEST).toLocaleTimeString('en-US', {
                             hour: '2-digit',
                             minute: '2-digit',
                         })
@@ -206,7 +99,7 @@ export default function HomeScreen() {
                         console.log("getting here");
                         toAdd = {medicationName: doc.data().medicationName,
                             pillQuantity: doc.data().pillQuantity,
-                            dispenseTime: dispenseTimeEST}
+                            dispenseTime: dispenseTimeTemp}
                         medications.push(toAdd);
                         console.log(toAdd);
                         
@@ -226,7 +119,7 @@ export default function HomeScreen() {
     }, [date]);
 
 
-    // NEW: CALENDAR TOGGLE
+    // MEDCARDS - CALENDAR TOGGLE
     const [show, setShow] = useState(false);
     const [date, setDate] = useState(new Date());
     const [text, setText] = useState("TODAY");

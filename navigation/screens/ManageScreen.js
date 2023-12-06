@@ -1,5 +1,5 @@
 import { getAuth } from 'firebase/auth';
-import { addDoc, doc, setDoc, collection, getDocs, updateDoc, increment, deleteDoc } from 'firebase/firestore';
+import { addDoc, doc, setDoc, collection, getDocs, updateDoc, increment, deleteDoc, Timestamp } from 'firebase/firestore';
 import React, {useState, useEffect, useRef} from 'react';
 import { FlatList, Animated, Dimensions, ImageBackground, Switch, Pressable, TouchableOpacity, SafeAreaView, Button, View, TextInput, StyleSheet, Text, KeyboardAvoidingView } from 'react-native';
 import Modal from 'react-native-modal';
@@ -10,6 +10,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { auth, db } from "../../firebase.js"
 import { setNotifications, scheduleWeeklyNotification, cancelNotification } from '../../notifs.js';
 import { Timeline } from 'react-native-calendars';
+
+import { format, zonedTimeToUtc } from 'date-fns-tz';
 
 import DateTimePicker from '@react-native-community/datetimepicker';
 // import RNDateTimePicker from '@react-native-community/datetimepicker';
@@ -673,8 +675,8 @@ export default function ManageScreen({ navigation }) {
                 querySnapshot.forEach((doc) => {
                     if (doc.data().dispenserNumber == "1") {
                         dbMedName = doc.data().medicationName;
-                        dbStartDate = doc.data().startDate;
-                        dbEndDate = doc.data().endDate;
+                        dbStartDate = checkChangeStartDate ? editStart : doc.data().startDate;
+                        dbEndDate = checkChangeEndDate ? editEnd : doc.data().endDate;
                         dbPillQuantity = doc.data().pillQuantity;
                     }
                 });
@@ -1025,12 +1027,18 @@ export default function ManageScreen({ navigation }) {
             console.log(tempWeeklySchedule);
             console.log(tempDispenserNumber);
 
+            // const startUTC = format(new Date(start), "yyyy-MM-dd'T'HH:mm:ss.SSSX", { timeZone: 'UTC' });
+            // const endUTC = format(new Date(end), "yyyy-MM-dd'T'HH:mm:ss.SSSX", { timeZone: 'UTC' });
+
+            const startUTC = zonedTimeToUtc(start, 'UTC');
+            const endUTC = zonedTimeToUtc(end, 'UTC');
+
             const medsDocInfo = {
                 user: user.uid,
                 medicationName: medicationName,
                 pillQuantity: pillQuantity,
-                startDate: start,
-                endDate: end,
+                startDate: startUTC,
+                endDate: endUTC,
                 dispenserNumber: tempDispenserNumber,
                 pillsInDispenser: 0,
                 weeklySchedule: tempWeeklySchedule,
@@ -1068,8 +1076,8 @@ export default function ManageScreen({ navigation }) {
                                 dispenseTime: dailyTimes[j],
                                 status: 'Scheduled',
                                 delayedTo: '',
-                                startDate: start,
-                                endDate: end,
+                                startDate: startUTC,
+                                endDate: endUTC,
                                 pillQuantity: pillQuantity,
                                 notificationId: notifId,
                                 dispenserNumber: tempDispenserNumber,
