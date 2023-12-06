@@ -41,6 +41,7 @@ import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 
 const sendPillData = async (nearPillACount, farPillBCount) => {
     try {
+        console.log(`http://10.0.0.219/?nearPillACount=${nearPillACount}&farPillBCount=${farPillBCount}`);
         const response = await fetch(`http://10.0.0.219/?nearPillACount=${nearPillACount}&farPillBCount=${farPillBCount}`);
         const responseData = await response.text();
         console.log(responseData); // Log the response for debugging
@@ -57,12 +58,16 @@ export default function HomeScreen() {
     const handleDispense = (dispenserAOrB, pillCount) => {
         // Example pill counts, replace with actual values as needed
 
+        console.log(dispenserAOrB, pillCount);
+
+        let nearPillACount, farPillBCount;
+
         if (dispenserAOrB == "1") {
-            const nearPillACount = pillCount;
-            const farPillBCount = 0;
+            nearPillACount = pillCount;
+            farPillBCount = 0;
         } else {
-            const nearPillACount = 0;
-            const farPillBCount = pillCount;
+            nearPillACount = 0;
+            farPillBCount = pillCount;
 
         }
 
@@ -273,7 +278,7 @@ export default function HomeScreen() {
                                 </View>
                             </View>
                             <View style={styles.buttonContent}>
-                                <StyledButtonDispense onPress={() => handleDispense(med.dispenserNumber, med.pillQuantity)}> 
+                                <StyledButtonDispense onPress={() => handleDispense(med.dispenser, med.pillQuantity)}> 
                                     <ButtonText style={{fontWeight: 'bold', textAlign: 'center'}}>
                                         Dispense Now!
                                     </ButtonText>
