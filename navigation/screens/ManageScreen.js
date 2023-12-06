@@ -1249,7 +1249,7 @@ export default function ManageScreen({ navigation }) {
             <Text style={{margin: 5, marginTop: -10, marginBottom: 20, fontWeight: 'bold', fontSize: 16, textAlign: 'center'}}>Tap the dispenser to manage!</Text>
             <Text style={{margin: 5, marginTop: -15, marginBottom: 20, fontWeight: 'bold', fontSize: 16, textAlign: 'center'}}>Refresh page to update!</Text>
             <View style={{alignItems:"center", marginTop: -20}}>
-                <StyledButtonRefresh onPress={() => alert("Refreshing Manage Screen!")}>
+                <StyledButtonRefresh onPress={getDispenserData}>
                     <ButtonText> Refresh Page </ButtonText>
                 </StyledButtonRefresh>
             </View>
