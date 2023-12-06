@@ -8,8 +8,8 @@ const StatusBarHeight = Constants.statusBarHeight;
 export const Colors = {
     primary: "#ffffff",
     secondary: "#E5E7EB",
-    tertiary: "1F2937",
-    darkLight: "9CA3AF",
+    tertiary: "#1F2937",
+    darkLight: "#9CA3AF",
     brand: "#6D28D9",
     green: "10B981",
     red: "#EF4444",
@@ -144,14 +144,14 @@ export const StyledButton = styled.TouchableOpacity`
 `;
 
 export const StyledButtonRefresh = styled.TouchableOpacity`
-    padding: 15px;
+    padding: 7px;
     background-color: ${brand};
     justify-content: center;
     align-items: center;
     text-align: center;
     border-radius: 5px;
     margin-vertical: 5px;
-    height: 50px;
+    height: 40px;
     width: 150px;
 `;
 

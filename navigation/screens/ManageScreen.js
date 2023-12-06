@@ -14,7 +14,7 @@ import { Timeline } from 'react-native-calendars';
 import { format, zonedTimeToUtc } from 'date-fns-tz';
 
 import DateTimePicker from '@react-native-community/datetimepicker';
-// import RNDateTimePicker from '@react-native-community/datetimepicker';
+import { StyledButtonRefresh, StyledButtonTODAY, ButtonText } from './../../components/styles';
 
 
 export default function ManageScreen({ navigation }) {
@@ -1245,8 +1245,14 @@ export default function ManageScreen({ navigation }) {
         </Camera>
         )) : (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Text style={{margin: 10, fontWeight: 'bold', fontSize: 28}}>Select Dispenser</Text>
-            <Text style={{margin: 5, marginBottom: 20, fontWeight: 'bold', fontSize: 20}}>Tap the dispenser you wish to manage!</Text>
+            <Text style={{margin: 10, fontWeight: 'bold', fontSize: 24}}>Select Dispenser</Text>
+            <Text style={{margin: 5, marginTop: -10, marginBottom: 20, fontWeight: 'bold', fontSize: 16, textAlign: 'center'}}>Tap the dispenser to manage!</Text>
+            <Text style={{margin: 5, marginTop: -15, marginBottom: 20, fontWeight: 'bold', fontSize: 16, textAlign: 'center'}}>Refresh page to update!</Text>
+            <View style={{alignItems:"center", marginTop: -20}}>
+                <StyledButtonRefresh onPress={() => alert("Refreshing Manage Screen!")}>
+                    <ButtonText> Refresh Page </ButtonText>
+                </StyledButtonRefresh>
+            </View>
             <SafeAreaView style={{
                 flex: 1,
                 alignItems: 'center'

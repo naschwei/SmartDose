@@ -141,9 +141,7 @@ const Signup = () => {
                 </TouchableOpacity>
             </View>
 
-            <Line />
-
-            <ExtraView>
+            <ExtraView style={{marginTop: 10}}>
                 <ExtraText> Already have an account? </ExtraText>
                 <TextLink onPress={() => navigation.replace("Login")}> 
                     <TextLinkContent> Login </TextLinkContent>

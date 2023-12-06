@@ -190,6 +190,7 @@ export default function HomeScreen() {
                     <StyledButtonRefresh onPress={getDailyMedications}>
                             <ButtonText> Refresh Page </ButtonText>
                     </StyledButtonRefresh>
+                    <Text style={{margin: 5, marginBottom: 20, fontWeight: 'bold', fontSize: 16, textAlign: 'center'}}>Refresh page to update!</Text>
                 </View>
             </View>
             
@@ -240,9 +241,10 @@ export default function HomeScreen() {
                         <View style= {styles.cardContainer}>
                             <View style={styles.cardContent}>
                                 <Text style={styles.titleStyle}> {med.medicationName} </Text>
-                                <Text> {med.pillQuantity} pills</Text>
-                                <Text> {med.dispenseTime} </Text>
-                                <Ionicons name="checkmark-circle-outline" size={50} iconColor="#5F8575" style={{ position: 'absolute', right: 0 }}/>
+                                <View style={styles.infoContainer}> 
+                                <Text style={{fontSize: 20}}> {med.pillQuantity} pill(s) at</Text>
+                                <Text style={{textAlign: 'right', fontSize: 20}}> {med.dispenseTime} </Text>
+                                </View>
                             </View>
                         </View>
                     )}
@@ -260,6 +262,9 @@ const styles=StyleSheet.create({
     cardContainer: {
         width: deviceWidth - 20,
         height: 100,
+        justifyContent: 'center',
+        alignItmes:'center',
+        flexDirection: 'row',
         backgroundColor: "#fff",
         elevation: 3, 
         borderRadius: 20,
@@ -271,12 +276,19 @@ const styles=StyleSheet.create({
         marginVertical: 6
     },
     titleStyle: {
-        fontSize: 20,
-        fontWeight: '800',
+        fontSize: 25,
+        fontWeight: 'bold',
     },
     cardContent: {
         marginHorizontal: 18,
-        marginVertical: 10
+        marginVertical: 10,
+        alignItems: 'center',
+        justifyContent: 'space-between'
+    },
+    infoContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        flexDirection: 'row'
     }
 })
 
