@@ -4,6 +4,8 @@ import Modal from 'react-native-modal';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useState} from 'react';
 
+import { useNavigation } from '@react-navigation/native';
+
 import { getAuth, updatePassword, deleteUser, EmailAuthProvider } from 'firebase/auth';
 import { doc, setDoc, collection, increment, updateDoc, deleteDoc } from 'firebase/firestore';
 import { auth, db } from "../../firebase.js"
@@ -21,18 +23,7 @@ import {
     Avatar
 } from './../../components/styles';
 
-const handleSignOut = () => {
-    signOut(getAuth(),)
-    .then(() => {
-        navigation.replace("Login");
-        console.log('Logged out');
-    })
-    .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        alert(errorMessage);
-    });
-}
+
 
 export default function SettingsScreen({ navigation }) {
     const [ isModalOneVisible, setIsModalOneVisible ] = useState(false);
@@ -112,6 +103,21 @@ export default function SettingsScreen({ navigation }) {
 
     const toggleDeleteAccountModal = () => {
         setConfirmPasswordModal(!confirmPasswordModal);
+    }
+
+    const handleSignOut = () => {
+        const navigation = useNavigation()
+    
+        signOut(getAuth(),)
+        .then(() => {
+            navigation.replace("Login");
+            console.log('Logged out');
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            alert(errorMessage);
+        });
     }
 
 
