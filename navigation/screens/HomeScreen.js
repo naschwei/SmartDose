@@ -39,11 +39,28 @@ import { setNotifications, immediateNotification, cancelAllNotifications } from 
 //import { format, isBefore, isAfter } from 'date-fns';
 import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 
+const sendPillData = async (nearPillACount, farPillBCount) => {
+    try {
+        const response = await fetch(`http://10.0.0.219/?nearPillACount=${nearPillACount}&farPillBCount=${farPillBCount}`);
+        const responseData = await response.text();
+        console.log(responseData); // Log the response for debugging
+    } catch (error) {
+        console.error("Error sending pill data:", error);
+    }
+};
 
 export default function HomeScreen() {
 
     const [userMedications, setUserMedications] = useState([]);
     const navigation = useNavigation()
+
+    const handleRefresh = () => {
+        // Example pill counts, replace with actual values as needed
+        const nearPillACount = 1; // Replace with actual count
+        const farPillBCount = 2; // Replace with actual count
+
+        sendPillData(nearPillACount, farPillBCount);
+    };
 
     // TODO: order based on start and end dates also, if within range then...
     const getDailyMedications = () => {
@@ -188,7 +205,7 @@ export default function HomeScreen() {
                     </View>
                 </View>
                 <View style={{alignItems:"center"}}>
-                    <StyledButtonRefresh onPress={getDailyMedications}>
+                    <StyledButtonRefresh onPress={handleRefresh}>
                             <ButtonText> Refresh Page </ButtonText>
                     </StyledButtonRefresh>
                     <Text style={{margin: 5, marginBottom: 20, fontWeight: 'bold', fontSize: 16, textAlign: 'center'}}>Refresh page to update!</Text>
