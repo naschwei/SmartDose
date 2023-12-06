@@ -1122,14 +1122,14 @@ export default function ManageScreen({ navigation }) {
               }}
             >
                 <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
-                    <Pressable style={{top: 20, left: -40, width: 120, height: 30, backgroundColor: '#f0ffff', justifyContent: 'center', alignItems: 'center', borderWidth: 3, borderRadius: 3, borderColor: 'black'}}
+                    <TouchableOpacity style={{top: 20, left: -40, width: 120, height: 30, backgroundColor: '#f0ffff', justifyContent: 'center', alignItems: 'center', borderWidth: 3, borderRadius: 3, borderColor: 'black'}}
                         onPress={__retakePicture}>
                         <Text style={{fontWeight: 'bold', color: 'black'}}>Re-Take Picture</Text>
-                    </Pressable>
-                    <Pressable style={{top: 20, left: 40, width: 120, height: 30, backgroundColor: '#f0ffff', justifyContent: 'center', alignItems: 'center', borderWidth: 3, borderRadius: 3, borderColor: 'black'}}
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{top: 20, left: 40, width: 120, height: 30, backgroundColor: '#f0ffff', justifyContent: 'center', alignItems: 'center', borderWidth: 3, borderRadius: 3, borderColor: 'black'}}
                         onPress={__usePhoto}>
                         <Text style={{fontWeight: 'bold', color: 'black'}}>Use Photo</Text>
-                    </Pressable>
+                    </TouchableOpacity>
                 </View>
                 
             </ImageBackground>
@@ -1228,19 +1228,19 @@ export default function ManageScreen({ navigation }) {
             }}
             type={type}>
             <View style={{flexDirection: 'row', justifyContent: 'space-evenly', width: '100%'}}>
-                <Pressable style={{top: 10, left: -95, width: 40, height: 40, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'black', borderRadius: 5}}
+                <TouchableOpacity style={{top: 10, left: -95, width: 40, height: 40, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'black', borderRadius: 5}}
                     onPress={closeCamera}>
                     <Text style={{color: 'white', fontWeight: 'bold', fontSize: 25}}>X</Text>
-                </Pressable>
-                <Pressable style={{top: 10, right: -95, width: 40, height: 40, borderWidth: 2, borderColor: 'black', justifyContent: 'center', alignItems: 'center', borderRadius: 5, backgroundColor: 'mediumpurple'}}
+                </TouchableOpacity>
+                <TouchableOpacity style={{top: 10, right: -95, width: 40, height: 40, borderWidth: 2, borderColor: 'black', justifyContent: 'center', alignItems: 'center', borderRadius: 5, backgroundColor: 'mediumpurple'}}
                     onPress={toggleCameraType}>
                     <Ionicons name="camera-reverse" size={27} color={'white'}/>
-                </Pressable>
+                </TouchableOpacity>
             </View>
             <View style={{alignSelf: 'center', flex: 1, alignItems: 'center'}}>
-                <Pressable style={{bottom: -600, width:70, height:70, borderWidth: 4, borderRadius: 50, borderColor: 'mediumpurple', backgroundColor: 'white'}}
+                <TouchableOpacity style={{bottom: -600, width:70, height:70, borderWidth: 4, borderRadius: 50, borderColor: 'mediumpurple', backgroundColor: 'white'}}
                     onPress={__takePicture}>
-                </Pressable>
+                </TouchableOpacity>
             </View>
         </Camera>
         )) : (
@@ -1460,15 +1460,15 @@ export default function ManageScreen({ navigation }) {
                 <View style={styles.container}>
                     <KeyboardAwareScrollView contentContainerStyle={{width: 350}}>
                         <View style={{flexDirection: 'row', margin: 7, marginTop: 10}}>
-                            <Pressable style={{top: -0, left: 0, width: 30, height: 30, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'black', borderRadius: 5}}
+                            <TouchableOpacity style={{top: -0, left: 0, width: 30, height: 30, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'black', borderRadius: 5}}
                                 onPress={toggleModal}>
                                 <Text style={{color: 'white', fontWeight: 'bold', fontSize: 20}}>X</Text>
-                            </Pressable>
+                            </TouchableOpacity>
                             <Text style={[styles.title, {left: 20}]}>Add New Medication</Text>
-                            <Pressable style={{top: 0, left: 40, width: 30, height: 30, borderWidth: 2, borderColor: 'black', justifyContent: 'center', alignItems: 'center', borderRadius: 5, backgroundColor: 'mediumpurple'}}
+                            <TouchableOpacity style={{top: 0, left: 40, width: 30, height: 30, borderWidth: 2, borderColor: 'black', justifyContent: 'center', alignItems: 'center', borderRadius: 5, backgroundColor: 'mediumpurple'}}
                                 onPress={__startCamera}>
                                 <Ionicons name="camera" size={20} color={'white'}/>
-                            </Pressable>
+                            </TouchableOpacity>
                         </View>
                         <View style={styles.container2}>
                             <View style={styles.items}>
@@ -1531,10 +1531,10 @@ export default function ManageScreen({ navigation }) {
                                         value={editTime}
                                         onChange={editTimeInput}
                                     />  
-                                    <Pressable style={{height: 35, width: 50, backgroundColor: 'lightgrey', borderWidth: 2, borderColor: 'black', borderRadius: 10, justifyContent: 'center', alignItems: 'center'}}
+                                    <TouchableOpacity style={{height: 35, width: 50, backgroundColor: 'lightgrey', borderWidth: 2, borderColor: 'black', borderRadius: 10, justifyContent: 'center', alignItems: 'center'}}
                                         onPress={addNewTime}>
                                         <Text style={{top: -2, fontWeight: 'bold', fontSize: 20}}>+</Text>
-                                    </Pressable>
+                                    </TouchableOpacity>
                                 </View>
                                 <View style={{marginBottom: 5, margin: 0, height: 40, width: 300, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
                                     {dailyTimes.map(t => 
@@ -1548,9 +1548,9 @@ export default function ManageScreen({ navigation }) {
                                     )}
                                 </View>
                             </View>
-                            <Pressable style={{width: 200, height: 30, backgroundColor: 'mediumpurple', borderWidth: 2, borderRadius: 5, borderColor: 'black', justifyContent: 'center', alignItems: 'center', marginBottom: 10, padding: 2}} title="Add New Medication" onPress={addMedication}>
+                            <TouchableOpacity style={{width: 200, height: 30, backgroundColor: 'mediumpurple', borderWidth: 2, borderRadius: 5, borderColor: 'black', justifyContent: 'center', alignItems: 'center', marginBottom: 10, padding: 2}} title="Add New Medication" onPress={addMedication}>
                                 <Text style={{fontWeight: 'bold', fontSize: 15, color: 'white'}}>Submit</Text>
-                            </Pressable>
+                            </TouchableOpacity>
                         </View>
                     </KeyboardAwareScrollView>
                 </View>

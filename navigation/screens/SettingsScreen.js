@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ScrollView, StyleSheet, Pressable, TextInput, View, Text } from 'react-native';
+import { TouchableOpacity, ScrollView, StyleSheet, Pressable, TextInput, View, Text } from 'react-native';
 import Modal from 'react-native-modal';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useState} from 'react';
@@ -297,18 +297,18 @@ export default function SettingsScreen({ navigation }) {
                 <View style={styles.container1}>
                     <View style={{marginTop: 5, justifyContent: 'center', alignItems: 'center'}}>
                         <View style={{flexDirection: 'row', margin: 7, marginTop: 10}}>
-                           <Pressable style={{top: -0, left: -20, width: 30, height: 30, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'black', borderRadius: 5}}
+                           <TouchableOpacity style={{top: -0, left: -20, width: 30, height: 30, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'black', borderRadius: 5}}
                                 onPress={toggleModalOne}>
                                 <Text style={{color: 'white', fontWeight: 'bold', fontSize: 20}}>X</Text>
-                            </Pressable>
+                            </TouchableOpacity>
                             <Text style={styles.title}>CHANGE CREDENTIALS</Text> 
                         </View>
                         <TextInput style={styles.input} placeholder="New Password" placeholderTextColor={'grey'} onChangeText={text => setNewPassword(text)}/>
                         <TextInput style={styles.input} placeholder="Confirm New Password" placeholderTextColor={'grey'} onChangeText={text => setConfirmNewPassword(text)}/>
-                        <Pressable style={{width: 200, height: 30, backgroundColor: 'mediumpurple', borderWidth: 2, borderRadius: 5, borderColor: 'black', justifyContent: 'center', alignItems: 'center', marginTop: 5, marginBottom: 10, padding: 2}} 
+                        <TouchableOpacity style={{width: 200, height: 30, backgroundColor: 'mediumpurple', borderWidth: 2, borderRadius: 5, borderColor: 'black', justifyContent: 'center', alignItems: 'center', marginTop: 5, marginBottom: 10, padding: 2}} 
                             onPress={__changeCredentials}>
                             <Text style={{fontWeight: 'bold', fontSize: 15, color: 'white'}}>Change Credentials</Text>
-                        </Pressable>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
@@ -366,49 +366,49 @@ export default function SettingsScreen({ navigation }) {
                                 <Text style={styles.text}>Change Daily Dispense Schedule?</Text>
                                 <TextInput style={styles.input} placeholder="Change Dispense Times (Each Day)" placeholderTextColor={'grey'} onChangeText={text => setDispenseTimes(text)} />
                             </View>
-                            <Pressable style={{width: 200, height: 30, backgroundColor: 'mediumpurple', borderWidth: 2, borderRadius: 5, borderColor: 'black', justifyContent: 'center', alignItems: 'center', marginTop: 3, marginBottom: 10, padding: 2}}
+                            <TouchableOpacity style={{width: 200, height: 30, backgroundColor: 'mediumpurple', borderWidth: 2, borderRadius: 5, borderColor: 'black', justifyContent: 'center', alignItems: 'center', marginTop: 3, marginBottom: 10, padding: 2}}
                             >
                                 <Text style={{fontWeight: 'bold', fontSize: 15, color: 'white'}}>Change Medication</Text>
-                            </Pressable>
+                            </TouchableOpacity>
                         </View>
                     </KeyboardAwareScrollView>
                 </View>
             </Modal>
             <Modal isVisible={isModalThreeVisible}>
-                <View style={{top: -50, height: 300, width: 375, backgroundColor: 'grey', borderWidth: 10, borderRadius: 25, borderColor: 'black', justifyContent: 'center', alignItems: 'center'}}>
+                <View style={{top: -50, height: 300, width: 375, backgroundColor: 'lightgray', borderWidth: 10, borderRadius: 25, borderColor: 'black', justifyContent: 'center', alignItems: 'center'}}>
                     <View style={{flexDirection: 'row', margin: 7, marginTop: 10}}>
-                        <Pressable style={{top: -0, left: -10, width: 30, height: 30, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'black', borderRadius: 5}}
+                        <TouchableOpacity style={{top: -0, left: -10, width: 30, height: 30, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'black', borderRadius: 5}}
                             onPress={toggleModalThree}>
                             <Text style={{color: 'white', fontWeight: 'bold', fontSize: 20}}>X</Text>
-                        </Pressable>
-                        <Text style={{fontWeight: 'bold', fontSize: 24, color: 'white'}}>CHOOSE MEDICATION(S)</Text> 
+                        </TouchableOpacity>
+                        <Text style={{fontWeight: 'bold', fontSize: 24, color: 'black'}}>CHOOSE MEDICATION(S)</Text> 
                     </View>
                     <View style={{flexDirection: 'row', justifyContent: 'space-evenly', width: 350}}>
                         <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
                             <View style={{width: 30, height: 25, borderWidth: 3, backgroundColor: '#f8ffff', justifyContent:'center', alignItems: 'center'}}>
                                 <Text style={{color: 'black', fontWeight: 'bold', justifyContent: 'center', alignItems: 'center'}}>A</Text>
                             </View>
-                            <Pressable style={[styles.grid, {backgroundColor: Dispenser1 ? 'mediumpurple' : '#f8ffff'}]} onPress={handleDispenserOne}></Pressable>
+                            <TouchableOpacity style={[styles.grid, {backgroundColor: Dispenser1 ? 'mediumpurple' : '#f8ffff'}]} onPress={handleDispenserOne}></TouchableOpacity>
                         </View>
                         <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
                             <View style={{width: 30, height: 25, borderWidth: 3, backgroundColor: '#f8ffff', justifyContent:'center', alignItems: 'center'}}>
                                 <Text style={{color: 'black', fontWeight: 'bold', justifyContent: 'center', alignItems: 'center'}}>B</Text>
                             </View>
-                            <Pressable style={[styles.grid, {backgroundColor: Dispenser2 ? 'mediumpurple' : '#f8ffff'}]} onPress={handleDispenserTwo}></Pressable>
+                            <TouchableOpacity style={[styles.grid, {backgroundColor: Dispenser2 ? 'mediumpurple' : '#f8ffff'}]} onPress={handleDispenserTwo}></TouchableOpacity>
                         </View>
                     </View>
-                    <Pressable style={{width: 200, height: 30, backgroundColor: 'mediumpurple', borderWidth: 2, borderRadius: 5, borderColor: 'black', justifyContent: 'center', alignItems: 'center', marginBottom: 10, padding: 2}} 
+                    <TouchableOpacity style={{width: 200, height: 30, backgroundColor: 'mediumpurple', borderWidth: 2, borderRadius: 5, borderColor: 'black', justifyContent: 'center', alignItems: 'center', marginBottom: 10, padding: 2}} 
                         onPress={__deleteMedication}>
                         <Text style={{fontWeight: 'bold', fontSize: 15, color: 'white'}}>DELETE MEDICATION(S)</Text>
-                    </Pressable>
+                    </TouchableOpacity>
                 </View>
             </Modal>
             <Modal isVisible={confirmPasswordModal}>
                 <View style={[styles.container1, {height: 240}]}>
-                    <Pressable style={{top: 10, left: -150, width: 30, height: 30, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'black', borderRadius: 5}}
+                    <TouchableOpacity style={{top: 10, left: -150, width: 30, height: 30, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'black', borderRadius: 5}}
                         onPress={toggleDeleteAccountModal}>
                         <Text style={{color: 'white', fontWeight: 'bold', fontSize: 20}}>X</Text>
-                    </Pressable>
+                    </TouchableOpacity>
                     <Text style={[styles.text, {marginTop: 0, fontSize: 30}]}>Delete Account?</Text>
                     <Text style={[styles.text, {margin: 5, marginBottom: 10}]}>Please Confirm Your Password</Text>
                     <TextInput style={styles.input}
@@ -418,10 +418,10 @@ export default function SettingsScreen({ navigation }) {
                         value={confirmDeleteAccountPass}
                         onChangeText={text => setConfirmDeleteAccountPass(text)}
                     />
-                    <Pressable style={{margin: 15, width: 200, height: 30, backgroundColor: 'red', borderWidth: 2, borderRadius: 5, borderColor: 'black', justifyContent: 'center', alignItems: 'center', marginBottom: 10, padding: 2}}
+                    <TouchableOpacity style={{margin: 15, width: 200, height: 30, backgroundColor: 'red', borderWidth: 2, borderRadius: 5, borderColor: 'black', justifyContent: 'center', alignItems: 'center', marginBottom: 10, padding: 2}}
                         onPress={deleteAccount}>
                         <Text style={{color: 'white', fontWeight: 'bold', fontSize: 15}}>SUBMIT</Text>
-                    </Pressable>
+                    </TouchableOpacity>
                 </View>
             </Modal>
         </View>
