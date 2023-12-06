@@ -155,6 +155,19 @@ export const StyledButtonRefresh = styled.TouchableOpacity`
     width: 150px;
 `;
 
+export const StyledButtonDispense = styled.TouchableOpacity`
+    padding: 5px;
+    background-color: ${brand};
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-radius: 5px;
+    margin-vertical: 5px;
+    margin-right: 20px;
+    height: 55px;
+    width: 113px;
+`;
+
 export const ButtonText = styled.Text`
     color: ${primary};
     font-size: 14px;

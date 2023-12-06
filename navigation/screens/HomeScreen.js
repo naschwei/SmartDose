@@ -16,7 +16,8 @@ import {
     StyledButton,
     ButtonText,
     StyledButtonRefresh,
-    StyledButtonTODAY
+    StyledButtonTODAY,
+    StyledButtonDispense
 } from './../../components/styles';
 
 const {primary, tertiary, brand, darkLight} = Colors;
@@ -242,9 +243,16 @@ export default function HomeScreen() {
                             <View style={styles.cardContent}>
                                 <Text style={styles.titleStyle}> {med.medicationName} </Text>
                                 <View style={styles.infoContainer}> 
-                                <Text style={{fontSize: 20}}> {med.pillQuantity} pill(s) at</Text>
-                                <Text style={{textAlign: 'right', fontSize: 20}}> {med.dispenseTime} </Text>
+                                    <Text style={{fontSize: 18}}> {med.pillQuantity} pill(s) at</Text>
+                                    <Text style={{fontSize: 18}}> {med.dispenseTime} </Text>
                                 </View>
+                            </View>
+                            <View style={styles.buttonContent}>
+                                <StyledButtonDispense onPress={() => alert("Dispense medication now!")}> 
+                                    <ButtonText style={{fontWeight: 'bold', textAlign: 'center'}}>
+                                        Dispense Now!
+                                    </ButtonText>
+                                </StyledButtonDispense>
                             </View>
                         </View>
                     )}
@@ -262,8 +270,6 @@ const styles=StyleSheet.create({
     cardContainer: {
         width: deviceWidth - 20,
         height: 100,
-        justifyContent: 'center',
-        alignItmes:'center',
         flexDirection: 'row',
         backgroundColor: "#fff",
         elevation: 3, 
@@ -278,17 +284,23 @@ const styles=StyleSheet.create({
     titleStyle: {
         fontSize: 25,
         fontWeight: 'bold',
+        marginTop: 5
     },
     cardContent: {
         marginHorizontal: 18,
         marginVertical: 10,
-        alignItems: 'center',
         justifyContent: 'space-between'
     },
     infoContainer: {
         flex: 1,
         justifyContent: 'center',
-        flexDirection: 'row'
+        flexDirection: 'row',
+        marginTop: 5
+    },
+    buttonContent: {
+        marginLeft: 'auto', // This pushes the element to the very right
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 })
 
