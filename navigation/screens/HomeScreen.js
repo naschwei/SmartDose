@@ -96,7 +96,10 @@ export default function HomeScreen() {
                     <View style={styles.cardContent}>
                         <Text style={styles.titleStyle}> {med.medicationName} </Text>
                         <Text> {med.pillQuantity} pills</Text>
-                        <Text> {med.dispenseTime} </Text>
+                        <Text> {med.dispenseTime.toLocaleTimeString('en-US', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        })} </Text>
                         <Ionicons name="checkmark-circle-outline" size={50} iconColor="#5F8575" style={{ position: 'absolute', right: 0 }}/>
                     </View>
                 </View>
@@ -156,8 +159,7 @@ export default function HomeScreen() {
     // TODO: order based on start and end dates also, if within range then...
     const getDailyMedications = () => {
         // where 0 refers to sunday, 1 refers to monday, 2 to tuesday, ... etc.
-        const d = new Date();
-        const day = d.getDay();
+        const day = date.getDay();
         console.log(day);
 
         // to compare start and end dates with
@@ -169,6 +171,7 @@ export default function HomeScreen() {
         let startDate, endDate;
 
         let toAdd;
+        let dispenseTimeTemp;
 
         db.collection("sched").where("user", "==", user.uid)
         .get()
@@ -177,22 +180,22 @@ export default function HomeScreen() {
                 if (doc.data().dayOfWeek === day) {
                     // TODO :: test if this works
 
-                    startDate = new Date(doc.data().startDate.toDate());
-                    endDate = new Date(doc.data().endDate.toDate())
-
-                    console.log(startDate);
-                    console.log(endDate);
-
                     console.log("start date is ", doc.data().startDate.toDate());
                     console.log("selected date is ", date);
                     console.log("end date is ", doc.data().endDate.toDate());
 
                     if (doc.data().startDate.toDate() <= date && doc.data().endDate.toDate() >= date) {
 
+
+                        dispenseTimeTemp = new Date(doc.data().dispenseTime.toDate()).toLocaleTimeString('en-US', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                        })
+
                         console.log("getting here");
                         toAdd = {medicationName: doc.data().medicationName,
                             pillQuantity: doc.data().pillQuantity,
-                            dispenseTimes: doc.data().dispenseTime.toDate()}
+                            dispenseTime: dispenseTimeTemp}
                         medications.push(toAdd);
                         console.log(toAdd);
                         
@@ -328,7 +331,18 @@ export default function HomeScreen() {
                     )
                 }
 
-                <MedCard/>
+                <InnerContainer>
+                    {userMedications.map(med => 
+                        <View style= {styles.cardContainer}>
+                            <View style={styles.cardContent}>
+                                <Text style={styles.titleStyle}> {med.medicationName} </Text>
+                                <Text> {med.pillQuantity} pills</Text>
+                                <Text> {med.dispenseTime} </Text>
+                                <Ionicons name="checkmark-circle-outline" size={50} iconColor="#5F8575" style={{ position: 'absolute', right: 0 }}/>
+                            </View>
+                        </View>
+                    )}
+                </InnerContainer>
             </View>
             </>
         </View>

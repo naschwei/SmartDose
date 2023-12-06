@@ -20,9 +20,6 @@ import { setNotifications, registerForPushNotificationsAsync } from './notifs.js
 export default function App() {
 
   setNotifications();
-  useEffect(() => {
-    registerForPushNotificationsAsync();
-  }, []);
 
   return (
     <Authenticate/>
