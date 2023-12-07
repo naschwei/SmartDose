@@ -1004,6 +1004,9 @@ export default function ManageScreen({ navigation }) {
         await setCheckChangeDispenseTimes(false);
         await setCheckChangeWeeklySched(false);
 
+        await setATaken(false);
+        await setBTaken(false);
+
         // await setDispenserInfo([]);
 
     }
