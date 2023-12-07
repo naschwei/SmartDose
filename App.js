@@ -5,14 +5,19 @@ import { StyleSheet, Text, View } from 'react-native';
 import * as React from 'react';
 import Authenticate from './navigation/Authenticate';
 
-// import { setNotifications, registerForPushNotificationsAsync } from './notifs.js';
+import { Notifications } from 'expo-notifications';
+import * as Permissions from 'expo-permissions';
+
+import { firebase } from './firebase';
+import { useEffect } from 'react';
+
+import { setNotifications } from './notifs.js';
 
 
 
 // TODO: (keyboard avoiding wrapper) https://youtu.be/tZVKk-V0Xko?si=EnhApZOt76oShmwN
 
 export default function App() {
-
   // setNotifications();
 
   // Notifications.setNotificationHandler({

@@ -41,6 +41,7 @@ import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 
 const sendPillData = async (nearPillACount, farPillBCount) => {
     try {
+        console.log(`http://10.0.0.219/?nearPillACount=${nearPillACount}&farPillBCount=${farPillBCount}`);
         const response = await fetch(`http://10.0.0.219/?nearPillACount=${nearPillACount}&farPillBCount=${farPillBCount}`);
         const responseData = await response.text();
         console.log(responseData); // Log the response for debugging
@@ -54,10 +55,21 @@ export default function HomeScreen() {
     const [userMedications, setUserMedications] = useState([]);
     const navigation = useNavigation()
 
-    const handleRefresh = () => {
+    const handleDispense = (dispenserAOrB, pillCount) => {
         // Example pill counts, replace with actual values as needed
-        const nearPillACount = 1; // Replace with actual count
-        const farPillBCount = 2; // Replace with actual count
+
+        console.log(dispenserAOrB, pillCount);
+
+        let nearPillACount, farPillBCount;
+
+        if (dispenserAOrB == "1") {
+            nearPillACount = pillCount;
+            farPillBCount = 0;
+        } else {
+            nearPillACount = 0;
+            farPillBCount = pillCount;
+
+        }
 
         sendPillData(nearPillACount, farPillBCount);
     };
@@ -117,7 +129,8 @@ export default function HomeScreen() {
                         console.log("getting here");
                         toAdd = {medicationName: doc.data().medicationName,
                             pillQuantity: doc.data().pillQuantity,
-                            dispenseTime: dispenseTimeTemp}
+                            dispenseTime: dispenseTimeTemp,
+                            dispenser: doc.data().dispenserNumber}
                         medications.push(toAdd);
                         console.log(toAdd);
                         
@@ -205,7 +218,7 @@ export default function HomeScreen() {
                     </View>
                 </View>
                 <View style={{alignItems:"center"}}>
-                    <StyledButtonRefresh onPress={handleRefresh}>
+                    <StyledButtonRefresh onPress={getDailyMedications}>
                             <ButtonText> Refresh Page </ButtonText>
                     </StyledButtonRefresh>
                     <Text style={{margin: 5, marginBottom: 20, fontWeight: 'bold', fontSize: 16, textAlign: 'center'}}>Refresh page to update!</Text>
@@ -265,7 +278,7 @@ export default function HomeScreen() {
                                 </View>
                             </View>
                             <View style={styles.buttonContent}>
-                                <StyledButtonDispense onPress={() => alert("Dispense medication now!")}> 
+                                <StyledButtonDispense onPress={() => handleDispense(med.dispenser, med.pillQuantity)}> 
                                     <ButtonText style={{fontWeight: 'bold', textAlign: 'center'}}>
                                         Dispense Now!
                                     </ButtonText>
