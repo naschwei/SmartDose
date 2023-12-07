@@ -5,13 +5,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import * as React from 'react';
 import Authenticate from './navigation/Authenticate';
 
-import { Notifications } from 'expo-notifications';
-import * as Permissions from 'expo-permissions';
-
-import { firebase } from './firebase';
-import { useEffect } from 'react';
-
-import { setNotifications, registerForPushNotificationsAsync } from './notifs.js';
+// import { setNotifications, registerForPushNotificationsAsync } from './notifs.js';
 
 
 
@@ -19,27 +13,14 @@ import { setNotifications, registerForPushNotificationsAsync } from './notifs.js
 
 export default function App() {
 
-  useEffect(() => {
-    Permissions.getAsync(Permissions.NOTIFICATIONS).then((statusObj) => {
-    if (statusObj.status !== 'granted') {
-      return Permissions.askAsync(Permissions.NOTIFICATIONS)
-    }
-    return statusObj;
-    }).then((statusObj) => {
-    if (statusObj.status !== 'granted') {
-      return;
-    }
-      })
-  }, [])
+  // setNotifications();
 
-  Notifications.setNotificationHandler({
-    handleNotification: async () => {
-    return {
-    shouldShowAlert: true
-    }}
-  })
-
-  setNotifications();
+  // Notifications.setNotificationHandler({
+  //   handleNotification: async () => {
+  //     return {
+  //     shouldShowAlert: true
+  //   }}
+  // })
 
   return (
     <Authenticate/>
